@@ -1,0 +1,5 @@
+export const CONTACT_EMAIL = process.env.CONTACT_EMAIL ?? ''
+export const CONTACT_PHONE = process.env.CONTACT_PHONE ?? ''
+export const ADDRESS = process.env.ADDRESS ?? ''
+export const ADDRESS_LINK = process.env.ADDRESS_LINK ?? ''
+export const FACEBOOK_LINK = process.env.FACEBOOK_LINK ?? ''

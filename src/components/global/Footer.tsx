@@ -1,10 +1,11 @@
 import { Globe, Video, Share2 } from 'lucide-react'
 import { FOOTER_SECTIONS } from '@/data/home'
+import { FACEBOOK_LINK } from '@/const'
 
 const SOCIAL_LINKS = [
-  { icon: Globe, label: 'Website' },
-  { icon: Video, label: 'YouTube' },
-  { icon: Share2, label: 'Social' },
+  { icon: Globe, label: 'Website', href: '/' },
+  { icon: Video, label: 'YouTube', href: '#' },
+  { icon: Share2, label: 'Facebook', href: FACEBOOK_LINK },
 ]
 
 export function Footer() {
@@ -52,10 +53,12 @@ export function Footer() {
             Theo dõi
           </h4>
           <div className="flex gap-4">
-            {SOCIAL_LINKS.map(({ icon: Icon, label }) => (
+            {SOCIAL_LINKS.map(({ icon: Icon, label, href }) => (
               <a
                 key={label}
-                href="#"
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={label}
                 className="w-10 h-10 min-w-10 rounded-lg flex items-center justify-center text-text-light border border-primary/20 bg-white/5 hover:bg-primary transition-all"
               >

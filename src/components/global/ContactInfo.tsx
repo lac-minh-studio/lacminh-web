@@ -1,9 +1,10 @@
 import { Mail, Phone, MapPin } from 'lucide-react'
+import { CONTACT_EMAIL, CONTACT_PHONE, ADDRESS } from '@/const'
 
 const CONTACT_ITEMS = [
-  { icon: Mail, label: 'Email liên hệ', value: 'invest@lacminh.vn' },
-  { icon: Phone, label: 'Điện thoại', value: '+84 24 3822 0000' },
-  { icon: MapPin, label: 'Trụ sở', value: 'Quận 1, TP. Hồ Chí Minh' },
+  { icon: Mail, label: 'Email liên hệ', value: CONTACT_EMAIL },
+  { icon: Phone, label: 'Điện thoại', value: CONTACT_PHONE },
+  { icon: MapPin, label: 'Trụ sở', value: ADDRESS },
 ]
 
 export function ContactInfo() {

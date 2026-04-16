@@ -1,10 +1,11 @@
 import { MapPin, Globe, Video, Mail, Share2 } from 'lucide-react'
+import { ADDRESS, ADDRESS_LINK, CONTACT_EMAIL, FACEBOOK_LINK } from '@/const'
 
 const SOCIAL_ICONS = [
-  { icon: Globe, label: 'Website' },
-  { icon: Video, label: 'YouTube' },
-  { icon: Share2, label: 'Social' },
-  { icon: Mail, label: 'Email' },
+  { icon: Globe, label: 'Website', href: '/' },
+  { icon: Video, label: 'YouTube', href: '#' },
+  { icon: Share2, label: 'Facebook', href: FACEBOOK_LINK },
+  { icon: Mail, label: 'Email', href: `mailto:${CONTACT_EMAIL}` },
 ]
 
 export function CareerContactInfo() {
@@ -18,14 +19,19 @@ export function CareerContactInfo() {
         >
           Văn phòng Lạc Minh
         </h4>
-        <div className="flex items-start gap-3 text-text-light/70 text-sm leading-relaxed">
+        <a
+          href={ADDRESS_LINK}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-start gap-3 text-text-light/70 text-sm leading-relaxed hover:text-primary transition-colors"
+        >
           <MapPin
             size={18}
             strokeWidth={1.5}
             className="text-primary mt-0.5 shrink-0"
           />
-          <span>18 Nam Kỳ Khởi Nghĩa, Q1, TP. HCM</span>
-        </div>
+          <span>{ADDRESS}</span>
+        </a>
       </div>
 
       {/* Social */}
@@ -37,13 +43,17 @@ export function CareerContactInfo() {
           Kết nối với chúng tôi
         </h4>
         <div className="flex gap-4">
-          {SOCIAL_ICONS.map(({ icon: Icon, label }) => (
-            <div
+          {SOCIAL_ICONS.map(({ icon: Icon, label, href }) => (
+            <a
               key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
               className="w-10 h-10 rounded-xl bg-white/5 border border-primary/30 flex items-center justify-center hover:bg-primary/20 transition-all cursor-pointer"
             >
               <Icon size={18} strokeWidth={1.5} className="text-primary" />
-            </div>
+            </a>
           ))}
         </div>
       </div>
