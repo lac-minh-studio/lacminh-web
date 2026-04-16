@@ -1,43 +1,119 @@
 @import "tailwindcss";
-
-:root {
-  --background: #131313;
-  --foreground: #e5e2e1;
-  --lm-primary: #dcdcdc;
-  --lm-primary-container: #c0c0c0;
-  --lm-secondary: #e9c349;
-  --lm-surface-lowest: #0e0e0e;
-  --lm-surface-low: #1c1b1b;
-  --lm-surface: #20201f;
-  --lm-surface-high: #2a2a2a;
-  --lm-outline: #444748;
-  --lm-muted: #c4c7c7;
-}
+@import "@heroui/styles";
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
-  --font-display: var(--font-newsreader);
-}
+  /* ─── Mythos Token Map ──────────────────────────────────────────────────────
+   * Source of truth: .stitch/DESIGN.md
+   * These CSS variables are the ONLY permitted way to reference colours, fonts,
+   * and shadows inside this project.  Components must always use the generated
+   * Tailwind class (e.g. `text-primary`) – never a raw hex or rgba value.
+   * ─────────────────────────────────────────────────────────────────────────── */
 
-html {
-  scroll-behavior: smooth;
+  /* Background & Surface */
+  --color-background: #EDE0C5;        /* Warm Cream — page / app base          */
+  --color-surface: #D8CAAF;           /* Parchment Gray — cards, panels         */
+  --color-surface-dark: #2D4538;      /* Deep Moss Green — footer, dark sections*/
+  --color-deep-moss: #1E3028;         /* Deeper Moss — overlays, heavy bg       */
+
+  /* Accent */
+  --color-primary: #C4954A;           /* Warm Bronze — buttons, active, CTAs   */
+  --color-secondary: #B08030;         /* Muted Gold — hover, decorative borders */
+
+  /* Semantic states */
+  --color-success: #4A7C59;           /* Moss Green                            */
+  --color-warning: #C4854A;           /* Amber                                 */
+  --color-destructive: #9C3A2A;       /* Deep Red                              */
+
+  /* Text */
+  --color-text-dark: #1E1208;         /* Rich Dark Brown — on light bg          */
+  --color-text-light: #F5EDD8;        /* Off-white Cream — on dark bg           */
+  --color-text-secondary: #5A4228;    /* Medium Warm Brown — body copy          */
+  --color-text-muted: #8A7560;        /* Muted Warm Brown — placeholders, captions */
+
+  /* Border */
+  --color-border: rgba(196,149,74,0.25); /* Bronze Ghost Border               */
+
+  /* Fonts */
+  --font-headline: var(--font-eb-garamond), 'EB Garamond', Georgia, serif;
+  --font-body: var(--font-inter), 'Inter', system-ui, sans-serif;
+
+  /* Shadows — neumorphic & glass */
+  --shadow-neu-light: 8px 8px 20px #C8B892, -8px -8px 20px rgba(255,255,255,0.565);
+  --shadow-neu-dark: 8px 8px 16px #1e2e25, -8px -8px 16px #3c5c4b;
+  --shadow-neu-cta: 4px 4px 10px rgba(0,0,0,0.2), -4px -4px 10px rgba(255,255,255,0.5);
+  --shadow-bronze-glow: 0 0 20px rgba(196,149,74,0.4);
+  --shadow-hero-image: 0 20px 50px rgba(30,18,8,0.5);
+
+  /* Extended font sizes — design system tokens for non-standard sizes */
+  --text-2xs: 0.6875rem;       /* 11px — uppercase caption labels   */
+  --text-tiny: 0.8125rem;      /* 13px — small link / meta text     */
+  --text-md: 0.9375rem;        /* 15px — medium paragraph / button  */
+  --text-body: 1.0625rem;      /* 17px — emphasized body copy       */
+  --text-heading-sm: 1.75rem;  /* 28px — form / card titles         */
+  --text-heading-md: 2.125rem; /* 34px — section sub-headings       */
+  --text-hero: 4.25rem;        /* 68px — hero headline              */
 }
 
 body {
-  background:
-    radial-gradient(circle at top, rgba(212, 175, 55, 0.12), transparent 28%),
-    var(--background);
-  color: var(--foreground);
-  font-family: var(--font-inter), sans-serif;
+  background-color: #EDE0C5;
+  color: #1E1208;
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-a {
-  text-decoration: none;
+/* Glassmorphism + Neumorphism utility classes */
+.glass-navbar {
+  background: rgba(237, 224, 197, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(196, 149, 74, 0.25);
 }
 
-::selection {
-  background: rgba(233, 195, 73, 0.3);
-  color: var(--foreground);
+.glass-card {
+  background: rgba(237, 224, 197, 0.45);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(196, 149, 74, 0.3);
+}
+
+.glass-stat-strip {
+  background: rgba(30, 18, 8, 0.45);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(196, 149, 74, 0.4);
+}
+
+.glass-form {
+  background: rgba(45, 69, 56, 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(196, 149, 74, 0.3);
+}
+
+.hero-overlay {
+  background: radial-gradient(circle, rgba(30,18,8,0.1) 0%, rgba(45,69,56,0.7) 100%);
+}
+
+/* Drop-shadow utility — references --shadow-hero-image token, not raw rgba */
+.drop-shadow-hero-image {
+  filter: drop-shadow(var(--shadow-hero-image));
+}
+
+.timeline-dashed {
+  background-image: linear-gradient(to right, rgba(196,149,74,0.4) 50%, transparent 50%);
+  background-size: 15px 1px;
+  background-repeat: repeat-x;
+}
+
+.value-pill {
+  background: rgba(216, 202, 175, 0.4);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(196, 149, 74, 0.3);
+}
+
+/* 1440px content column — centered within wide viewports (1920px → 240px margin each side) */
+.content-container {
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  padding-left: 2rem;
+  padding-right: 2rem;
 }

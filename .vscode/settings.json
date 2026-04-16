@@ -1,0 +1,13 @@
+{
+  "tailwindCSS.files.exclude": [
+    ".github/**",
+    ".stitch/**"
+  ],
+  "files.associations": {
+    ".github/**/*.js": "plaintext",
+    ".github/**/*.json": "plaintext",
+    ".github/**/*.mjs": "plaintext",
+    ".stitch/**/*.html": "plaintext",
+    ".stitch/**/*.json": "plaintext"
+  }
+}

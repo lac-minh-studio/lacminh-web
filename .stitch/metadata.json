@@ -1,0 +1,17 @@
+{
+  "projectId": "15105611068859615529",
+  "projectTitle": "Lạc Minh Web",
+  "createdAt": "2026-04-05",
+  "screens": {
+    "home": {
+      "id": "a4ed39dfb1bd4cf395b7fdcdcc4caac1",
+      "currentRound": 4,
+      "status": "refining"
+    },
+    "careers": {
+      "id": "6f877dfc3a35401396e3b673da399165",
+      "currentRound": 7,
+      "status": "approved"
+    }
+  }
+}

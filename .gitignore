@@ -5,13 +5,11 @@
 /.pnp
 .pnp.*
 .yarn/*
+.stitch/designs
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-.github/*
-.vscode
-stitch_exports/*
 
 # testing
 /coverage
@@ -44,3 +42,4 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+.env*.local

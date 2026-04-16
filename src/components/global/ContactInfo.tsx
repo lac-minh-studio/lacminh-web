@@ -1,0 +1,45 @@
+import { Mail, Phone, MapPin } from 'lucide-react'
+
+const CONTACT_ITEMS = [
+  { icon: Mail, label: 'Email liên hệ', value: 'invest@lacminh.vn' },
+  { icon: Phone, label: 'Điện thoại', value: '+84 24 3822 0000' },
+  { icon: MapPin, label: 'Trụ sở', value: 'Quận 1, TP. Hồ Chí Minh' },
+]
+
+export function ContactInfo() {
+  return (
+    <div className="space-y-12">
+      <div className="space-y-6">
+        <h2
+          className="text-heading-md text-text-light font-semibold leading-tight"
+          style={{ fontFamily: 'var(--font-headline)' }}
+        >
+          Cùng Lạc Minh
+          <br />
+          Kiến Tạo Tương Lai
+        </h2>
+        <p className="text-text-light/70 text-body leading-relaxed">
+          Chúng tôi đang tìm kiếm những đối tác chiến lược có chung tầm nhìn
+          đưa giá trị Việt ra thế giới thông qua những sản phẩm giải trí chất
+          lượng cao.
+        </p>
+      </div>
+
+      <div className="space-y-8">
+        {CONTACT_ITEMS.map(({ icon: Icon, label, value }) => (
+          <div key={label} className="flex items-center gap-6 group">
+            <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center border border-primary/30 group-hover:bg-primary/20 transition-all shrink-0">
+              <Icon size={22} strokeWidth={1.5} className="text-primary" />
+            </div>
+            <div>
+              <div className="text-text-light/50 text-2xs uppercase font-bold tracking-widest mb-1">
+                {label}
+              </div>
+              <div className="text-text-light font-medium text-lg">{value}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
