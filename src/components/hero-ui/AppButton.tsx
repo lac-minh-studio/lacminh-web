@@ -28,7 +28,7 @@ export function AppButton({
   }
 
   const btn = (
-    <Button {...props} className={cn(base, variantClass[variant], className)}>
+    <Button {...props} className={cn(base, variantClass[variant], className, " leading-0")}>
       {children}
     </Button>
   )
