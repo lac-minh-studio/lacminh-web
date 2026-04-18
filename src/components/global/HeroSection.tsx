@@ -61,6 +61,7 @@ export function HeroSection({
           src="/hero_background.png"
           alt="Lạc Minh Studio — hero background"
           fill
+          sizes="100vw"
           className="object-cover"
           priority
         />

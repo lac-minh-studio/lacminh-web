@@ -1,20 +1,19 @@
 import type { Metadata } from 'next'
 import { EB_Garamond, Inter } from 'next/font/google'
-import { Providers } from './providers'
 import './globals.css'
 import { Footer, Navbar } from '@/components/global'
 
 const ebGaramond = EB_Garamond({
   variable: '--font-eb-garamond',
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['500', '600', '700'],
   display: 'swap',
 })
 
 const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+  weight: ['400', '500', '600'],
   display: 'swap',
 })
 
@@ -31,7 +30,7 @@ export default function RootLayout({
     <html lang="vi" data-theme="light" className={`${ebGaramond.variable} ${inter.variable}`}>
       <body>
         <Navbar />
-        <Providers>{children}</Providers>
+        {children}
         <Footer />
       </body>
     </html>

@@ -1,5 +1,44 @@
+/* CSS layer order — must be declared before any @import */
+@layer theme, base, components, utilities;
+
+/* Core: Tailwind CSS v4 */
 @import "tailwindcss";
-@import "@heroui/styles";
+
+/* HeroUI animation utilities */
+@import "tw-animate-css";
+
+/* HeroUI base reset */
+@import "@heroui/styles/base" layer(base);
+
+/* HeroUI theme tokens & CSS variables */
+@import "@heroui/styles/themes/default" layer(theme);
+
+/* HeroUI Tailwind utilities & variants */
+@import "@heroui/styles/utilities";
+@import "@heroui/styles/variants";
+
+/* HeroUI components — only what this project uses, in layer(components) so
+   Tailwind utilities (layer(utilities)) retain override priority */
+/* Shared primitives */
+@import "@heroui/styles/components/close-button.css" layer(components);
+@import "@heroui/styles/components/description.css" layer(components);
+@import "@heroui/styles/components/error-message.css" layer(components);
+@import "@heroui/styles/components/field-error.css" layer(components);
+@import "@heroui/styles/components/label.css" layer(components);
+/* UI components */
+@import "@heroui/styles/components/button.css" layer(components);
+@import "@heroui/styles/components/button-group.css" layer(components);
+@import "@heroui/styles/components/card.css" layer(components);
+@import "@heroui/styles/components/chip.css" layer(components);
+/* Form components */
+@import "@heroui/styles/components/input.css" layer(components);
+@import "@heroui/styles/components/textarea.css" layer(components);
+@import "@heroui/styles/components/textfield.css" layer(components);
+@import "@heroui/styles/components/popover.css" layer(components);
+@import "@heroui/styles/components/select.css" layer(components);
+@import "@heroui/styles/components/list-box.css" layer(components);
+@import "@heroui/styles/components/list-box-item.css" layer(components);
+@import "@heroui/styles/components/list-box-section.css" layer(components);
 
 @theme inline {
   /* ─── Mythos Token Map ──────────────────────────────────────────────────────
