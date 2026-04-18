@@ -17,13 +17,13 @@ export function VisionSection() {
               alt="Trống Đồng Đông Sơn — biểu tượng văn hóa Việt Nam"
               width={480}
               height={480}
-              className="w-full h-auto object-contain drop-shadow-hero-image"
+              className="w-full h-auto object-contain drop-shadow-hero-image rounded-2xl"
             />
           </div>
         </div>
 
         {/* Text content */}
-        <div className="space-y-10">
+        <div className="space-y-6 sm:space-y-10">
           <div>
             <span className="text-primary font-bold tracking-[0.2em] uppercase text-xs">
               SỨ MỆNH CỦA CHÚNG TÔI
@@ -32,7 +32,7 @@ export function VisionSection() {
           </div>
 
           <h2
-            className="text-4xl text-text-dark leading-tight font-semibold"
+            className="text-2xl sm:text-3xl md:text-4xl text-text-dark leading-tight font-semibold"
             style={{ fontFamily: 'var(--font-headline)' }}
           >
             Từ Đất Thiêng Lạc Hồng,

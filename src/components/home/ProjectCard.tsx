@@ -32,7 +32,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
 
           {/* Featured overlay */}
           {project.featured && (
-            <div className="absolute inset-0 bg-text-dark/60 backdrop-blur-sm flex items-center justify-center">
+            <div className="absolute inset-0 bg-text-dark/60 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
               <AppButton size="sm" className="px-6 py-3 text-xs">
                 XEM DỰ ÁN
               </AppButton>
@@ -62,7 +62,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         </div>
 
         {/* Body */}
-        <div className="p-8">
+        <div className="p-4">
           <h3
             className="text-xl text-text-dark mb-3 font-bold"
             style={{ fontFamily: 'var(--font-headline)' }}
@@ -75,7 +75,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         </div>
       </CardContent>
 
-      <CardFooter className="px-8 pb-8 pt-0">
+      <CardFooter className="px-4 pb-8 pt-0">
         <a
           href="#"
           className="inline-flex items-center text-primary font-bold text-tiny hover:translate-x-1 transition-transform"

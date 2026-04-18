@@ -9,5 +9,6 @@
     ".github/**/*.mjs": "plaintext",
     ".stitch/**/*.html": "plaintext",
     ".stitch/**/*.json": "plaintext"
-  }
+  },
+  "jira-plugin.workingProject": ""
 }

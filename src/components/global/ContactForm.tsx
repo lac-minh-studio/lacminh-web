@@ -49,7 +49,7 @@ export function ContactForm() {
   }
 
   return (
-    <div className="glass-form p-10 rounded-3xl shadow-(--shadow-neu-dark) border border-white/10">
+    <div className="glass-form p-6 sm:p-10 rounded-2xl sm:rounded-3xl shadow-(--shadow-neu-dark) border border-white/10">
       <h3
         className="text-heading-sm text-text-light font-bold mb-10"
         style={{ fontFamily: 'var(--font-headline)' }}
@@ -57,7 +57,7 @@ export function ContactForm() {
         Gửi đề xuất hợp tác
       </h3>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         {/* Name */}
         <TextField value={name} onChange={setName} className="flex flex-col gap-1">
           <Label className={labelClass}>Họ và tên</Label>
@@ -65,7 +65,7 @@ export function ContactForm() {
         </TextField>
 
         {/* Email + Phone */}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <TextField value={email} onChange={setEmail} className="flex flex-col gap-1">
             <Label className={labelClass}>Email</Label>
             <Input type="email" placeholder="investor@example.com" className={inputClass} />

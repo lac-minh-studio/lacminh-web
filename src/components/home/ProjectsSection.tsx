@@ -10,7 +10,7 @@ export function ProjectsSection() {
         {/* Heading */}
         <div className="text-center mb-8 md:mb-16 lg:mb-20 space-y-4">
           <h2
-            className="text-5xl text-text-dark font-semibold"
+            className="text-3xl sm:text-4xl md:text-5xl text-text-dark font-semibold"
             style={{ fontFamily: 'var(--font-headline)' }}
           >
             Các Dự Án Tâm Huyết
@@ -26,15 +26,15 @@ export function ProjectsSection() {
         </div>
 
         {/* Wide banner CTA */}
-        <div className="mt-10 md:mt-20 p-6 md:p-10 bg-surface-dark rounded-3xl flex flex-col md:flex-row items-center justify-between gap-8 border border-primary/30">
+        <div className="mt-10 md:mt-20 p-6 md:p-10 bg-surface-dark rounded-2xl sm:rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 border border-primary/30">
           <div className="text-center md:text-left">
             <h4
-              className="text-text-light text-3xl font-bold mb-2"
+              className="text-text-light text-xl sm:text-2xl md:text-3xl font-bold mb-2"
               style={{ fontFamily: 'var(--font-headline)' }}
             >
               Khám phá toàn bộ vũ trụ Lạc Minh
             </h4>
-            <p className="text-text-light/60 text-md">
+            <p className="text-text-light/60 text-sm sm:text-md">
               Hơn 10+ ý tưởng đang được ấp ủ từ chất liệu sử thi dân tộc.
             </p>
           </div>

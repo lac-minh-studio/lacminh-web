@@ -1,7 +1,7 @@
 # App Vision & Constitution
 
 > **AGENT INSTRUCTION:** Read this file before every iteration. It is the project's "Long-Term Memory."
-> If `next-prompt.md` has `status: approved`, pick the next screen from Section 5 (Backlog) and start at round 1.
+> To resume a screen, read its baton from `.stitch/designs/{screen}/baton.md`. If a screen's baton has `status: approved`, pick the next screen from Section 5 (Backlog), create a new baton at `.stitch/designs/{next-screen}/baton.md`, and start at round 1. Every screen owns its own baton — never overwrite another screen's file.
 
 ## 1. Core Identity
 * **Project Name:** Lạc Minh Studio Website
@@ -34,7 +34,13 @@
 ## 3. Architecture & File Structure
 * **Framework:** Next.js (App Router)
 * **Styling:** Tailwind CSS
-* **Stitch output:** `.stitch/designs/{screen}/round-{round}.png`
+* **Stitch output (per round):**
+  - `.stitch/designs/{screen}/round-{N}-pc.png`
+  - `.stitch/designs/{screen}/round-{N}-mobile.png`
+* **HTML download (for code, implementation round only):**
+  - `.stitch/designs/{screen}/round-{N}-pc.html`
+  - `.stitch/designs/{screen}/round-{N}-mobile.html`
+* **Baton (per screen):** `.stitch/designs/{screen}/baton.md` — round + status, never shared
 * **Review log:** `.stitch/designs/{screen}/review.md` — append all rounds for that screen into one file
 * **Code output:** `src/app/{route}/page.tsx` or `src/components/{Name}.tsx`
 * **Project assets:** `public/**/*` — reusable logos, hero images, illustrations, symbols, diagrams, and backgrounds
@@ -53,7 +59,7 @@
 ## 4. Screen Inventory (Current State)
 *Update when a screen completes round 6 and is approved.*
 
-* [ ] `home` → `src/app/page.tsx`
+* [x] `home` → `src/app/page.tsx` ✅ Round 7 approved
 * [ ] `about` → `src/app/about/page.tsx`
 * [ ] `projects` → `src/app/projects/page.tsx`
 * [x] `careers` → `src/app/careers/page.tsx` ✅ Round 7 approved
@@ -94,7 +100,7 @@
 ## 7. Rules of Engagement
 1. Never write code before round 6 is approved.
 2. Always document critique of previous round before generating the next.
-3. Update `next-prompt.md` before completing every iteration.
+3. Write back to `.stitch/designs/{screen}/baton.md` before completing every iteration. Never overwrite another screen's baton.
 4. Mark screens complete in Section 4 only after round 6 passes quality gate.
 5. The Trống Đồng and crane motifs are sacred brand symbols — use with intentionality.
 6. Avoid: tím neon, xanh điện, đen tuyệt đối — these clash with the warm premium palette.

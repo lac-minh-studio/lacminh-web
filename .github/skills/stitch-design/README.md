@@ -23,7 +23,7 @@ Enables professional-grade UI/UX design workflows through Stitch MCP:
 - Stitch MCP Server access
 - A project `projectId` (can be discovered via `list_projects`)
 
-## Example Prompt
+## Usage
 
 ```text
 Design a premium landing page for a mountain resort with a Glassmorphism + Neumorphism hybrid design, layered shadows, frosted glass, and clear responsive behavior across pc, laptop, tablet, mini-tablet, and mobile.
@@ -36,8 +36,7 @@ stitch-design/
 ├── SKILL.md           — Core instructions & Prompt Pipeline
 ├── README.md          — This file
 ├── workflows/         — Specialized pipelines (Text-to-UI, Edit, MD)
-├── references/        — UI/UX keywords & Technical Mappings
-└── examples/          — Gold-standard references (Solace Mindfulness)
+└── resources/         — UI/UX keywords & Technical Mappings
 ```
 
 ## Works With

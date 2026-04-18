@@ -14,15 +14,10 @@ Use these mappings to transform vague user requests into precise, high-fidelity 
 | "picture area" | "hero section with focal-point image or video background" |
 | "sidebar" | "collapsible side navigation with icon-label pairings" |
 | "popup" | "modal dialog with overlay and smooth entry animation" |
-| "glass effect" | "glassmorphism support panel with frosted glass treatment, translucent fill, and thin border" |
-| "soft section" | "neumorphism primary section with sculpted depth and soft inset/outset shadows" |
-| "depth" | "layered shadows with clear foreground-background separation" |
-| "transparent card" | "glassmorphism card with frosted blur, translucent background, and subtle border" |
-| "big block" | "large section container using neumorphism as the primary surface language" |
 | "use my logo" | "use the existing logo asset from the project's public folder as the canonical brand mark; do not invent a replacement" |
 | "use my image" | "use the existing project asset from the public folder as the visual source for this section" |
 | "keep the old version" | "update from the previous version only; do not regenerate from scratch" |
-| "review each part" | "perform a section-by-section review listing what exists, what is missing, what violates the current round, and what must change" |
+| "review each part" | "perform a section-by-section review listing what exists, what is missing, and what must change" |
 
 ## Project Asset Grounding
 
@@ -35,7 +30,6 @@ Use local project assets to reduce Stitch inference work whenever imagery alread
 | Section artwork | "Use `/path/in/public.ext` as the section illustration for this content block." |
 | Symbol / emblem | "Use `/path/in/public.ext` as the primary symbolic asset in this section." |
 | Map / diagram | "Use `/path/in/public.ext` as the visual diagram or map reference rather than synthesizing a new one." |
-| Exact asset fidelity | "Asset fidelity: use exact project asset files as canonical imagery; preserve native aspect ratio; do not crop or reinterpret into a different subject." |
 | Locked fallback | "If exact rendering is not possible, keep a locked media slot for Next.js replacement rather than generating substitute imagery." |
 
 **Asset prompt rule:**
@@ -43,10 +37,6 @@ Use local project assets to reduce Stitch inference work whenever imagery alread
 - Add one short visual description after each path
 - Prefer existing project assets over generic generated imagery whenever there is a match
 - Use `LOCKED - REUSE EXACT FILES` wording when the asset is mandatory
-- Add `Asset fidelity: use exact project asset files as canonical imagery`
-- Add `Preserve native aspect ratio`
-- Add `If exact rendering is not possible, keep a locked media slot for Next.js replacement`
-- If Stitch cannot render the exact local file, ask for a locked media slot and replace it with the real asset in Next.js
 
 ## Iterative Review Language
 
@@ -57,8 +47,10 @@ Use these phrases to force true version-to-version refinement instead of fresh r
 | Preserve lineage | "Update from the previous version only; do not regenerate from scratch." |
 | Reference current base | "Base version: round [N-1], screen id [id]." |
 | Review all sections | "Section-by-section review covering every visible section in the current screen." |
-| Explain delta | "For each section: what exists, what is missing, what violates the current round focus, and what must change." |
+| Explain delta | "For each section: what exists, what is missing, and what must change." |
 | Lock imagery | "Use the provided project asset as a locked visual source; do not replace or reinterpret it." |
+| Flag overlaps | "Check all sections for elements overlapping, clipping, or breaking alignment." |
+| Flag layout breaks | "Verify no content overflows its container or breaks the intended layout structure." |
 
 ## Atmosphere & "Vibe" Descriptors
 
@@ -72,32 +64,9 @@ Add these adjectives to set the mood and aesthetic philosophy:
 | "Dark Mode" | "Electric, high-contrast accents on deep slate or near-black backgrounds." |
 | "Luxury" | "Elegant, spacious, with fine lines, serif headers, and a focus on high-fidelity photography." |
 | "Tech / Cyber" | "Futuristic, neon accents, glassmorphism effects, and technological monospaced typography." |
-| "Calm / Premium" | "Layered, restrained, and polished with frosted glass support panels, sculpted neumorphism sections, and soft depth transitions." |
-
-## Hybrid Design System Defaults
-
-Use these mappings whenever the project does not explicitly override the default style system.
-
-| Intent | Required Design Language |
-|:---|:---|
-| Large main section | "Neumorphism primary surface with sculpted depth" |
-| Secondary floating panel | "Glassmorphism support panel with frosted glass" |
-| Card stack depth | "Layered shadows with clear elevation hierarchy" |
-| Overlay / modal | "Frosted glass overlay with translucent surface and thin border" |
-| Toolbar / filter bar | "Glassmorphism utility layer above a neumorphism base section" |
-| Dashboard shell | "Neumorphism layout containers with glassmorphism detail panels" |
-| Strong depth cue | "Dual-direction neumorphic shadows with visible highlight and cast shadow separation" |
-| Glass detail cue | "Translucent fill, background blur, and highlight border" |
-| Anti-flatness | "Flat surfaces are forbidden; every major surface must show visible depth or layered material behavior" |
-
-**Mandatory default phrasing:**
-- `Glassmorphism + Neumorphism hybrid design`
-- `Neumorphism for large sections`
-- `Glassmorphism for supporting surfaces`
-- `layered shadows`
-- `frosted glass`
-- `Depth recipe: dual-direction neumorphic shadows`
-- `Glass recipe: translucent fill, background blur, highlight border`
+| "Calm / Premium" | "Layered, restrained, and polished with soft depth transitions and refined material treatments." |
+| "Bold / Energetic" | "High contrast, oversized typography, vivid accent colors, and strong visual hierarchy." |
+| "Minimal / Clean" | "Extreme whitespace discipline, monochrome palette, thin borders, and understated interactions." |
 - `Flat surfaces: forbidden`
 
 ## Geometry & Shape Translation
@@ -143,14 +112,16 @@ Stitch desktop renders are constrained to a `1280px` maximum width. Use the foll
 | pc | "Stitch canvas: 1280px max desktop frame; simulate pc proportions by scaling internal desktop elements to 1280/1920." |
 | laptop | "Stitch canvas: 1280px max desktop frame; simulate laptop proportions by scaling internal elements to 1280/1600." |
 | overflow guard | "Overflow rule: no element may exceed the 1280px frame." |
+| full-bleed | "Full-bleed layout: all section backgrounds and containers span the full 1280px canvas width with 0px outer horizontal margin. Do not add side padding to section wrappers. Background colors, images, and decorative elements must extend to the canvas edges." |
 | proportional scale | "Scale typography, spacing, imagery, and component footprints proportionally; do not keep 1920-sized elements inside a 1280 frame." |
 | density fill | "Fill leftover space with secondary modules, metadata, or supporting content instead of oversizing hero elements." |
-| content width budget | "Content width targets: pc 1180-1220px, laptop 1040-1120px within the 1280px frame." |
+| next-js handoff | "Next.js will apply its own responsive container conventions during code conversion — design full-bleed for the Stitch canvas only." |
 
 **Mandatory desktop scaling phrasing:**
 - `Stitch canvas: 1280px max desktop frame`
 - `Desktop scaling: pc 1280/1920, laptop 1280/1600`
-- `Content width targets: pc 1180-1220px, laptop 1040-1120px within the 1280px frame`
+- `Full-bleed layout: 0px outer horizontal margin; all sections span edge-to-edge`
 - `Overflow rule: no element may exceed the 1280px frame`
 - `Scale behavior: scale typography, spacing, imagery, and component footprints proportionally`
 - `Density rule: fill leftover space with secondary modules, metadata, or supporting content instead of oversizing hero elements`
+- `Next.js handoff: responsive container constraints are applied during code conversion, not in Stitch`

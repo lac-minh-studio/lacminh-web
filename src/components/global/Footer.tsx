@@ -11,9 +11,9 @@ const SOCIAL_LINKS = [
 export function Footer() {
   return (
     <footer className="bg-deep-moss pt-12">
-      <div className="content-container grid grid-cols-1 md:grid-cols-4 gap-10">
+      <div className="content-container grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-10">
         {/* Brand */}
-        <div className="md:col-span-1 pr-6">
+        <div className="col-span-2 md:col-span-1 pr-6">
           <div
             className="text-3xl text-text-light font-bold mb-6 italic"
             style={{ fontFamily: 'var(--font-headline)' }}

@@ -2,26 +2,16 @@ import { readdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { stdin, stdout } from 'node:process'
 
-const MAX_GENERATE_PROMPT_CHARS = 10000
+const MAX_GENERATE_PROMPT_CHARS = 5000
 const MAX_EDIT_PROMPT_CHARS = 4500
-
-const REQUIRED_STYLE_TOKENS = [
-  'glassmorphism + neumorphism hybrid design',
-  'large sections: neumorphism',
-  'supporting surfaces: glassmorphism',
-  'depth: layered shadows',
-  'material: frosted glass',
-  'depth recipe: dual-direction neumorphic shadows',
-  'glass recipe: translucent fill, background blur, highlight border',
-  'flat surfaces: forbidden'
-]
 
 const REQUIRED_RESPONSIVE_TIERS = [
   { label: 'pc', lower: 1920, upper: 1600 },
   { label: 'laptop', lower: 1600, upper: 1200 },
-  { label: 'tablet', lower: 1200, upper: 900 },
-  { label: 'mini-tablet', lower: 900, upper: 700 },
-  { label: 'mobile', lower: 700, upper: 0 }
+  { label: 'macbook', lower: 1200, upper: 900 },
+  { label: 'tablet', lower: 900, upper: 700 },
+  { label: 'mini-tablet', lower: 700, upper: 450 },
+  { label: 'mobile', lower: 450, upper: 0 }
 ]
 
 const REQUIRED_CANVAS_TOKENS = [
@@ -31,13 +21,6 @@ const REQUIRED_CANVAS_TOKENS = [
   'overflow rule: no element may exceed the 1280px frame',
   'scale behavior: scale typography, spacing, imagery, and component footprints proportionally',
   'density rule: fill leftover space with secondary modules, metadata, or supporting content instead of oversizing hero elements'
-]
-
-const REQUIRED_COMPACT_EDIT_STYLE_TOKENS = [
-  'glassmorphism + neumorphism hybrid design',
-  'depth recipe: dual-direction neumorphic shadows',
-  'glass recipe: translucent fill, background blur, highlight border',
-  'flat surfaces: forbidden'
 ]
 
 const REQUIRED_COMPACT_EDIT_CANVAS_TOKENS = [
@@ -113,14 +96,14 @@ const toolKind = getToolKindFromRefs(toolRefs)
 const promptLength = prompt.length
 const usesCompactEditPrompt = roundNumber >= 2 && toolKind === 'edit' && hasCompactEditPrompt(normalizedPrompt)
 const hasAuthoritativeDesignSystem = designSystemSourceHasRequiredTokens(normalizedDesignSystemSource)
-const styleTokensToEnforce = usesCompactEditPrompt && hasAuthoritativeDesignSystem
-  ? REQUIRED_COMPACT_EDIT_STYLE_TOKENS
-  : REQUIRED_STYLE_TOKENS
-const canvasTokensToEnforce = usesCompactEditPrompt && hasAuthoritativeDesignSystem
+// Relax verbose token requirements when DESIGN.md is the authoritative source:
+// - compact edit prompts (round 2+): no responsive tiers, only 4 compact canvas tokens
+// - round 1 generate prompts with DESIGN.md: same relaxation (avoid double-pasting what DESIGN.md already encodes)
+const canRelaxTokens = hasAuthoritativeDesignSystem && (usesCompactEditPrompt || toolKind === 'generate')
+const canvasTokensToEnforce = canRelaxTokens
   ? REQUIRED_COMPACT_EDIT_CANVAS_TOKENS
   : REQUIRED_CANVAS_TOKENS
-const missingStyleTokens = styleTokensToEnforce.filter((token) => !normalizedPrompt.includes(token))
-const missingResponsiveTiers = usesCompactEditPrompt && hasAuthoritativeDesignSystem
+const missingResponsiveTiers = canRelaxTokens
   ? []
   : REQUIRED_RESPONSIVE_TIERS.filter((tier) => !hasResponsiveTier(normalizedPrompt, tier))
 const missingCanvasTokens = canvasTokensToEnforce.filter((token) => !normalizedPrompt.includes(token))
@@ -194,16 +177,12 @@ if (needsProjectAssets && (!hasProjectAssetBlock || !hasAssetLockingInstruction 
   process.exit(0)
 }
 
-if (missingStyleTokens.length === 0 && missingResponsiveTiers.length === 0 && missingCanvasTokens.length === 0) {
+if (missingResponsiveTiers.length === 0 && missingCanvasTokens.length === 0) {
   respondAllow('Stitch prompt contains the required hybrid style recipe, continuity tokens, asset fidelity rules, and desktop canvas scaling rules.')
   process.exit(0)
 }
 
 const problems = []
-
-if (missingStyleTokens.length > 0) {
-  problems.push(`missing hybrid style tokens: ${missingStyleTokens.join(', ')}`)
-}
 
 if (missingResponsiveTiers.length > 0) {
   problems.push(
@@ -218,21 +197,18 @@ if (missingCanvasTokens.length > 0) {
 respondDeny(
   `Blocked Stitch call: ${problems.join('; ')}.`,
   [
-    'Every Stitch prompt must include:',
-    '- Depth: layered shadows',
-    '- Material: frosted glass',
-    '- Depth recipe: dual-direction neumorphic shadows',
-    '- Glass recipe: translucent fill, background blur, highlight border',
-    '- Flat surfaces: forbidden',
-    '- Responsive tiers: pc 1920-1600, laptop 1600-1200, tablet 1200-900, mini-tablet 900-700, mobile <700',
+    'Prompts without an authoritative .stitch/DESIGN.md must include the full canvas and responsive spec:',
+    '- Responsive tiers: pc 1920-1600, laptop 1600-1200, macbook 1200-900, tablet 900-700, mini-tablet 700-450, mobile <450',
     '- Stitch canvas: 1280px max desktop frame',
     '- Desktop scaling: pc 1280/1920, laptop 1280/1600',
     '- Content width targets: pc 1180-1220px, laptop 1040-1120px within the 1280px frame',
     '- Overflow rule: no element may exceed the 1280px frame',
     '- Scale behavior: scale typography, spacing, imagery, and component footprints proportionally',
-    '- Density rule: fill leftover space with secondary modules, metadata, or supporting content instead of oversizing hero elements'
+    '- Density rule: fill leftover space with secondary modules, metadata, or supporting content instead of oversizing hero elements',
+    'Tip: if .stitch/DESIGN.md already encodes all canvas and responsive tokens, only the 4 compact canvas tokens are required in the prompt itself.'
   ].join('\n')
 )
+process.exit(0)
 
 function readStdin() {
   return new Promise((resolve) => {
@@ -245,33 +221,6 @@ function readStdin() {
     stdin.on('end', () => resolve(buffer))
     stdin.resume()
   })
-}
-
-function extractToolName(value) {
-  const visited = new Set()
-  const queue = [value]
-
-  while (queue.length > 0) {
-    const current = queue.shift()
-
-    if (!current || typeof current !== 'object' || visited.has(current)) {
-      continue
-    }
-
-    visited.add(current)
-
-    for (const [key, nestedValue] of Object.entries(current)) {
-      if (typeof nestedValue === 'string' && ['toolName', 'tool_name', 'recipient_name'].includes(key)) {
-        return nestedValue
-      }
-
-      if (nestedValue && typeof nestedValue === 'object') {
-        queue.push(nestedValue)
-      }
-    }
-  }
-
-  return ''
 }
 
 function extractToolNames(value) {
@@ -390,7 +339,7 @@ function hasResponsiveTier(normalizedPrompt, tier) {
   const includesUpper = normalizedPrompt.includes(String(tier.upper))
 
   if (tier.label === 'mobile') {
-    return includesLabel && (normalizedPrompt.includes('<700') || normalizedPrompt.includes('< 700') || normalizedPrompt.includes('below 700'))
+    return includesLabel && (normalizedPrompt.includes('<450') || normalizedPrompt.includes('< 450') || normalizedPrompt.includes('below 450'))
   }
 
   return includesLabel && includesLower && includesUpper
@@ -500,8 +449,7 @@ function designSystemSourceHasRequiredTokens(normalizedDesignSystemSource) {
     return false
   }
 
-  return REQUIRED_STYLE_TOKENS.every((token) => normalizedDesignSystemSource.includes(token))
-    && REQUIRED_RESPONSIVE_TIERS.every((tier) => hasResponsiveTier(normalizedDesignSystemSource, tier))
+  return REQUIRED_RESPONSIVE_TIERS.every((tier) => hasResponsiveTier(normalizedDesignSystemSource, tier))
     && REQUIRED_CANVAS_TOKENS.every((token) => normalizedDesignSystemSource.includes(token))
 }
 
@@ -510,7 +458,7 @@ function hasCompactEditPrompt(normalizedPrompt) {
     'design snapshot (compact)',
     'preserve the current palette, typography, materials, section order, and overall layout hierarchy from the previous version',
     'treat unchanged areas as locked',
-    'this round s changes only',
+    'this round\'s changes only',
     'delta only'
   ].some((token) => normalizedPrompt.includes(token))
 }

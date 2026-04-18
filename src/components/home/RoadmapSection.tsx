@@ -42,10 +42,10 @@ function MilestoneNode({ milestone }: { milestone: IMilestone }) {
           isFuture && 'opacity-50 grayscale-[0.5]'
         )}
       >
-        <CardContent className="p-6 text-center">
+        <CardContent className="p-4 sm:p-6 text-center">
           <span
             className={cn(
-              'text-2xl font-bold block mb-1',
+              'text-lg sm:text-2xl font-bold block mb-1',
               isFuture ? 'text-text-secondary' : 'text-primary'
             )}
             style={{ fontFamily: 'var(--font-headline)' }}
@@ -53,7 +53,7 @@ function MilestoneNode({ milestone }: { milestone: IMilestone }) {
             {milestone.year}
           </span>
           <h4
-            className="text-md font-bold text-text-dark mb-2"
+            className="text-sm sm:text-md font-bold text-text-dark mb-2"
             style={{ fontFamily: 'var(--font-headline)' }}
           >
             {milestone.title}
@@ -81,7 +81,7 @@ export function RoadmapSection() {
         {/* Header row */}
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-6 mb-12 md:mb-16 lg:mb-24">
           <h2
-            className="text-5xl text-text-dark font-semibold"
+            className="text-3xl sm:text-4xl md:text-5xl text-text-dark font-semibold"
             style={{ fontFamily: 'var(--font-headline)' }}
           >
             Lộ Trình Phát Triển
@@ -108,7 +108,7 @@ export function RoadmapSection() {
         {/* Timeline */}
         <div className="relative">
           <div className="absolute top-5.5 left-0 w-full h-px timeline-dashed hidden lg:block" />
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 relative z-10">
             {MILESTONES.map((milestone) => (
               <MilestoneNode key={milestone.id} milestone={milestone} />
             ))}

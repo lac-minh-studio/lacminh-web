@@ -1,5 +1,5 @@
 import { Mail, Phone, MapPin } from 'lucide-react'
-import { CONTACT_EMAIL, CONTACT_PHONE, ADDRESS } from '@/const'
+import { CONTACT_EMAIL, CONTACT_PHONE, ADDRESS, ADDRESS_LINK } from '@/const'
 
 const CONTACT_ITEMS = [
   { icon: Mail, label: 'Email liên hệ', value: CONTACT_EMAIL },
@@ -36,7 +36,25 @@ export function ContactInfo() {
               <div className="text-text-light/50 text-2xs uppercase font-bold tracking-widest mb-1">
                 {label}
               </div>
-              <div className="text-text-light font-medium text-lg">{value}</div>
+              {label === 'Trụ sở' && ADDRESS_LINK ? (
+                <a
+                  href={ADDRESS_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-text-light font-medium text-lg hover:text-primary transition-colors"
+                >
+                  {value}
+                </a>
+              ) : label === 'Email liên hệ' && value ? (
+                <a
+                  href={`mailto:${value}`}
+                  className="text-text-light font-medium text-lg hover:text-primary transition-colors"
+                >
+                  {value}
+                </a>
+              ) : (
+                <div className="text-text-light font-medium text-lg">{value}</div>
+              )}
             </div>
           </div>
         ))}

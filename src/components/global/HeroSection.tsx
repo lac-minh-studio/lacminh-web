@@ -67,29 +67,38 @@ export function HeroSection({
         <div className="absolute inset-0 hero-overlay" />
       </div>
 
+      {/* Vertical decorative text — desktop only */}
+      <div className="absolute left-12 top-1/2 -translate-y-1/2 flex-col items-center gap-8 opacity-40 z-20 hidden xl:flex">
+        <div className="w-px h-32 bg-text-light" />
+        <span className="[writing-mode:vertical-rl] font-headline text-text-light tracking-[0.5em] text-lg uppercase font-bold">
+          Huyền Sử Lạc Hồng
+        </span>
+        <div className="w-px h-32 bg-text-light" />
+      </div>
+
       {/* Hero content */}
       <div className="relative z-10 w-full content-container text-center">
         <h1
-          className="text-5xl md:text-6xl lg:text-hero text-text-light leading-tight mb-6 font-semibold"
+          className="text-3xl sm:text-5xl md:text-6xl lg:text-hero text-text-light leading-tight mb-4 sm:mb-6 font-semibold"
           style={{ fontFamily: 'var(--font-headline)' }}
         >
           {title}
         </h1>
 
-        <p className="text-md text-text-light/90 max-w-2xl mx-auto mb-12 leading-relaxed">
+        <p className="text-sm sm:text-md text-text-light/90 max-w-2xl mx-auto mb-8 sm:mb-12 leading-relaxed">
           {subtitle}
         </p>
 
-        <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
-          <AppButton href={primaryCTA.href} className="px-10 py-5 text-md">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
+          <AppButton href={primaryCTA.href} className="px-8 sm:px-10 py-4 sm:py-5 text-sm sm:text-md w-full sm:w-auto">
             {primaryCTA.label}
           </AppButton>
-          <AppButton variant="outline" href={secondaryCTA.href} className="px-10 py-5 text-md">
+          <AppButton variant="outline" href={secondaryCTA.href} className="px-8 sm:px-10 py-4 sm:py-5 text-sm sm:text-md w-full sm:w-auto">
             {secondaryCTA.label}
           </AppButton>
         </div>
 
-        <div className="mt-10 text-text-light/60 flex flex-col items-center gap-2 animate-bounce cursor-default">
+        <div className="mt-6 sm:mt-10 text-text-light/60 flex flex-col items-center gap-2 animate-bounce cursor-default">
           <span className="text-xs font-bold tracking-widest uppercase">
             {scrollLabel}
           </span>
@@ -98,18 +107,18 @@ export function HeroSection({
       </div>
 
       {/* Stat strip */}
-      <div className="absolute bottom-10 left-0 w-full">
+      <div className="absolute bottom-4 sm:bottom-10 left-0 w-full">
         <div className="content-container">
-          <div className={cn('glass-stat-strip rounded-2xl p-8 grid gap-6 text-center', gridClass)}>
+          <div className={cn('glass-stat-strip rounded-xl sm:rounded-2xl p-4 sm:p-8 grid gap-3 sm:gap-6 text-center', gridClass)}>
             {stats.map((stat, i) => (
               <div key={stat.label} className={borders[i]}>
                 <div
-                  className="text-primary text-4xl font-bold leading-none mb-2"
+                  className="text-primary text-2xl sm:text-4xl font-bold leading-none mb-1 sm:mb-2"
                   style={{ fontFamily: 'var(--font-headline)' }}
                 >
                   {stat.value}
                 </div>
-                <div className="text-text-light text-2xs font-medium uppercase tracking-[0.2em]">
+                <div className="text-text-light text-[0.5rem] sm:text-2xs font-medium uppercase tracking-[0.15em] sm:tracking-[0.2em]">
                   {stat.label}
                 </div>
               </div>

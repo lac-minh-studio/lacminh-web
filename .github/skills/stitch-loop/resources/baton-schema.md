@@ -1,6 +1,6 @@
 # Baton File Schema
 
-The baton file (`next-prompt.md`) is the communication mechanism between loop iterations. It tracks the current screen and which of the 6 required design rounds is next.
+Each screen has its own baton file at `.stitch/designs/{screen}/baton.md`. This is the communication mechanism between rounds for that screen — it is **never shared with other screens**. Switching pages never overwrites another screen's baton. It tracks the current round and which of the 6 required design rounds is next. Each round produces BOTH a PC and a mobile design.
 
 ## Format
 
@@ -9,7 +9,8 @@ The baton file (`next-prompt.md`) is the communication mechanism between loop it
 screen: <screen-identifier>
 round: <1+>
 mode: generate | edit
-base-screen-id: <required-for-edit-rounds>
+base-pc-id: <required-for-edit-rounds>
+base-mobile-id: <required-for-edit-rounds>
 status: refining | final-review | approved
 ---
 ROUND {N} FOCUS: {Round Topic}
@@ -25,7 +26,8 @@ ROUND {N} FOCUS: {Round Topic}
 | `screen` | string | Yes | Screen identifier (maps to `src/app/{route}/page.tsx`) |
 | `round` | integer | Yes | Current design round. Must increase by exactly 1 each iteration. |
 | `mode` | enum | Yes | `generate` for round 1, `edit` for round 2 and later |
-| `base-screen-id` | string | Required for `mode: edit` | Latest Stitch screen id that the next round must edit |
+| `base-pc-id` | string | Required for `mode: edit` | Latest PC Stitch screen id to edit |
+| `base-mobile-id` | string | Required for `mode: edit` | Latest mobile Stitch screen id to edit |
 | `status` | enum | Yes | `refining`, `final-review`, or `approved` |
 
 ### Round Progression
@@ -45,25 +47,34 @@ After round 6 minimum passes quality gate → set `status: approved` and pick ne
 ## Artifact Convention
 
 - Each screen owns one artifact folder: `.stitch/designs/{screen}/`
-- Round screenshots are saved as `.stitch/designs/{screen}/round-{round}.png`
+- Round screenshots are saved as:
+  - `.stitch/designs/{screen}/round-{round}-pc.png`
+  - `.stitch/designs/{screen}/round-{round}-mobile.png` — always save the highest available export resolution and do not downscale after download
+- When a round is explicitly selected for implementation, HTML is downloaded as:
+  - `.stitch/designs/{screen}/round-{round}-pc.html`
+  - `.stitch/designs/{screen}/round-{round}-mobile.html`
 - Review notes are appended into a single file: `.stitch/designs/{screen}/review.md`
-- Do not create one review file per round; keep rounds `R1` to `R7+` in the same log for later audit
+- Do not create one review file per round; keep rounds `R1` to `R7+` in the same log
 
 ### Body (Markdown)
 
 The body MUST always begin with the round declaration, then include:
 
 1. **Round N FOCUS header** — states the round topic explicitly
-2. **Base Version block** (rounds 2+) — previous round number, current screen id, and `update from previous version only; do not regenerate from scratch`
-3. **Section-by-Section Review** (rounds 2+) — for every visible section: what exists, what is missing, what violates the current round focus, what must change
-4. **This round's specific goals** — what must be improved or added
-5. **Design snapshot** (required) — round 1 may use a fuller design block, but round 2+ should prefer a compact 6-10 line snapshot that preserves the current palette, typography, materials, depth recipe, and 1280 canvas rules without re-pasting the entire initial concept
-6. **Assets in this round** (required when relevant) — only the exact root-relative paths from `public/` touched in the current edit, plus asset fidelity and aspect-ratio preservation rules
-7. **Component Checklist** — specific UI elements to address this round
+2. **Canonical Titles block** — the authoritative local names for the current round:
+  - PC: `{screen}-r{round:02d}-desktop`
+  - Mobile: `{screen}-r{round:02d}-mobile`
+3. **Base Version block** (rounds 2+) — previous round number, PC and mobile screen IDs, and `update from previous version only; do not regenerate from scratch`
+4. **Section-by-Section Review** (rounds 2+) — for every visible section: what exists, what is missing, and what must change
+5. **Cross-Device Section Parity** (rounds 2+) — compare PC and mobile section coverage, confirm each required section exists in both variants, and explicitly note any intentional mobile merge/collapse
+6. **Layout Issues** (rounds 2+) — specifically call out overlapping elements, broken alignment, content overflow, and missing components from prior rounds
+7. **Style Consistency Check** (rounds 2+) — compare shared components with other approved pages and flag drift
+8. **This round's specific goals** — what must be improved or added
+9. **Assets in this round** (required when relevant) — only the exact root-relative paths from `public/` touched in the current edit
+10. **Component Checklist** — specific UI elements to address this round
 
-Round 2+ prompts are delta-only. The baton must not carry forward the full round 1 screen description or unchanged section specs. `edit_screens` already has the previous visual state.
-
-If exact image fidelity inside Stitch preview is required, the baton must note that the relevant asset has already been uploaded manually to the Stitch project. Otherwise the baton must treat the asset as a locked reference or media slot only.
+Round 2+ prompts are delta-only. The baton must not carry forward the full round 1 screen description.
+If a section is intentionally collapsed or merged on mobile, the parity block must say so explicitly.
 
 ## Example — Round 3 Baton
 
@@ -72,14 +83,20 @@ If exact image fidelity inside Stitch preview is required, the baton must note t
 screen: dashboard
 round: 3
 mode: edit
-base-screen-id: d7237c7d78f44befa4f60afb17c818c1
+base-pc-id: d7237c7d78f44befa4f60afb17c818c1
+base-mobile-id: a1b2c3d4e5f64789abcdef0123456789
 status: refining
 ---
 ROUND 3 FOCUS: Component Detail
 
+**CANONICAL TITLES (REQUIRED):**
+- PC: `dashboard-r03-desktop`
+- Mobile: `dashboard-r03-mobile`
+
 **BASE VERSION (REQUIRED):**
 - Previous round: 2
-- Screen id: d7237c7d78f44befa4f60afb17c818c1
+- PC screen id: d7237c7d78f44befa4f60afb17c818c1
+- Mobile screen id: a1b2c3d4e5f64789abcdef0123456789
 - Instruction: update from previous version only; do not regenerate from scratch
 
 **SECTION-BY-SECTION REVIEW (REQUIRED):**
@@ -89,38 +106,29 @@ ROUND 3 FOCUS: Component Detail
 - Section 4 — Data table: table exists, but sort icons, hover feedback, and checkbox states are missing
 - Section 5 — Top actions: button group exists, but primary/secondary emphasis and spacing are unclear
 
+**CROSS-DEVICE SECTION PARITY (REQUIRED):**
+- Sidebar and top actions exist in both PC and mobile
+- KPI row exists in both; mobile stacks cards vertically but keeps the full set
+- Chart panel exists in both; mobile is missing the legend/filter cluster and must restore it or intentionally merge it
+- Data section exists in both; mobile may collapse rows into cards, but the section itself must remain
+
+**LAYOUT ISSUES:**
+- KPI cards overlap on mobile viewport at current sizing
+- Chart legend text clips against the card boundary in PC view
+
+**STYLE CONSISTENCY:**
+- Consistent with homepage navigation and color palette — no drift detected
+
 **This Round's Goals:**
 Refine every interactive component to match the design system precisely.
 Focus on: data table (sort indicators, row hover, checkbox column),
 KPI cards (icon/value/trend hierarchy), sidebar states, button variants.
 
-**DESIGN SNAPSHOT (COMPACT):**
-- Preserve the current palette, typography, materials, and layout hierarchy from the previous version
-- Style: Glassmorphism + Neumorphism hybrid design
-- Theme: Dark, data-dense, professional
-- Primary Accent: #6366f1 (Indigo)
-- Depth recipe: dual-direction neumorphic shadows
-- Glass recipe: translucent fill, background blur, highlight border
-- Flat surfaces: forbidden
-- Stitch canvas: 1280px max desktop frame
-- Overflow rule: no element may exceed the 1280px frame
-- Scale behavior: scale typography, spacing, imagery, and component footprints proportionally
-- Density rule: fill leftover space with secondary modules, metadata, or supporting content instead of oversizing hero elements
-
-**ASSETS IN THIS ROUND (LOCKED):**
-- `/logo.png` — canonical brand mark for navigation and app identity
-- `hero_background.png` — atmospheric hero background reference
-- `trongdong.png` — symbolic feature artwork
-- Asset fidelity: use exact project asset files as canonical imagery
-- Preserve native aspect ratio
-- If exact rendering is not possible, keep a locked media slot for Next.js replacement
-
 **Component Checklist:**
-- [ ] Data table: sort icon in header, row hover (#1e2233), checkbox selection
-- [ ] KPI card: icon 24px, value 32px bold, trend up/down arrow, label 12px muted
-- [ ] Sidebar: 3px left border active state, #6366f1 active bg at 10% opacity
-- [ ] Primary button: bg #6366f1, hover bg #4f46e5, text #fff
-- [ ] Secondary button: border #334155, bg transparent, hover bg #1e2233
+- [ ] Sidebar: active item state, hover feedback
+- [ ] KPI card: icon/value/trend hierarchy
+- [ ] Data table: header, sort, row hover, checkbox
+- [ ] Buttons: primary/secondary/destructive variants
 ```
 
 ## Validation Rules
@@ -130,12 +138,14 @@ Before advancing to the next round, validate the baton:
 - [ ] `screen` frontmatter field exists and matches a route in `APP.md`
 - [ ] `round` is incremented by exactly 1 from the previous baton
 - [ ] `mode` is `generate` for round 1 and `edit` for round 2+
+- [ ] `base-pc-id` and `base-mobile-id` are both present for round 2+
 - [ ] `status` correctly reflects the current round (see table above)
 - [ ] Body starts with `ROUND {N} FOCUS:` header
-- [ ] Rounds 2+ include `BASE VERSION` and `SECTION-BY-SECTION REVIEW`
+- [ ] Body includes `CANONICAL TITLES` using the exact `{screen}-r{round:02d}-{device}` pattern
+- [ ] Rounds 2+ include `BASE VERSION`, `SECTION-BY-SECTION REVIEW`, `CROSS-DEVICE SECTION PARITY`, `LAYOUT ISSUES`, and `STYLE CONSISTENCY`
 - [ ] Round 2+ baton is delta-only and does not repeat the full round 1 prompt body
-- [ ] Baton includes either a full round 1 design block or a compact round 2+ design snapshot
-- [ ] Design snapshot includes the explicit depth recipe, anti-flatness rule, overflow rule, scale behavior, and density rule
-- [ ] If relevant imagery exists in `public/`, the baton includes an asset block with the exact root-relative paths touched in this round
-- [ ] If relevant imagery exists in `public/`, the baton includes asset-fidelity, native-aspect-ratio, and locked-slot fallback language
+- [ ] Parity section explains whether any missing mobile section is intentional or a defect
+- [ ] Layout issues section specifically identifies overlapping, overflow, and alignment problems
+- [ ] Style consistency section compares with other approved pages
+- [ ] If relevant imagery exists in `public/`, the baton includes an asset block
 - [ ] Component checklist is specific and actionable

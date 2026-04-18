@@ -1,15 +1,25 @@
 {
   "projectId": "15105611068859615529",
   "projectTitle": "Lạc Minh Web",
+  "titleConvention": {
+    "pattern": "{screen}-r{round:02d}-{device}",
+    "sourceOfTruth": "local-metadata"
+  },
   "createdAt": "2026-04-05",
   "screens": {
     "home": {
-      "id": "a4ed39dfb1bd4cf395b7fdcdcc4caac1",
-      "currentRound": 4,
-      "status": "refining"
+      "pcId": "200f705d6d1f429e8c50616ecca79d20",
+      "mobileId": "b41f5fdc42624b699a179cc464b9b87a",
+      "pcCanonicalTitle": "home-r07-desktop",
+      "mobileCanonicalTitle": "home-r07-mobile",
+      "currentRound": 7,
+      "status": "approved"
     },
     "careers": {
-      "id": "6f877dfc3a35401396e3b673da399165",
+      "pcId": "6f877dfc3a35401396e3b673da399165",
+      "mobileId": null,
+      "pcCanonicalTitle": "careers-r07-desktop",
+      "mobileCanonicalTitle": null,
       "currentRound": 7,
       "status": "approved"
     }

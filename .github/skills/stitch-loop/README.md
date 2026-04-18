@@ -12,7 +12,7 @@ npx skills add google-labs-code/stitch-skills --skill stitch-loop --global
 
 Enables continuous, autonomous website development through a "baton" system:
 
-1. Agent reads task from `next-prompt.md`
+1. Agent reads the active screen's baton from `.stitch/designs/{screen}/baton.md`
 2. Generates or refines a screen via Stitch MCP tools
 3. Stores artifacts under `.stitch/designs/{screen}/round-{N}.png`
 4. Appends round notes into `.stitch/designs/{screen}/review.md`
@@ -24,10 +24,10 @@ Enables continuous, autonomous website development through a "baton" system:
 - A `DESIGN.md` file (generate with the `design-md` skill)
 - A `SITE.md` file for project context
 
-## Example Prompt
+## Usage
 
 ```text
-Read my next-prompt.md and generate the page using Stitch, then prepare the next iteration.
+Continue designing the home screen using Stitch, then save the next baton.
 ```
 
 ## Skill Structure
@@ -39,9 +39,6 @@ stitch-loop/
 ├── resources/
 │   ├── baton-schema.md   — Baton file format spec
 │   └── site-template.md  — SITE.md/DESIGN.md templates
-└── examples/
-    ├── next-prompt.md    — Example baton
-    └── SITE.md           — Example site constitution
 ```
 
 ## Works With

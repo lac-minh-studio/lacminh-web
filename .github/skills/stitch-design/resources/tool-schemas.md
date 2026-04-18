@@ -59,6 +59,8 @@ Edits existing screens with a text prompt.
 
 ## 🖼️ Screen Management
 
+**Important limitation:** The current MCP flow lets you read a screen's `title`, but it does not expose a rename operation for changing that title. Use local canonical titles in `.stitch/metadata.json` as the source of truth instead of relying on Stitch's generated titles.
+
 ### `list_screens`
 Lists all screens within a project.
 ```json

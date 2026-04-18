@@ -2,6 +2,7 @@ import type { IStatItem, IProject, IMilestone, INavLink, IFooterSection } from '
 
 export const NAV_LINKS: INavLink[] = [
   { label: 'Tầm Nhìn', href: '/'},
+  { label: 'Dự Án', href: '#projects'},
   { label: 'Lộ Trình', href: '#roadmap'},
   { label: 'Tuyển dụng', href: '/careers'},
   { label: 'Blog', href: '#blog' },
@@ -42,7 +43,6 @@ export const PROJECTS: IProject[] = [
     platform: 'Web / Mobile',
     imageSrc: '/interactive_story.png',
     imageAlt: 'Huyền Sử Ký — interactive story artwork',
-    featured: true,
   },
   {
     id: 'coi-hu-vo',
@@ -57,10 +57,10 @@ export const PROJECTS: IProject[] = [
 ]
 
 export const MILESTONES: IMilestone[] = [
-  { id: '2026-q1', year: '2026 Q1', title: 'Nền tảng', state: 'completed' },
-  { id: '2026-q2', year: '2026 Q2', title: 'Phát triển', state: 'active' },
-  { id: '2026-q3', year: '2026 Q3', title: 'Thử nghiệp', state: 'future' },
-  { id: '2026-q4', year: '2026 Q4', title: 'Khởi chạy', state: 'future' },
+  { id: '2026-q1', year: '2026 Q1', title: 'Khởi tạo Core Engine', state: 'completed' },
+  { id: '2026-q2', year: '2026 Q2', title: 'Phát hành Alpha Test', state: 'active' },
+  { id: '2026-q3', year: '2026 Q3', title: 'Hợp tác Quốc tế', state: 'future' },
+  { id: '2026-q4', year: '2026 Q4', title: 'Grand Launching', state: 'future' },
 ]
 
 export const FOOTER_SECTIONS: IFooterSection[] = [

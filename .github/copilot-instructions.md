@@ -28,15 +28,15 @@ Read both skill files before proceeding:
 
 ### 1.2 Understand the Request
 Apply the `stitch-design` skill's **Prompt Enhancement Pipeline**:
-- Map vague terms to professional UI/UX terminology (see `skills/stitch-design/references/design-mappings.md`)
+- Map vague terms to professional UI/UX terminology (see `skills/stitch-design/resources/design-mappings.md`)
 - Identify: screen name, layout structure, key components, data requirements, interactive states
 - Inspect candidate assets in `public/` and map each relevant file to a screen role such as logo, hero background, section illustration, symbol, or diagram
-- If an asset is selected from `public/`, require canonical reuse language, native-aspect-ratio preservation, and a locked media-slot fallback instead of generated replacement art
-- Incorporate design tokens from `.stitch/DESIGN.md` Section 6
-- If `.stitch/DESIGN.md` is missing or regenerated, enforce the fixed responsive tiers, the `Glassmorphism + Neumorphism hybrid design` defaults, and the `1280px Stitch canvas` desktop scaling rules
+- If an asset is selected from `public/`, include it as a locked reference in the prompt
+- Incorporate design tokens from `.stitch/DESIGN.md` if it exists
+- If `.stitch/DESIGN.md` does not exist, rely entirely on the user's prompt for style direction — do not inject default styles
 
 ### 1.3 Create the First Baton
-Write `.stitch/next-prompt.md` with `round: 1`, `mode: generate`, `status: refining`, and a fully structured Round 1 prompt (Concept & Layout focus). When relevant assets exist, include a `PROJECT ASSETS (LOCKED - REUSE EXACT FILES)` block with exact public-relative paths and intended roles. Follow the schema in `.github/skills/stitch-loop/resources/baton-schema.md`.
+Create the folder `.stitch/designs/{screen}/` if it does not exist and write `.stitch/designs/{screen}/baton.md` with `round: 1`, `mode: generate`, `status: refining`, and a fully structured Round 1 prompt (Concept & Layout focus). Every screen owns its own baton file — no two screens ever share or overwrite each other's baton. When relevant assets exist, include a `PROJECT ASSETS (LOCKED - REUSE EXACT FILES)` block with exact public-relative paths and intended roles. Follow the schema in `.github/skills/stitch-loop/resources/baton-schema.md`.
 
 ### 1.4 Confirm Before Proceeding
 Show the user the enhanced prompt and the screen plan. Get confirmation before starting the Stitch loop.
@@ -64,15 +64,16 @@ After round 6, continue to round 7+ only if quality still fails or the user expl
 
 ### Per-Round Execution
 For each round:
-1. Read the current baton from `.stitch/next-prompt.md`
-2. (Rounds 2+) Write a **section-by-section review** of the previous round's screenshot. If the screen has five sections, review all five. For each section, state what exists, what is missing, what violates the current round focus, and what must change.
-3. Treat the following as hard defects that must block round advancement: invented replacement imagery when a matching public asset exists, flat surfaces that do not visibly express the hybrid depth recipe, and any typography/component/image footprint that overflows or behaves like unscaled 1920 content inside the 1280 frame.
-4. **Round 1 only:** call `generate_screen_from_text`.
-5. **Rounds 2+:** call `edit_screens` using the current screen id from `.stitch/metadata.json`. The new prompt must be a compact delta edit: preserve the current version as the source of truth for unchanged layout and styling, include a brief section-by-section review, and explicitly say `update from previous version only` and `do not regenerate from scratch`.
-6. Save outputs to the screen artifact folder: `.stitch/designs/{screen}/round-{round}.png`
-7. Append the round notes to `.stitch/designs/{screen}/review.md` — keep exactly one review log per screen folder and record rounds `R1` to `R7+` in that file
-8. Write the next baton with `round` incremented by 1 and `mode: edit` for every round after round 1
-9. Report round results to the user and ask to proceed to the next round
+1. Read the current baton from `.stitch/designs/{screen}/baton.md` where `{screen}` is the screen being worked on (determined from the user's request or from the APP.md backlog)
+2. (Rounds 2+) Write a **section-by-section review** of the previous round's screenshots (BOTH PC and mobile). For each section, state what exists, what is missing, and what must change. The review must also compare PC vs mobile and confirm whether every intended section exists in both variants, or explicitly note any intentional mobile merge/collapse. Pay special attention to **layout defects**: overlapping elements, broken alignment, content overflow, and missing components from prior rounds.
+3. Treat the following as hard defects that must block round advancement: elements overlapping or clipping other elements, broken alignment or content overflow, missing components that existed in previous rounds, a core section appearing on PC but disappearing on mobile without explicit justification, style inconsistency with other approved pages, and any top-level section wrapper that adds outer left or right margin/padding (side-padding creep — every section must span the full canvas width).
+4. **Round 1 only:** call `generate_screen_from_text` TWICE — once for PC (`DESKTOP`) and once for mobile (`MOBILE`, ≤450px).
+5. **Rounds 2+:** call `edit_screens` TWICE — once for PC and once for mobile using their respective screen IDs from `.stitch/metadata.json`. The new prompt must be a compact delta edit: preserve the current version as the source of truth, include a section-by-section review, and explicitly say `update from previous version only` and `do not regenerate from scratch`.
+6. Save outputs to the screen artifact folder: `.stitch/designs/{screen}/round-{round}-pc.png` and `.stitch/designs/{screen}/round-{round}-mobile.png`. The mobile PNG must be downloaded at the highest available Stitch export resolution and must not be downscaled after download.
+7. Update `.stitch/metadata.json` with canonical local titles for the current round using the exact format `{screen}-r{round:02d}-desktop` and `{screen}-r{round:02d}-mobile`. These are the authoritative round names even if Stitch shows different titles.
+8. Append the round notes to `.stitch/designs/{screen}/review.md` — keep exactly one review log per screen folder, covering both PC and mobile reviews
+9. Write the next baton back to `.stitch/designs/{screen}/baton.md` with `round` incremented by 1 and `mode: edit` for every round after round 1
+10. Report round results to the user and ask to proceed to the next round
 
 ### Design Approval
 After Round 6, run the quality gate checklist (from `stitch-loop` SKILL.md). Only when all checks pass:
@@ -89,7 +90,7 @@ After Round 6, run the quality gate checklist (from `stitch-loop` SKILL.md). Onl
 **Rule: No code is written yet. This phase produces a structured implementation plan only.**
 
 ### 3.1 Analyze the Approved Design
-View `.stitch/designs/{screen}/round-6.png` (the final round 6 screenshot). Decompose the design into:
+View `.stitch/designs/{screen}/round-{selected-round}-pc.png` and `.stitch/designs/{screen}/round-{selected-round}-mobile.png` for the round that has been locked as the implementation source. Download the HTML for both variants using `get_screen` and save as `.stitch/designs/{screen}/round-{selected-round}-pc.html` and `.stitch/designs/{screen}/round-{selected-round}-mobile.html`. Download HTML only for this locked implementation round, never for intermediate review rounds. The HTML files are the primary source of truth for code implementation; the screenshots serve as visual reference. Decompose the design into:
 
 **A. Component Hierarchy**
 Map every visible UI element to a component. Use a tree structure:
@@ -149,7 +150,7 @@ Implement components strictly in the order defined in Section 3.2D (bottom-up):
 4. Page component → `src/app/(app)/{route}/page.tsx`
 
 ### 4.2 Per-Component Rules
-- Translate the approved Stitch screenshot into Tailwind classes using the color/spacing mappings in `.stitch/DESIGN.md`
+- Use the downloaded HTML from `.stitch/designs/{screen}/round-{selected-round}-pc.html` and `round-{selected-round}-mobile.html` as the primary reference for implementation. Translate into Tailwind classes using the color/spacing mappings in `.stitch/DESIGN.md`
 - Props must match exactly what was defined in Section 3.2B
 - No hardcoded strings — use the mock data arrays defined in the analytics plan
 - Add `'use client'` only when the component has local interactive state
@@ -181,18 +182,20 @@ Update `.github/analytics/current-design.md` to mark the component as implemente
 
 1. **Never write application code before Round 6 is approved.** Analytics files and type definitions are the only exception.
 2. **Never skip a Stitch round.** If pressure exists to skip, explain the quality risk and refuse.
-3. **All Stitch calls must carry the design system intentionally.** Round 1 may inline a fuller design block. Round 2 and later should prefer a compact design snapshot that preserves the current palette, typography, materials, depth recipe, and 1280 canvas rules instead of re-pasting the entire Section 6 block.
+3. **All Stitch calls must carry the design system intentionally.** If `.stitch/DESIGN.md` exists, Round 1 may inline a fuller design block. Round 2 and later should prefer a compact design snapshot that preserves the current palette and typography instead of re-pasting the entire design block.
 4. **All code must reference the analytics plan** — no component should be invented without a corresponding entry in `current-design.md`.
 5. **Load the relevant skill file before acting** — never rely on memory of skill content.
-6. **All generated design systems and Stitch prompts must include the fixed responsive tiers and the `Glassmorphism + Neumorphism hybrid design` defaults unless the user explicitly overrides them.**
+6. **Do not inject default styles into Stitch prompts.** The skill optimizes prompt structure and clarity; the user's prompt is the sole source of style direction. If `.stitch/DESIGN.md` exists, incorporate its tokens.
 7. **If relevant visual assets already exist in `public/`, Stitch prompts must reference those exact public-relative paths and the final Next.js implementation must reuse them.**
 8. **Round 2 and later must update from the previous Stitch version via `edit_screens`.** Do not create a new independent design from the original prompt after round 1 unless the user explicitly approves a reset.
 9. **Round 2+ prompts are delta-only.** Do not paste the previous round prompt or restate unchanged section specs. `edit_screens` already carries the previous visual state; only describe net changes, locked areas, and hard constraints for the next step.
-10. **Desktop prompts must account for Stitch's 1280px canvas limit.** Simulate `pc` by scaling internal desktop proportions to `1280/1920`, and simulate `laptop` by scaling internal proportions to `1280/1600`.
-11. **Desktop prompts must also define content-width budget, overflow control, and density behavior.** They must explicitly say `Content width targets: pc 1180-1220px, laptop 1040-1120px within the 1280px frame`, `Overflow rule: no element may exceed the 1280px frame`, `Scale behavior: scale typography, spacing, imagery, and component footprints proportionally`, and `Density rule: fill leftover space with secondary modules, metadata, or supporting content instead of oversizing hero elements`.
-12. **Hybrid-style prompts must include a visible depth recipe, not only the style label.** They must explicitly say `Depth recipe: dual-direction neumorphic shadows`, `Glass recipe: translucent fill, background blur, highlight border`, and `Flat surfaces: forbidden`.
-13. **Locked assets must preserve fidelity.** When a public asset is referenced, prompts must explicitly say `Asset fidelity: use exact project asset files as canonical imagery`, `Preserve native aspect ratio`, and `If exact rendering is not possible, keep a locked media slot for Next.js replacement`.
-14. **Do not claim that Stitch is rendering exact local asset pixels unless those files were manually uploaded into the Stitch project.** The current MCP design calls are text-only; without manual upload, exact asset fidelity in Stitch preview is not guaranteed.
+10. **Every round must produce two designs: one PC (DESKTOP) and one mobile (MOBILE, ≤450px).** No round is complete until both variants are generated and saved.
+11. **Every mobile review PNG must be saved at the highest available export resolution.** Do not downscale mobile artifacts after download.
+12. **Code implementation must be based on downloaded HTML, not screenshots.** Use `get_screen` to download the HTML only for the implementation-selected round and save it alongside the PNG artifacts.
+13. **Cross-page style consistency is mandatory.** When reviewing rounds, compare the current screen's style against previously approved pages. Flag inconsistencies in typography, color usage, spacing, and component appearance.
+14. **Locked assets must preserve fidelity.** When a public asset is referenced, prompts must explicitly say `Asset fidelity: use exact project asset files as canonical imagery`, `Preserve native aspect ratio`, and `If exact rendering is not possible, keep a locked media slot for Next.js replacement`.
+15. **Do not claim that Stitch is rendering exact local asset pixels unless those files were manually uploaded into the Stitch project.** The current MCP design calls are text-only; without manual upload, exact asset fidelity in Stitch preview is not guaranteed.
+16. **Full-bleed layout is a permanent, non-negotiable constraint across all rounds.** Every section wrapper must span the full canvas width with zero outer left or right margin or padding. Every Round 2+ prompt MUST include the `CANVAS LAYOUT (PERMANENT CONSTRAINT)` block. Side-padding creep detected in any round review is a hard defect that blocks advancement to the next round.
 
 ---
 
@@ -212,11 +215,14 @@ Update `.github/analytics/current-design.md` to mark the component as implemente
 .stitch/
 ├── APP.md                      ← App identity, screen inventory, backlog
 ├── DESIGN.md                   ← Design system tokens (source of truth)
-├── metadata.json               ← Stitch project ID and screen IDs
-├── next-prompt.md              ← Current baton (screen + round + status)
+├── metadata.json               ← Stitch project ID, screen IDs, and canonical local round titles
 └── designs/
     └── {screen}/
-        ├── round-{N}.png       ← Stitch screenshot lineage for a single screen (PNG only)
+        ├── baton.md            ← Per-screen baton (round + status, never shared with other screens)
+        ├── round-{N}-pc.png    ← PC screenshot per round
+        ├── round-{N}-mobile.png ← Mobile screenshot per round, saved at max export resolution
+        ├── round-{N}-pc.html   ← PC HTML (downloaded for implementation-selected round)
+        ├── round-{N}-mobile.html ← Mobile HTML (downloaded for implementation-selected round)
         └── review.md           ← One accumulated round review log for that screen (R1-R7+)
 
 public/

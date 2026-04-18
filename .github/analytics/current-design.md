@@ -1,159 +1,135 @@
-# Home Page — Design Analytics (R4 Approved)
-
-**Screen:** home | **Source:** Stitch R4 (`a4ed39dfb1bd4cf395b7fdcdcc4caac1`) | **Status:** Approved
-
----
-
-## A. Component Hierarchy
-
-```
-page.tsx (src/app/page.tsx)
-├── Navbar                        src/components/home/Navbar.tsx
-├── HeroSection                   src/components/home/HeroSection.tsx
-├── VisionSection                 src/components/home/VisionSection.tsx
-├── StatSeparator                 src/components/home/StatSeparator.tsx
-├── ProjectsSection               src/components/home/ProjectsSection.tsx
-│   └── ProjectCard (×3)          src/components/home/ProjectCard.tsx
-├── RoadmapSection                src/components/home/RoadmapSection.tsx
-├── ContactSection                src/components/home/ContactSection.tsx
-│   ├── ContactForm (client)      src/components/home/ContactForm.tsx
-│   └── ContactInfo               src/components/home/ContactInfo.tsx
-└── Footer                        src/components/home/Footer.tsx
-```
-
-## B. Props & State Mapping
-
-### Navbar — Server Component
-- Props: none (static nav links from data file)
-
-### HeroSection — Server Component
-- Props: none; composites stat strip
-
-### VisionSection — Server Component
-- Props: none; Trống Đồng image from trongdong.png
-
-### StatSeparator — Server Component
-- Props: none
-
-### ProjectCard — Server Component
-- Props: `project: IProject`
-
-### ProjectsSection — Server Component
-- Props: none; renders 3 × ProjectCard
-
-### RoadmapSection — Server Component
-- Props: none; renders 4 milestone nodes
-
-### ContactForm — Client Component
-- State: name, email, phone, investmentType, notes (strings), phoneError
-
-### ContactInfo — Server Component
-- Props: none
-
-### ContactSection — Server Component
-- Composes ContactForm + ContactInfo
-
-### Footer — Server Component
-- Props: none
-
-## C. Data Shapes
-
-See src/types/home.ts
-
-## D. Implementation Order (bottom-up)
-
-- [ ] src/types/home.ts
-- [ ] src/data/home.ts
-- [ ] src/lib/utils.ts
-- [ ] globals.css + layout.tsx updates
-- [ ] Navbar
-- [ ] HeroSection
-- [ ] VisionSection
-- [ ] StatSeparator
-- [ ] ProjectCard
-- [ ] ProjectsSection
-- [ ] RoadmapSection
-- [ ] ContactForm (client)
-- [ ] ContactInfo
-- [ ] ContactSection
-- [ ] Footer
-- [ ] page.tsx
-
-## Asset Usage
-
-| Asset | Component |
-|---|---|
-| /logo.png | Navbar, Footer |
-| hero_background.png | HeroSection |
-| trongdong.png | VisionSection |
-| cultivation.jpg | ProjectCard 1 |
-| interactive_story.png | ProjectCard 2 |
-| void_map.png | ProjectCard 3 |
-
----
-
-# Careers Page — Design Analytics (R6 Approved)
-
-**Screen:** careers | **Source:** Stitch R6 (`88f52bd3838f466d8e2a809523f1b103`) | **Status:** Implemented
+# Home Screen — Implementation Analytics
+**Source:** `.stitch/designs/home/round-7-pc.html` + `round-7-mobile.html`
+**Status:** Approved R7 — ready for Phase 4
 
 ---
 
 ## A. Component Hierarchy
 
 ```
-src/app/careers/page.tsx
-└── main
-    ├── CareersHero              src/components/careers/CareersHero.tsx
-    │   ├── Image (hero_background.png)
-    │   ├── badge pill (Tuyển Dụng)
-    │   ├── h1 (Gia Nhập / Huyền Sử)
-    │   ├── AppButton × 2
-    │   ├── scroll indicator (ChevronDown)
-    │   └── glass-stat-strip (ICareerStat × 3)
-    ├── StudioVision             src/components/careers/StudioVision.tsx
-    │   └── 2-col grid
-    │       ├── left: intro + ValuePillarCard × 3
-    │       └── right: Image (trongdong.png)
-    ├── JobListings              src/components/careers/JobListings.tsx
-    │   ├── JobCard × 5          src/components/careers/JobCard.tsx
-    │   └── open-application CTA card
-    ├── ContactSection           src/components/global/ContactSection.tsx (reuse)
-    └── Footer                   src/components/global/Footer.tsx (reuse)
+src/app/page.tsx (HomePage — Server Component)
+└── <main>
+    ├── <HeroSection />             src/components/global/HeroSection.tsx
+    ├── <VisionSection />           src/components/home/VisionSection.tsx
+    ├── <StatSeparator />           src/components/home/StatSeparator.tsx
+    ├── <ProjectsSection />         src/components/home/ProjectsSection.tsx
+    │   └── <ProjectCard /> ×3      src/components/home/ProjectCard.tsx
+    ├── <RoadmapSection />          src/components/home/RoadmapSection.tsx
+    │   └── <MilestoneNode /> ×4   (inline sub-component)
+    └── <ContactSection />          src/components/global/ContactSection.tsx
+        ├── <ContactForm />         src/components/global/ContactForm.tsx
+        └── <ContactInfo />         src/components/global/ContactInfo.tsx
+
+src/app/layout.tsx (Root Layout)
+├── <Navbar />                      src/components/global/Navbar.tsx
+└── <Footer />                      src/components/global/Footer.tsx
 ```
 
-## B. Props & State Mapping
+---
 
-### CareersHero — Client Component (smooth scroll handler)
-- Props: none
-- State: none
-- Handlers: `scrollToJobs()` → `document.getElementById('job-listings')?.scrollIntoView`
+## B. Existing Implementation Status
 
-### StudioVision — Server Component
-- Props: none
+All home-page components are already implemented. This section diffs R7 design against current code and identifies targeted updates only.
 
-### JobListings — Server Component
-- Props: none
+### Already correct — no change needed
 
-### JobCard — Server Component
-- Props: `{ job: IJobPosition }` — required
-
-## C. Data Shapes
-
-See `src/types/careers.ts`
-
-## D. Build Order (completed)
-
-- [x] `src/types/careers.ts` — `IJobPosition`, `IValuePillar`, `ICareerStat`
-- [x] `src/data/careers.ts` — 5 positions, 3 value pillars, 3 career stats
-- [x] `JobCard` — `src/components/careers/JobCard.tsx`
-- [x] `StudioVision` — `src/components/careers/StudioVision.tsx`
-- [x] `CareersHero` — `src/components/careers/CareersHero.tsx`
-- [x] `JobListings` — `src/components/careers/JobListings.tsx`
-- [x] `CareersPage` — `src/app/careers/page.tsx`
-
-## Asset Usage
-
-| Asset | Component |
+| Component | Why |
 |---|---|
-| hero_background.png | CareersHero |
-| trongdong.png | StudioVision |
+| `StatSeparator` | Thin 64px bar, 4 text-only cols, bg-surface-dark, divide-x — matches R7 exactly |
+| `ContactSection` | 55/45 flex-row layout, form left + info right — matches R7 |
+| `ContactForm` | All 5 fields, heading "Gửi đề xuất hợp tác", submit "Gửi lời mời hợp tác", phone validation |
+| `ContactInfo` | H2 "Cùng Lạc Minh / Kiến Tạo Tương Lai", 3 contact rows, icon boxes |
+| `Footer` | bg-deep-moss, 4-col grid, copyright text correct |
+| `AppButton` | primary + outline variants, border-text-light on outline — matches R7 |
+
+### Needs targeted update
+
+#### 1. HeroSection — Add vertical decorative text (desktop only)
+R7 shows a vertical "Huyền Sử Lạc Hồng" label on the left edge, hidden xl:flex, opacity-40.
+Current code: Missing this element.
+Change: Add vertical text decoration inside the section z-layer.
+
+#### 2. VisionSection — Trongdong slow-spin animation
+R7 shows: animate-[spin_60s_linear_infinite] on the trongdong Image.
+Current code: No animation, static image.
+Change: Add the slow spin animation class.
+
+#### 3. ProjectCard — Featured overlay is hover-only
+R7 shows: opacity-0 group-hover:opacity-100 transition-opacity on the featured overlay.
+Current code: Featured overlay is always visible (permanent dark overlay + "XEM DỰ ÁN" button).
+Change: Make the featured overlay appear only on hover.
+
+#### 4. data/home.ts — Add "Dự Án" to nav links + update milestone titles
+R7 nav: Tầm Nhìn | Dự Án | Lộ Trình | Tuyển dụng | Blog | Liên Hệ
+Current: 5 links missing "Dự Án" → #projects
+R7 milestones: "Khởi tạo Core Engine" / "Phát hành Alpha Test" / "Hợp tác Quốc tế" / "Grand Launching"
+Current: "Nền tảng" / "Phát triển" / "Thử nghiệm" / "Khởi chạy"
+Change: Update NAV_LINKS and MILESTONES arrays.
+
+---
+
+## C. Props & State Mapping
+
+### HeroSection (existing — no state changes needed)
+Props: title (ReactNode), subtitle (string), primaryCTA (HeroCTA), secondaryCTA (HeroCTA), scrollLabel (optional string), stats (HeroStat[])
+State: none
+Event handlers: none (links handled by AppButton href)
+
+### VisionSection (no props — self-contained static data)
+State: none
+
+### ProjectCard
+Props: project (IProject — required)
+State: none
+Behavior: featured drives lift/border style + hover-only overlay
+
+### RoadmapSection (no props — reads MILESTONES from data)
+State: none (animate-ping on active node is CSS-only)
+
+---
+
+## D. Data Shape (no new types needed)
+
+All interfaces already exist in src/types/home.ts:
+- INavLink — { label, href, active? }
+- IStatItem — { value, label }
+- IProject — { id, title, description, year, platform, imageSrc, imageAlt, featured? }
+- IMilestone — { id, year, title, state: 'completed' | 'active' | 'future' }
+- IFooterSection — { heading, links: { label, href }[] }
+
+---
+
+## E. Data Updates (src/data/home.ts)
+
+NAV_LINKS update — add "Dự Án" as second item:
+  { label: 'Tầm Nhìn', href: '/' }
+  { label: 'Dự Án', href: '#projects' }   ← ADD
+  { label: 'Lộ Trình', href: '#roadmap' }
+  { label: 'Tuyển dụng', href: '/careers' }
+  { label: 'Blog', href: '#blog' }
+  { label: 'Liên Hệ', href: '#contact' }
+
+MILESTONES update — update titles:
+  { id: '2026-q1', year: '2026 Q1', title: 'Khởi tạo Core Engine', state: 'completed' }
+  { id: '2026-q2', year: '2026 Q2', title: 'Phát hành Alpha Test', state: 'active' }
+  { id: '2026-q3', year: '2026 Q3', title: 'Hợp tác Quốc tế', state: 'future' }
+  { id: '2026-q4', year: '2026 Q4', title: 'Grand Launching', state: 'future' }
+
+---
+
+## F. Implementation Order (bottom-up, targeted diffs only)
+
+1. src/data/home.ts — NAV_LINKS + MILESTONES data updates
+2. src/components/home/VisionSection.tsx — add trongdong slow-spin
+3. src/components/home/ProjectCard.tsx — featured overlay hover-only
+4. src/components/global/HeroSection.tsx — add vertical decorative text (xl only)
+
+---
+
+## G. Build Checklist
+
+- [ ] data/home.ts — NAV_LINKS updated (add "Dự Án") — src/data/home.ts
+- [ ] data/home.ts — MILESTONES titles updated — src/data/home.ts
+- [ ] VisionSection.tsx — trongdong animate-[spin_60s_linear_infinite] — src/components/home/VisionSection.tsx
+- [ ] ProjectCard.tsx — featured overlay hover-only (opacity-0 group-hover:opacity-100) — src/components/home/ProjectCard.tsx
+- [ ] HeroSection.tsx — vertical decorative text hidden xl:flex — src/components/global/HeroSection.tsx
