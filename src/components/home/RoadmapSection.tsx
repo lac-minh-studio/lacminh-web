@@ -60,7 +60,7 @@ function MilestoneNode({ milestone }: { milestone: IMilestone }) {
           </h4>
           <p
             className={cn(
-              'text-3xs uppercase font-bold tracking-widest',
+              'text-xs uppercase font-bold tracking-widest',
               isCompleted && 'text-primary',
               isActive && 'text-primary animate-pulse',
               isFuture && 'text-text-dark/40'
