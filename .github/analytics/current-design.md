@@ -1,3 +1,91 @@
+# Analytics: `not-found` — Coming Soon / 404 Page
+
+**Source design:** `.stitch/designs/not-found/round-02-pc.png` + `round-02-mobile.png`
+**Implementation round locked:** Round 2
+**Output file:** `src/app/not-found.tsx`
+
+---
+
+## A. Component Hierarchy
+
+```
+NotFoundPage (Server Component — src/app/not-found.tsx)
+│
+├── [Background Layer]  — full-bleed, z-0
+│   ├── next/image hero_background.png  (fill, object-cover, priority)
+│   ├── Dark overlay div                (gradient top → bottom, rgba dark)
+│   └── next/image trongdong.png        (absolute centered, low-opacity watermark)
+│
+├── [Bokeh Orbs]  — z-10, decorative corner blobs (4 × absolute divs)
+│
+├── [Glass Panel]  — z-20, centered in viewport
+│   ├── next/image logo.png             (height 16 / 64px)
+│   ├── Error label                     ("404 · LẠC LỐI")
+│   ├── Headline h1                     ("Trang Đang Xây Dựng")
+│   ├── Sub-headline p italic           (Vietnamese poetic line)
+│   ├── Gold divider div
+│   ├── Body copy p
+│   ├── CTA Link → /                    ("Quay về Trang Chủ")
+│   └── Secondary Link → /projects     ("Xem các dự án đang phát triển →")
+│
+└── [Footer Strip]  — z-20, anchored bottom
+    └── Copyright p
+```
+
+**Single-file decision:** All static markup, no client state. Fits under 300 lines as one Server Component.
+
+**Root layout note:** `layout.tsx` wraps all pages with `<Navbar />` and `<Footer />`. The not-found wrapper uses `h-screen overflow-hidden` to clip the root Footer. The glassmorphic fixed Navbar floats over the dark background naturally.
+
+---
+
+## B. Props & State
+
+No props, no state, no `'use client'`. Pure Server Component.
+
+---
+
+## C. Data Shape
+
+No interfaces needed — all static copy.
+
+---
+
+## D. Implementation Order
+
+- [x] Add `glass-panel-dark` + `hero-dark-overlay` utilities to `src/app/globals.css`
+- [x] Implement `src/app/not-found.tsx`
+
+---
+
+## E. Asset Map
+
+| Asset | Role | Usage |
+|-------|------|-------|
+| `/public/hero_background.png` | Full-bleed background | `next/image` fill + dark overlay |
+| `/public/trongdong.png` | Watermark behind panel | `next/image` absolute, opacity-15 |
+| `/public/logo.png` | Logo inside panel | `next/image` h-16 |
+
+---
+
+## F. CSS Tokens to Add
+
+```css
+.glass-panel-dark {
+  background: rgba(8, 4, 2, 0.58);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(196, 149, 74, 0.40);
+  box-shadow: inset 0 1px 0 rgba(196, 149, 74, 0.18);
+}
+.hero-dark-overlay {
+  background: linear-gradient(to bottom, rgba(8,4,2,0.80) 0%, rgba(4,2,1,0.90) 100%);
+}
+```
+
+---
+
+---
+
 # Blogs Page — Implementation Analytics
 **Source:** `.stitch/designs/blogs/round-8-pc.html` + `round-8-mobile.html`
 **Status:** Approved R8 — ready for Phase 4

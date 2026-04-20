@@ -1,9 +1,10 @@
 import type { IJobPosition, IValuePillar, ICareerStat } from '@/types/careers'
 
 export const CAREER_STATS: ICareerStat[] = [
-  { value: '3+', label: 'Năm phát triển' },
-  { value: '4', label: 'Dự án lớn' },
-  { value: '12', label: 'Thành viên' },
+  { value: '5+', label: 'Năm phát triển' },
+  { value: '3', label: 'Dự án lớn' },
+  { value: '18', label: 'Thành viên' },
+  { value: '5+', label: 'Cơ hội mới' },
 ]
 
 export const VALUE_PILLARS: IValuePillar[] = [

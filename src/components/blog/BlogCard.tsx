@@ -6,13 +6,16 @@ interface BlogCardProps {
   post: IBlogPost
   variant?: 'compact' | 'full'
   className?: string
+  isShadow?: boolean
 }
 
-export function BlogCard({ post, variant = 'full', className = '' }: BlogCardProps) {
+export function BlogCard({ post, variant = 'full', className = '', isShadow = true }: BlogCardProps) {
   return (
     <article
       className={cn(
-        'rounded-2xl overflow-hidden flex flex-col group cursor-pointer h-full not-[]:glass-card shadow-(--shadow-neu-light)', className
+        'rounded-2xl overflow-hidden flex flex-col group cursor-pointer h-full not-[]:glass-card',
+        isShadow ? 'shadow-(--shadow-neu-light)' : '', 
+        className
       )}
     >
       {/* Cover image */}

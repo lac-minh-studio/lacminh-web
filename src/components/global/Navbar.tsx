@@ -48,7 +48,7 @@ export function Navbar() {
               className={cn(
                 'text-sm font-medium transition-colors',
                 isActive(link.href)
-                  ? 'text-primary font-bold border-b-2 border-primary pb-1'
+                  ? 'text-primary'
                   : 'text-text-dark hover:text-primary'
               )}
             >
@@ -56,22 +56,14 @@ export function Navbar() {
             </NextLink>
           ))}
         </div>
-
-        <div className="flex items-center gap-3">
-          <AppButton size="sm" className="hidden lg:block px-6 py-2 text-sm">
-            Kêu gọi đầu tư
-          </AppButton>
-
-          {/* Hamburger */}
-          <button
-            type="button"
-            aria-label={open ? 'Đóng menu' : 'Mở menu'}
-            onClick={() => setOpen((v) => !v)}
-            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg text-text-dark hover:bg-primary/10 transition-colors"
-          >
-            {open ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
+        <button
+          type="button"
+          aria-label={open ? 'Đóng menu' : 'Mở menu'}
+          onClick={() => setOpen((v) => !v)}
+          className="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg text-text-dark hover:bg-primary/10 transition-colors"
+        >
+          {open ? <X size={24} /> : <Menu size={24} />}
+        </button>
       </div>
 
       {/* Mobile drawer */}
@@ -97,11 +89,6 @@ export function Navbar() {
               {link.label}
             </NextLink>
           ))}
-          <div className="px-4 pt-3 pb-1">
-            <AppButton size="sm" className="w-full py-3 text-sm" onClick={() => setOpen(false)}>
-              Kêu gọi đầu tư
-            </AppButton>
-          </div>
         </div>
       </div>
     </nav>

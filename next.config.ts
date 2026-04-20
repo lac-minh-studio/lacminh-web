@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     optimizeCss: true,
     optimizePackageImports: ['@heroui/react', 'lucide-react'],
   },
+  transpilePackages: ['swiper'],
 };
 
 export default nextConfig;

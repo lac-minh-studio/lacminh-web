@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { IBlogPost } from '@/types/blogs'
 import { cn } from '@/lib/utils'
@@ -14,14 +14,21 @@ export function BlogCarousel({ slides }: BlogCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const slide = slides[activeIndex]
 
+  useEffect(()=>{
+    const nextPostInterval = setInterval(()=>{
+      handleNext()
+    },3000)
+    return () => clearInterval(nextPostInterval)
+  },[])
+
   const handlePrev = () =>
     setActiveIndex((i) => (i - 1 + slides.length) % slides.length)
   const handleNext = () =>
     setActiveIndex((i) => (i + 1) % slides.length)
 
   return (
-    <section aria-label="Tin Nổi Bật" className="w-full">
-      <article className="glass-card rounded-2xl overflow-hidden shadow-(--shadow-neu-light)">
+    <section aria-label="Tin Nổi Bật" className="w-full h-auto">
+      <article className="glass-card rounded-2xl overflow-hidden shadow-(--shadow-neu-light) h-auto">
         <div className="flex flex-col lg:flex-row">
           {/* Left: cover image — aspect-video on mobile, 4:3 on desktop */}
           <div className="relative aspect-video lg:aspect-4/3 w-full lg:w-3/5 overflow-hidden">
@@ -36,7 +43,7 @@ export function BlogCarousel({ slides }: BlogCarouselProps) {
           </div>
 
           {/* Right: content — self-start so text is top-aligned on desktop */}
-          <div className="lg:w-2/5 p-5 lg:p-6 flex flex-col gap-4 lg:self-start">
+          <div className="lg:w-2/5 p-5 lg:p-6 flex flex-col gap-4 lg:self-start h-full">
             {/* Category pill */}
             <span className="inline-flex px-3 py-1 bg-primary/10 text-primary text-2xs font-bold rounded-full border border-primary/20 uppercase tracking-widest w-fit">
               {slide.category}
@@ -72,8 +79,7 @@ export function BlogCarousel({ slides }: BlogCarouselProps) {
               <ChevronRight size={14} />
             </a>
 
-            {/* Navigation row */}
-            <div className="flex items-center gap-3 pt-2">
+            <div className="flex items-center justify-center gap-3 mt-auto mb-0 pt-2 lg:absolute bottom-5 right-5 max-md:w-full ">
               <button
                 onClick={handlePrev}
                 aria-label="Bài trước"

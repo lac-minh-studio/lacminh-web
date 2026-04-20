@@ -4,6 +4,10 @@
 /* Core: Tailwind CSS v4 */
 @import "tailwindcss";
 
+/* Swiper */
+@import "swiper/css";
+@import "swiper/css/free-mode";
+
 /* HeroUI animation utilities */
 @import "tw-animate-css";
 
@@ -112,6 +116,20 @@ body {
   background: rgba(237, 224, 197, 0.45);
   backdrop-filter: blur(16px);
   border: 1px solid rgba(196, 149, 74, 0.3);
+}
+
+/* Dark smoked glass — not-found / coming-soon panel */
+.glass-panel-dark {
+  background: rgba(8, 4, 2, 0.58);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(196, 149, 74, 0.40);
+  box-shadow: inset 0 1px 0 rgba(196, 149, 74, 0.18);
+}
+
+/* Full-bleed dark overlay for bright hero backgrounds */
+.hero-dark-overlay {
+  background: linear-gradient(to bottom, rgba(8, 4, 2, 0.80) 0%, rgba(4, 2, 1, 0.90) 100%);
 }
 
 .glass-stat-strip {

@@ -30,6 +30,14 @@
       "mobileCanonicalTitle": "blogs-r08-mobile",
       "currentRound": 8,
       "status": "approved"
+    },
+    "not-found": {
+      "pcId": "03f605b76dd94227bbfc8c51fb9d8ca4",
+      "mobileId": "3ceb76059b674f8a95c6a91e521973a9",
+      "pcCanonicalTitle": "not-found-r02-desktop",
+      "mobileCanonicalTitle": "not-found-r02-mobile",
+      "currentRound": 2,
+      "status": "approved"
     }
   }
 }
