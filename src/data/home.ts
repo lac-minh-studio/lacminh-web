@@ -2,11 +2,11 @@ import type { IStatItem, IProject, IMilestone, INavLink, IFooterSection } from '
 
 export const NAV_LINKS: INavLink[] = [
   { label: 'Tầm Nhìn', href: '/'},
-  { label: 'Dự Án', href: '#projects'},
-  { label: 'Lộ Trình', href: '#roadmap'},
+  { label: 'Dự Án', href: '/projects'},
+  { label: 'Lộ Trình', href: '/roadmap'},
   { label: 'Tuyển dụng', href: '/careers'},
-  { label: 'Blog', href: '#blog' },
-  { label: 'Liên Hệ', href: '#contact' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Liên Hệ', href: '/contact' },
 ]
 
 export const HERO_STATS: IStatItem[] = [
@@ -69,8 +69,8 @@ export const FOOTER_SECTIONS: IFooterSection[] = [
     links: [
       { label: 'Về chúng tôi', href: '#' },
       { label: 'Dự án mới', href: '#' },
-      { label: 'Tuyển dụng', href: '#' },
-      { label: 'Blog tin tức', href: '#' },
+      { label: 'Tuyển dụng', href: '/careers' },
+      { label: 'Blog tin tức', href: '/blog' },
     ],
   },
   {

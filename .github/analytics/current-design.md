@@ -1,6 +1,93 @@
-# Home Screen — Implementation Analytics
-**Source:** `.stitch/designs/home/round-7-pc.html` + `round-7-mobile.html`
-**Status:** Approved R7 — ready for Phase 4
+# Blogs Page — Implementation Analytics
+**Source:** `.stitch/designs/blogs/round-8-pc.html` + `round-8-mobile.html`
+**Status:** Approved R8 — ready for Phase 4
+
+---
+
+## A. Component Hierarchy Tree
+
+```
+BlogPage (Server Component)
+└── <main>
+    ├── [constrained wrapper max-w-7xl px-2.5 py-7]
+    │   ├── BlogCarousel ('use client') — Section 1
+    │   │   └── [slides rendered internally from IBlogPost[]]
+    │   ├── BlogSwiper (Server Component) — Section 2
+    │   │   └── BlogCard × 6 (variant="compact")
+    │   └── BlogGridSection ('use client') — Section 3
+    │       ├── [filter pills + search input inline]
+    │       └── BlogCard × N (variant="full")
+    └── ContactSection (existing global component) — Section 4 (full-bleed)
+```
+
+## B. Props & State Mapping
+
+### `BlogCard`
+- Props: `{ post: IBlogPost; variant?: 'compact' | 'full' }`
+- No local state — Server Component
+
+### `BlogCarousel`
+- Props: `{ slides: IBlogPost[] }`
+- State: `activeIndex: number` (useState)
+- Handlers: `handlePrev`, `handleNext`, dot nav
+- 'use client'
+
+### `BlogSwiper`
+- Props: `{ posts: IBlogPost[] }`
+- No state — CSS overflow-x scroll — Server Component
+
+### `BlogGridSection`
+- Props: `{ posts: IBlogPost[]; filters: string[] }`
+- State: `activeFilter: string`, `searchQuery: string`, `visibleCount: number`
+- 'use client'
+
+## C. TypeScript Interfaces
+
+```ts
+export interface IBlogPost {
+  id: string; title: string; excerpt?: string; category: string;
+  author?: string; date: string; readTime?: string;
+  imageSrc: string; imageAlt: string;
+}
+```
+
+## D. Data Shape
+
+```ts
+export const BLOG_FILTERS: string[]
+export const mockCarouselSlides: IBlogPost[]   // 3 items
+export const mockRecentPosts: IBlogPost[]       // 6 items
+export const mockGridPosts: IBlogPost[]         // 8 items
+```
+
+## E. Build Order (bottom-up)
+
+- [ ] `src/types/blogs.ts`
+- [ ] `src/data/blogs.ts`
+- [ ] `src/app/globals.css` — scrollbar-hide + blog-swiper-card utilities
+- [ ] `src/components/blog/BlogCard.tsx`
+- [ ] `src/components/blog/BlogCarousel.tsx`
+- [ ] `src/components/blog/BlogSwiper.tsx`
+- [ ] `src/components/blog/BlogGridSection.tsx`
+- [ ] `src/components/blog/index.ts`
+- [ ] `src/app/(app)/blog/layout.tsx`
+- [ ] `src/app/(app)/blog/page.tsx`
+
+## F. Spacing Reference
+
+| HTML value       | Tailwind class     |
+|-----------------|---------------------|
+| `px-[10px]`     | `px-2.5`            |
+| `gap-[14px]`    | `gap-3.5`           |
+| `py-[28px]`     | `py-7`              |
+| `h-[160px]`     | `h-40`              |
+| `text-[11px]`   | `text-2xs`          |
+| `text-[13px]`   | `text-tiny`         |
+| `text-[27px]`   | `text-heading-sm`   |
+
+## G. Completed Components
+
+_(mark each as implemented below)_
 
 ---
 

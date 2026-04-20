@@ -82,8 +82,8 @@ CANVAS & RESPONSIVE SPEC:
 - Overflow rule: no element may exceed the 1280px frame
 - Scale behavior: scale typography, spacing, imagery, and component footprints proportionally
 - Density rule: fill leftover space with secondary modules, metadata, or supporting content instead of oversizing hero elements
-- Full-bleed: all sections span the full 1280px canvas width with 0px outer horizontal margin
-- No outer left/right padding on section wrappers
+- PC outer padding (HARDCODED — NON-NEGOTIABLE): all section wrappers use exactly padding-left: 10px and padding-right: 10px; never use more
+- Full-bleed backgrounds: background colors, gradients, and images extend to the canvas edge; the 10px applies to inner content offset only
 - Responsive tiers: pc 1920-1600, laptop 1600-1200, macbook 1200-900, tablet 900-700, mini-tablet 700-450, mobile <450
 
 [OMIT block above if .stitch/DESIGN.md is authoritative — replace with 4-line compact version below]
@@ -120,11 +120,10 @@ BASE VERSION (REQUIRED):
 - Preserve all unchanged areas as locked
 
 CANVAS LAYOUT (PERMANENT CONSTRAINT — DO NOT CHANGE):
-- Full-bleed: every section wrapper spans the full canvas width with 0px outer horizontal margin
-- No left or right padding on any top-level section container
-- Background colors, gradients, and images must bleed to the canvas edge
-- Inner content may have internal padding, but the outer section wrapper must never shrink from the canvas edge
-- VIOLATION: adding any margin, padding, or whitespace to the left or right edge of a section wrapper is a hard defect; reject and revert if detected
+- PC outer padding (HARDCODED — NON-NEGOTIABLE): every section wrapper uses exactly padding-left: 10px and padding-right: 10px — no more, no less
+- Full-bleed backgrounds: background colors, gradients, and images must extend to the canvas edge; the 10px applies to inner content offset only
+- Inner content starts 10px from the canvas edge; no additional outer margin or padding beyond this 10px is permitted
+- VIOLATION: any section wrapper with outer left or right padding exceeding 10px is a hard defect; reject and revert if detected
 - 1280px max desktop frame
 - Overflow rule: no element may exceed the 1280px frame
 - Scale behavior: scale typography, spacing, imagery, and component footprints proportionally

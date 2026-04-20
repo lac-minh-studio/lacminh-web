@@ -6,6 +6,7 @@
 .pnp.*
 .yarn/*
 .stitch/designs/**/**.png
+.stitch/designs/**/**.html
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases

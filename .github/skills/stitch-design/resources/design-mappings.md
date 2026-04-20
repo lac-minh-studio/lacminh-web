@@ -112,7 +112,7 @@ Stitch desktop renders are constrained to a `1280px` maximum width. Use the foll
 | pc | "Stitch canvas: 1280px max desktop frame; simulate pc proportions by scaling internal desktop elements to 1280/1920." |
 | laptop | "Stitch canvas: 1280px max desktop frame; simulate laptop proportions by scaling internal elements to 1280/1600." |
 | overflow guard | "Overflow rule: no element may exceed the 1280px frame." |
-| full-bleed | "Full-bleed layout: all section backgrounds and containers span the full 1280px canvas width with 0px outer horizontal margin. Do not add side padding to section wrappers. Background colors, images, and decorative elements must extend to the canvas edges." |
+| full-bleed | "PC layout: all section wrappers use exactly padding-left: 10px and padding-right: 10px — hardcoded, non-negotiable, never more. Background colors, images, and decorative elements still extend to the full canvas edge (full-bleed backgrounds). Do not add any outer margin or additional padding beyond the mandatory 10px on section wrappers." |
 | proportional scale | "Scale typography, spacing, imagery, and component footprints proportionally; do not keep 1920-sized elements inside a 1280 frame." |
 | density fill | "Fill leftover space with secondary modules, metadata, or supporting content instead of oversizing hero elements." |
 | next-js handoff | "Next.js will apply its own responsive container conventions during code conversion — design full-bleed for the Stitch canvas only." |

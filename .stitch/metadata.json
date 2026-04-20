@@ -22,6 +22,14 @@
       "mobileCanonicalTitle": null,
       "currentRound": 7,
       "status": "approved"
+    },
+    "blogs": {
+      "pcId": "d95429855a3e4d52bd9cc4721e6fa12b",
+      "mobileId": "a0385bcf20974e87abba6272646cab1b",
+      "pcCanonicalTitle": "blogs-r08-desktop",
+      "mobileCanonicalTitle": "blogs-r08-mobile",
+      "currentRound": 8,
+      "status": "approved"
     }
   }
 }

@@ -147,6 +147,27 @@ body {
   border: 1px solid rgba(196, 149, 74, 0.3);
 }
 
+/* Hide scrollbar — used by horizontal swiper strip */
+.scrollbar-hide {
+  scrollbar-width: none;       /* Firefox */
+  -ms-overflow-style: none;    /* IE/Edge */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;               /* Chrome/Safari/WebKit */
+}
+
+/* Blog swiper card width — 4.75 items visible on desktop, fixed 150px on mobile */
+.blog-swiper-card {
+  flex-shrink: 0;
+  width: 9.375rem; /* 150px — mobile default */
+}
+@media (min-width: 1024px) {
+  .blog-swiper-card {
+    /* gap-3.5 = 0.875rem; 4 gaps between 4.75 cards → total gap = 3.5rem */
+    width: calc((100% - 3.5rem) / 4.75);
+  }
+}
+
 /* 1440px content column — centered within wide viewports (1920px → 240px margin each side) */
 .content-container {
   max-width: 1440px;

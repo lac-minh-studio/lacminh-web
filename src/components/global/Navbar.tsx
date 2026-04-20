@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import NextLink from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
 import { NAV_LINKS } from '@/data/home'
 import { cn } from '@/lib/utils'
@@ -10,6 +11,12 @@ import { AppButton } from '@/components/hero-ui'
 
 export function Navbar() {
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
+
+  function isActive(href: string): boolean {
+    if (href === '/') return pathname === '/'
+    return href.startsWith('/') && pathname.startsWith(href)
+  }
 
   return (
     <nav className="fixed top-0 w-full z-50 glass-navbar">
@@ -40,7 +47,7 @@ export function Navbar() {
               href={link.href}
               className={cn(
                 'text-sm font-medium transition-colors',
-                link.active
+                isActive(link.href)
                   ? 'text-primary font-bold border-b-2 border-primary pb-1'
                   : 'text-text-dark hover:text-primary'
               )}
@@ -82,7 +89,7 @@ export function Navbar() {
               onClick={() => setOpen(false)}
               className={cn(
                 'block px-4 py-3 rounded-lg text-sm font-medium transition-colors',
-                link.active
+                isActive(link.href)
                   ? 'text-primary bg-primary/10 font-bold'
                   : 'text-text-dark hover:bg-primary/5 hover:text-primary'
               )}
@@ -100,3 +107,4 @@ export function Navbar() {
     </nav>
   )
 }
+
