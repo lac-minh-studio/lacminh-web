@@ -1,3 +1,48 @@
+# Analytics — Projects Screen (R7 Implementation)
+**Source:** `.stitch/designs/projects/round-7-pc.html` + `round-7-mobile.html`
+**Approved round:** 7 | **Date:** 2026-04-21
+
+---
+
+## A. Component Hierarchy
+
+```
+ProjectsPage (Server Component)
+├── ProjectsMiniHero          ← 42vh hero, /hero_background.png + dark overlay + bounce chevron
+├── ProjectsBentoGrid         ← 70/30 layout, imports all 3 card types + ComingSoonStrip
+│   ├── ProjectCardHero       ← Sen-City: large dark bg-image card, glassmorphic bottom panel
+│   ├── ProjectCardTall       ← Khế ước: tall portrait, /cultivation.jpg asset, dark overlay
+│   ├── ProjectCardLite (×2)  ← E-Commerce + Du Học: neumorphic cream cards
+│   └── ComingSoonStrip       ← Dashed bronze border strip below bento
+├── OrnamentalDivider         ← Bronze line + circle motif decorative separator
+├── ProjectsCTAStrip          ← "Sẵn sàng kiến tạo huyền thoại?" — dark moss section
+├── ManifestoSection          ← "Triết Lý Sáng Tạo" — quote on cream neumorphic bg
+└── ContactSection            ← REUSE src/components/global/ContactSection.tsx (no change)
+    (Footer is in root layout)
+```
+
+## B. Implementation Order (bottom-up)
+
+1. [x] CSS utilities → `src/app/globals.css`
+2. [x] TypeScript interfaces → `src/types/projects.ts`
+3. [x] Mock data → `src/data/projects.ts`
+4. [x] `ProjectCardHero` → `src/components/projects/ProjectCardHero.tsx`
+5. [x] `ProjectCardTall` → `src/components/projects/ProjectCardTall.tsx`
+6. [x] `ProjectCardLite` → `src/components/projects/ProjectCardLite.tsx`
+7. [x] `ComingSoonStrip` → `src/components/projects/ComingSoonStrip.tsx`
+8. [x] `OrnamentalDivider` → `src/components/projects/OrnamentalDivider.tsx`
+9. [x] `ProjectsBentoGrid` → `src/components/projects/ProjectsBentoGrid.tsx`
+10. [x] `ProjectsMiniHero` → `src/components/projects/ProjectsMiniHero.tsx`
+11. [x] `ProjectsCTAStrip` → `src/components/projects/ProjectsCTAStrip.tsx`
+12. [x] `ManifestoSection` → `src/components/projects/ManifestoSection.tsx`
+13. [x] `index.ts` → `src/components/projects/index.ts`
+14. [x] Layout → `src/app/(app)/projects/layout.tsx`
+15. [x] Page → `src/app/(app)/projects/page.tsx`
+
+---
+
+## (Previous: not-found screen — archived below)
+
 # Analytics: `not-found` — Coming Soon / 404 Page
 
 **Source design:** `.stitch/designs/not-found/round-02-pc.png` + `round-02-mobile.png`

@@ -38,6 +38,14 @@
       "mobileCanonicalTitle": "not-found-r02-mobile",
       "currentRound": 2,
       "status": "approved"
+    },
+    "projects": {
+      "pcId": "b18b9af40058491b90e47a4e3be43f73",
+      "mobileId": "23e87831f27249db943f6a33dffebcc1",
+      "pcCanonicalTitle": "projects-r07-desktop",
+      "mobileCanonicalTitle": "projects-r07-mobile",
+      "currentRound": 7,
+      "status": "approved"
     }
   }
 }

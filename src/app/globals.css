@@ -4,10 +4,6 @@
 /* Core: Tailwind CSS v4 */
 @import "tailwindcss";
 
-/* Swiper */
-@import "swiper/css";
-@import "swiper/css/free-mode";
-
 /* HeroUI animation utilities */
 @import "tw-animate-css";
 
@@ -95,6 +91,15 @@
   --text-heading-sm: 1.75rem;  /* 28px — form / card titles         */
   --text-heading-md: 2.125rem; /* 34px — section sub-headings       */
   --text-hero: 4.25rem;        /* 68px — hero headline              */
+  --text-display: 5rem;        /* 80px — projects mini-hero H1      */
+
+  /* Projects page layout tokens */
+  --height-mini-hero: 42vh;         /* mini-hero section height         */
+  --height-bento-row: 46.25rem;     /* 740px — full bento row           */
+  --height-project-hero-card: 25rem;/* 400px — Sen-City hero card       */
+  --height-project-lite-card: 20.25rem; /* 324px — web project cards    */
+  --width-bento-left: 70%;          /* bento left column width          */
+  --width-bento-right: 30%;         /* bento right column width         */
 }
 
 body {
@@ -194,4 +199,44 @@ body {
   width: 100%;
   padding-left: 2rem;
   padding-right: 2rem;
+}
+
+/* Projects page — full-bleed section with 10px side padding */
+.projects-section {
+  width: 100%;
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+}
+
+/* Projects page — inner content width cap */
+.projects-inner {
+  max-width: 80rem; /* 1280px */
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+/* Khế ước Lạc Hồng card — locked media slot overlay (warm amber-brown gradient) */
+/* /cultivation.jpg is the canonical asset; this gradient is the fallback/tint layer */
+.project-card-tall-tint {
+  background: linear-gradient(to bottom, rgba(45, 26, 10, 0.55), rgba(90, 45, 12, 0.75));
+}
+
+/* Dark glassmorphic bottom panel on project hero cards */
+.project-card-panel {
+  background: rgba(18, 10, 4, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(196, 149, 74, 0.2);
+}
+
+/* Dashed Coming Soon strip border */
+.projects-dashed-strip {
+  border: 2px dashed rgba(196, 149, 74, 0.6);
+}
+
+/* Manifesto section neumorphic container */
+.manifesto-card {
+  box-shadow: 8px 8px 20px #C8B892, -8px -8px 20px rgba(255, 255, 255, 0.56);
+  border: 1px solid rgba(196, 149, 74, 0.1);
 }

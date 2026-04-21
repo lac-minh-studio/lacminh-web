@@ -61,7 +61,7 @@
 
 * [x] `home` → `src/app/page.tsx` ✅ Round 7 approved
 * [ ] `about` → `src/app/about/page.tsx`
-* [ ] `projects` → `src/app/projects/page.tsx`
+* [x] `projects` → `src/app/(app)/projects/page.tsx` ✅ Round 7 approved
 * [x] `careers` → `src/app/careers/page.tsx` ✅ Round 7 approved
 * [ ] `blog` → `src/app/blog/page.tsx`
 * [ ] `contact` → `src/app/contact/page.tsx`

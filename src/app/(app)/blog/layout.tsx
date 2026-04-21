@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import '@/styles/swiper.css'
 
 export const metadata: Metadata = {
   title: 'Blog — Lạc Minh Studio',
