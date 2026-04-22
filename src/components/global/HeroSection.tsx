@@ -61,9 +61,11 @@ export function HeroSection({
           src="/hero_background.png"
           alt="Lạc Minh Studio — hero background"
           fill
+          quality={75}
           sizes="100vw"
+          preload
+          fetchPriority="high"
           className="object-cover"
-          priority
         />
         <div className="absolute inset-0 hero-overlay" />
       </div>

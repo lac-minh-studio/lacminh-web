@@ -27,7 +27,6 @@
 @import "@heroui/styles/components/label.css" layer(components);
 /* UI components */
 @import "@heroui/styles/components/button.css" layer(components);
-@import "@heroui/styles/components/button-group.css" layer(components);
 @import "@heroui/styles/components/card.css" layer(components);
 @import "@heroui/styles/components/chip.css" layer(components);
 /* Form components */
@@ -38,7 +37,6 @@
 @import "@heroui/styles/components/select.css" layer(components);
 @import "@heroui/styles/components/list-box.css" layer(components);
 @import "@heroui/styles/components/list-box-item.css" layer(components);
-@import "@heroui/styles/components/list-box-section.css" layer(components);
 
 @theme inline {
   /* ─── Mythos Token Map ──────────────────────────────────────────────────────

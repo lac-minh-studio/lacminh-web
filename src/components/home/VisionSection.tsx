@@ -17,6 +17,8 @@ export function VisionSection() {
               alt="Trống Đồng Đông Sơn — biểu tượng văn hóa Việt Nam"
               width={480}
               height={480}
+              quality={65}
+              sizes="(max-width: 767px) calc(100vw - 2rem), (max-width: 1279px) calc(50vw - 2rem), 480px"
               className="w-full h-auto object-contain drop-shadow-hero-image rounded-2xl"
             />
           </div>

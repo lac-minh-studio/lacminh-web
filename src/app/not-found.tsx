@@ -11,7 +11,10 @@ export default function NotFound() {
           src="/hero_background.png"
           alt="Lạc Minh Studio background"
           fill
-          priority
+          quality={65}
+          sizes="100vw"
+          preload
+          fetchPriority="high"
           className="object-cover object-top"
         />
         {/* Dark overlay to neutralise the bright hero image */}
@@ -25,6 +28,7 @@ export default function NotFound() {
           alt=""
           width={560}
           height={560}
+          quality={60}
           className="rounded-full opacity-15 select-none"
           aria-hidden="true"
         />
@@ -46,6 +50,7 @@ export default function NotFound() {
             alt="Lạc Minh Studio"
             width={160}
             height={64}
+            quality={75}
             className="h-14 w-auto mb-8 object-contain"
           />
 

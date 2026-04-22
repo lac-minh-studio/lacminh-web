@@ -27,8 +27,8 @@ export function Navbar() {
             alt="Lạc Minh Studio logo"
             width={40}
             height={40}
+            quality={75}
             className="h-8 w-auto lg:h-10 object-contain"
-            priority
           />
           <span
             className="text-lg lg:text-2xl text-text-dark"

@@ -14,17 +14,17 @@ export function BlogCarousel({ slides }: BlogCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const slide = slides[activeIndex]
 
-  useEffect(()=>{
-    const nextPostInterval = setInterval(()=>{
-      handleNext()
-    },3000)
-    return () => clearInterval(nextPostInterval)
-  },[])
-
   const handlePrev = () =>
     setActiveIndex((i) => (i - 1 + slides.length) % slides.length)
   const handleNext = () =>
     setActiveIndex((i) => (i + 1) % slides.length)
+
+  useEffect(() => {
+    const nextPostInterval = setInterval(() => {
+      setActiveIndex((i) => (i + 1) % slides.length)
+    }, 3000)
+    return () => clearInterval(nextPostInterval)
+  }, [slides.length])
 
   return (
     <section aria-label="Tin Nổi Bật" className="w-full h-auto">
@@ -36,9 +36,9 @@ export function BlogCarousel({ slides }: BlogCarouselProps) {
               src={slide.imageSrc}
               alt={slide.imageAlt}
               fill
+              quality={65}
               className="object-cover"
-              priority
-              sizes="(max-width: 1024px) 100vw, 60vw"
+              sizes="(max-width: 1023px) calc(100vw - 2rem), (max-width: 1440px) 60vw, 845px"
             />
           </div>
 

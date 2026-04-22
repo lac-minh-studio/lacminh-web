@@ -13,7 +13,10 @@ export function ProjectsHero() {
           src="/trongdong.png"
           alt=""
           fill
-          priority
+          quality={60}
+          sizes="100vw"
+          loading="eager"
+          fetchPriority="high"
           className="object-cover"
           aria-hidden
         />

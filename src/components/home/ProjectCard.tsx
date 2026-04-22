@@ -26,7 +26,8 @@ export function ProjectCard({ project }: ProjectCardProps) {
               src={project.imageSrc}
               alt={project.imageAlt}
               fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              quality={65}
+              sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 767px) calc((100vw - 3.5rem) / 2), (max-width: 1440px) calc((100vw - 7rem) / 3), 443px"
               className="object-cover transition-transform duration-700"
             />
           ) : (

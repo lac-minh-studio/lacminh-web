@@ -76,6 +76,8 @@ export function StudioVision() {
                 src="/trongdong.png"
                 alt="Trống đồng — biểu tượng văn hóa Lạc Việt"
                 fill
+                quality={65}
+                sizes="(max-width: 479px) calc(100vw - 2rem), 448px"
                 className="object-cover"
               />
               <div className="absolute inset-0 hero-overlay opacity-30" />

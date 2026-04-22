@@ -57,8 +57,9 @@ export function GameRow({ game }: GameRowProps) {
             src={game.imageSrc}
             alt={game.imageAlt}
             fill
+            quality={60}
             className="object-cover"
-            sizes="(max-width: 768px) 100vw, 40vw"
+            sizes="(max-width: 767px) calc(100vw - 2rem), (max-width: 1440px) 40vw, 563px"
           />
         ) : (
           /* Castle placeholder for Shadow Bastion */

@@ -26,8 +26,9 @@ export function BlogCard({ post, variant = 'full', className = '', isShadow = tr
           src={post.imageSrc}
           alt={post.imageAlt}
           fill
+          quality={65}
           className="object-cover transition-transform duration-300 group-hover:scale-105"
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) calc((100vw - 2.875rem) / 2), (max-width: 1440px) calc((100vw - 4.625rem) / 4), 342px"
         />
       </div>
 

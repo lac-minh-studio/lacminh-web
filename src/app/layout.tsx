@@ -5,16 +5,18 @@ import { Footer, Navbar } from '@/components/global'
 
 const ebGaramond = EB_Garamond({
   variable: '--font-eb-garamond',
-  subsets: ['latin'],
+  subsets: ['vietnamese'],
   weight: ['500', '600', '700'],
-  display: 'swap',
+  display: 'optional',
+  preload: false,
 })
 
 const inter = Inter({
   variable: '--font-inter',
-  subsets: ['latin'],
+  subsets: ['vietnamese'],
   weight: ['400', '500', '600'],
-  display: 'swap',
+  display: 'optional',
+  preload: false,
 })
 
 export const metadata: Metadata = {
