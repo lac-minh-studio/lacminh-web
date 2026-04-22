@@ -17,7 +17,4 @@ export interface IValuePillar {
   icon: string
 }
 
-export interface ICareerStat {
-  value: string
-  label: string
-}
+// ICareerStat removed — use IStatItem from @/types/global instead.

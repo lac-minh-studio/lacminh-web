@@ -1,5 +1,5 @@
 import { Globe, Video, Share2 } from 'lucide-react'
-import { FOOTER_SECTIONS } from '@/data/home'
+import { FOOTER_SECTIONS } from '@/data/global'
 import { FACEBOOK_LINK } from '@/const'
 
 const SOCIAL_LINKS = [

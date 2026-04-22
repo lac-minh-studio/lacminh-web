@@ -1,9 +1,12 @@
-export { ProjectsMiniHero } from './ProjectsMiniHero'
-export { ProjectsBentoGrid } from './ProjectsBentoGrid'
-export { ProjectCardHero } from './ProjectCardHero'
-export { ProjectCardTall } from './ProjectCardTall'
-export { ProjectCardLite } from './ProjectCardLite'
-export { ComingSoonStrip } from './ComingSoonStrip'
-export { OrnamentalDivider } from './OrnamentalDivider'
-export { ProjectsCTAStrip } from './ProjectsCTAStrip'
-export { ManifestoSection } from './ManifestoSection'
+// ─── Editorial layout (active) ────────────────────────────────────────────────
+export { ProjectsHero } from './ProjectsHero'
+export { ProjectsStudioSection } from './ProjectsStudioSection'
+export { ProjectsGameUniverse } from './ProjectsGameUniverse'
+export { TechPlatformStrip } from './TechPlatformStrip'
+export { ProjectsCommercial } from './ProjectsCommercial'
+// ─── Leaf components ──────────────────────────────────────────────────────────
+export { StudioStatsGrid } from './StudioStatsGrid'
+export { DevelopmentTimeline } from './DevelopmentTimeline'
+export { GameRow } from './GameRow'
+export { CommercialCard } from './CommercialCard'
+

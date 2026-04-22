@@ -1,12 +1,30 @@
 ---
 screen: projects
 round: 7
-mode: approved
-base-pc-id: b18b9af40058491b90e47a4e3be43f73
-base-mobile-id: 23e87831f27249db943f6a33dffebcc1
+mode: edit
 status: approved
-implementation-round: 7
+implementation-pc-id: a1416cb9a17d46eab04c52c0a93c89cb
+implementation-mobile-id: d577387e02ea45c5906962042c42580b
+base-pc-id: a1416cb9a17d46eab04c52c0a93c89cb
+base-mobile-id: d577387e02ea45c5906962042c42580b
 ---
+
+ROUND 1 COMPLETED — Editorial redesign.
+- PC ID: 6ebddaaa44f44006b301798bbebb9cea (projects-r01-desktop)
+- Mobile ID: d1b19762dd294e6e8a458298bc154064 (projects-r01-mobile)
+- Artifacts: round-1-pc.png (53KB), round-1-mobile.png (28KB)
+- 5-section editorial text-heavy layout with glassmorphism
+- S1 Hero dark, S2 Studio Story 50/50, S3 Game Universe 3 rows, S4 Commercial, S5 CTA
+
+ROUND 2 FOCUS: Visual Identity
+- Apply design tokens more precisely: Bronze #C4954A, EB Garamond headings
+- Deepen glassmorphism: rgba(45,69,56,0.6) blur 16px on dark sections, rgba(237,224,197,0.45) on light
+- Refine typography scale: display 76px hero, H2 38-40px, body 16px line-height 1.75
+- Bronze accent hierarchy: labels 13px, chips, stat numbers 52px #C4954A
+- Neumorphic stat grid depth (S2 right column)
+- Ensure /trongdong.png watermark visible at 8% opacity in S1 and S2
+- Confirm 10px outer padding on all section wrappers
+- Canonical titles: projects-r02-desktop / projects-r02-mobile
 
 ROUND 5 COMPLETED — Results:
 - PC screen ID: 9f0740a979044397a5f618ded03b2357 (projects-r05-desktop)

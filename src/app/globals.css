@@ -85,21 +85,25 @@
 
   /* Extended font sizes — design system tokens for non-standard sizes */
   --text-2xs: 0.6875rem;       /* 11px — uppercase caption labels   */
-  --text-tiny: 0.8125rem;      /* 13px — small link / meta text     */
+  --text-tiny: 0.75rem;      /* 13px — small link / meta text     */
   --text-md: 0.9375rem;        /* 15px — medium paragraph / button  */
   --text-body: 1.0625rem;      /* 17px — emphasized body copy       */
   --text-heading-sm: 1.75rem;  /* 28px — form / card titles         */
   --text-heading-md: 2.125rem; /* 34px — section sub-headings       */
   --text-hero: 4.25rem;        /* 68px — hero headline              */
-  --text-display: 5rem;        /* 80px — projects mini-hero H1      */
 
-  /* Projects page layout tokens */
-  --height-mini-hero: 42vh;         /* mini-hero section height         */
-  --height-bento-row: 46.25rem;     /* 740px — full bento row           */
-  --height-project-hero-card: 25rem;/* 400px — Sen-City hero card       */
-  --height-project-lite-card: 20.25rem; /* 324px — web project cards    */
-  --width-bento-left: 70%;          /* bento left column width          */
-  --width-bento-right: 30%;         /* bento right column width         */
+  /* Editorial projects page — type scale (reduced ~15% for 1920px viewports) */
+  --text-proj-h1: 3.75rem;          /* 60px — hero headline (was 76px)  */
+  --text-proj-h2: 1.875rem;         /* 30px — section H2 (was 34px)     */
+  --text-proj-h3: 1.5rem;           /* 24px — game card H3 (was 30px)   */
+  --text-proj-stat: 2.75rem;        /* 44px — studio stat numbers       */
+  --text-proj-metric: 1.5rem;      /* 24px — commercial metric value   */
+  --text-proj-card-h3: 1.625rem;    /* 26px — commercial card title     */
+
+  /* Editorial projects page — colour & height tokens */
+  --color-tech-strip: #1a2a1f;      /* ultra-dark moss — tech strip bg  */
+  --color-gold: #9A7030;            /* muted gold — stats, timeline     */
+  --height-proj-hero: 27.5rem;      /* 440px — editorial hero height    */
 }
 
 body {
@@ -197,46 +201,78 @@ body {
   margin-left: auto;
   margin-right: auto;
   width: 100%;
-  padding-left: 2rem;
-  padding-right: 2rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
-/* Projects page — full-bleed section with 10px side padding */
-.projects-section {
-  width: 100%;
-  padding-left: 0.625rem;
-  padding-right: 0.625rem;
+/* ─── Editorial Projects Page ──────────────────────────────────────────────── */
+
+/* Glass card — dark variant for game universe rows */
+.glass-card-dark {
+  background: rgba(45, 69, 56, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(196, 149, 74, 0.3);
 }
 
-/* Projects page — inner content width cap */
-.projects-inner {
-  max-width: 80rem; /* 1280px */
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
+/* Diagonal cinematic transitions between sections */
+.clip-diagonal-bottom {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5rem), 0 100%);
+  padding-bottom: 10rem;
+  margin-bottom: -5rem;
+}
+.clip-diagonal-top {
+  clip-path: polygon(0 5rem, 100% 0, 100% 100%, 0 100%);
+  padding-top: 10rem;
 }
 
-/* Khế ước Lạc Hồng card — locked media slot overlay (warm amber-brown gradient) */
-/* /cultivation.jpg is the canonical asset; this gradient is the fallback/tint layer */
-.project-card-tall-tint {
-  background: linear-gradient(to bottom, rgba(45, 26, 10, 0.55), rgba(90, 45, 12, 0.75));
+/* Bronze uppercase section label */
+.proj-section-label {
+  font-family: var(--font-body);
+  font-size: var(--text-2xs);
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 600;
 }
 
-/* Dark glassmorphic bottom panel on project hero cards */
-.project-card-panel {
-  background: rgba(18, 10, 4, 0.8);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid rgba(196, 149, 74, 0.2);
+/* Timeline dot — default (past/done) */
+.proj-timeline-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  background-color: var(--color-primary);
+  border-radius: 9999px;
+  flex-shrink: 0;
 }
 
-/* Dashed Coming Soon strip border */
-.projects-dashed-strip {
-  border: 2px dashed rgba(196, 149, 74, 0.6);
+/* Timeline dot — active/current (with glow) */
+.proj-timeline-dot-active {
+  width: 1rem;
+  height: 1rem;
+  background-color: var(--color-primary);
+  border-radius: 9999px;
+  box-shadow: 0 0 0.75rem var(--color-primary);
+  flex-shrink: 0;
 }
 
-/* Manifesto section neumorphic container */
-.manifesto-card {
-  box-shadow: 8px 8px 20px #C8B892, -8px -8px 20px rgba(255, 255, 255, 0.56);
-  border: 1px solid rgba(196, 149, 74, 0.1);
+/* Timeline dot — pending (dashed outline) */
+.proj-timeline-dot-dashed {
+  width: 0.625rem;
+  height: 0.625rem;
+  background: transparent;
+  border: 1px dashed var(--color-primary);
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+/* Neumorphic sculpt — cream variant for projects stats + commercial cards */
+.proj-neumorphic-card {
+  background: var(--color-background);
+  border: 1px solid rgba(196, 149, 74, 0.25);
+  box-shadow: 8px 8px 16px rgba(126, 87, 16, 0.05), -8px -8px 16px rgba(255, 255, 255, 0.4);
+}
+
+/* Animation delay helper for timeline ping rings */
+.proj-delay-500 {
+  animation-delay: 0.5s;
 }

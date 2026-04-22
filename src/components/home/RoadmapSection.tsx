@@ -53,14 +53,14 @@ function MilestoneNode({ milestone }: { milestone: IMilestone }) {
             {milestone.year}
           </span>
           <h4
-            className="text-sm sm:text-md font-bold text-text-dark mb-2"
+            className="text-sm sm:text-md font-bold text-text-dark mb-2 text-nowrap"
             style={{ fontFamily: 'var(--font-headline)' }}
           >
             {milestone.title}
           </h4>
           <p
             className={cn(
-              'text-xs uppercase font-bold tracking-widest',
+              'text-xs uppercase font-bold tracking-widest text-nowrap',
               isCompleted && 'text-primary',
               isActive && 'text-primary animate-pulse',
               isFuture && 'text-text-dark/40'
@@ -108,7 +108,7 @@ export function RoadmapSection() {
         {/* Timeline */}
         <div className="relative">
           <div className="absolute top-5.5 left-0 w-full h-px timeline-dashed hidden lg:block" />
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 relative z-10">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 relative z-10">
             {MILESTONES.map((milestone) => (
               <MilestoneNode key={milestone.id} milestone={milestone} />
             ))}

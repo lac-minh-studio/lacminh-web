@@ -1,13 +1,7 @@
-import type { IStatItem, IProject, IMilestone, INavLink, IFooterSection } from '@/types/home'
+import type { IMilestone } from '@/types/home'
+import type { IStatItem } from '@/types/global'
 
-export const NAV_LINKS: INavLink[] = [
-  { label: 'Tầm Nhìn', href: '/'},
-  { label: 'Dự Án', href: '/projects'},
-  { label: 'Lộ Trình', href: '/roadmap'},
-  { label: 'Tuyển dụng', href: '/careers'},
-  { label: 'Blog', href: '/blog' },
-  { label: 'Liên Hệ', href: '/contact' },
-]
+// NAV_LINKS and FOOTER_SECTIONS moved to @/data/global (used by global components)
 
 export const HERO_STATS: IStatItem[] = [
   { value: '5+', label: 'Năm kinh nghiệm' },
@@ -23,62 +17,14 @@ export const SEPARATOR_STATS: IStatItem[] = [
   { value: 'Seed Round 2026', label: '' },
 ]
 
-export const PROJECTS: IProject[] = [
-  {
-    id: 'linh-nam-truyen-ky',
-    title: 'Lĩnh Nam Truyền Kỳ',
-    description:
-      'Game nhập vai thế giới mở dựa trên các truyền thuyết kỳ bí thời Hùng Vương.',
-    year: '2025',
-    platform: 'PC / Console',
-    imageSrc: '/cultivation.jpg',
-    imageAlt: 'Lĩnh Nam Truyền Kỳ — game artwork',
-  },
-  {
-    id: 'huyen-su-ky',
-    title: 'Huyền Sử Ký',
-    description:
-      'Trải nghiệm tương tác đa phương tiện đưa người xem nhập vai vào các sự kiện lịch sử.',
-    year: '2026',
-    platform: 'Web / Mobile',
-    imageSrc: '/interactive_story.png',
-    imageAlt: 'Huyền Sử Ký — interactive story artwork',
-  },
-  {
-    id: 'coi-hu-vo',
-    title: 'Cõi Hư Vô',
-    description:
-      'Hệ sinh thái Metaverse tái hiện không gian văn hóa tâm linh Việt Nam cổ đại.',
-    year: '2027',
-    platform: 'Metaverse',
-    imageSrc: '/void_map.png',
-    imageAlt: 'Cõi Hư Vô — metaverse artwork',
-  },
-]
+// PROJECTS removed — ProjectsSection now uses GAME_PROJECTS from @/data/projects
 
 export const MILESTONES: IMilestone[] = [
-  { id: '2026-q1', year: '2026 Q1', title: 'Khởi tạo Core Engine', state: 'completed' },
-  { id: '2026-q2', year: '2026 Q2', title: 'Phát hành Alpha Test', state: 'active' },
-  { id: '2026-q3', year: '2026 Q3', title: 'Hợp tác Quốc tế', state: 'future' },
-  { id: '2026-q4', year: '2026 Q4', title: 'Grand Launching', state: 'future' },
+  { id: 'founding', year: 'Jan 2026', title: 'Thành Lập Studio', state: 'completed' },
+  { id: '3games', year: 'Apr 2026', title: 'Ra Mắt 3 Game', state: 'completed' },
+  { id: 'sen-city-launch', year: 'Q3 2026', title: 'SEN CITY Ra Mắt', state: 'active' },
+  { id: 'shadow-bastion', year: 'Q4 2026', title: 'Shadow Bastion', state: 'future' },
+  { id: 'khe-uoc', year: '2028+', title: 'Khế Ước Lạc Hồng', state: 'future' },
 ]
 
-export const FOOTER_SECTIONS: IFooterSection[] = [
-  {
-    heading: 'Liên kết',
-    links: [
-      { label: 'Về chúng tôi', href: '#' },
-      { label: 'Dự án mới', href: '#' },
-      { label: 'Tuyển dụng', href: '/careers' },
-      { label: 'Blog tin tức', href: '/blog' },
-    ],
-  },
-  {
-    heading: 'Pháp lý',
-    links: [
-      { label: 'Điều khoản sử dụng', href: '#' },
-      { label: 'Chính sách bảo mật', href: '#' },
-      { label: 'Quy định cộng đồng', href: '#' },
-    ],
-  },
-]
+// FOOTER_SECTIONS moved to @/data/global

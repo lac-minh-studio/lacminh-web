@@ -1,5 +1,5 @@
 import { MoveRight } from 'lucide-react'
-import { PROJECTS } from '@/data/home'
+import { GAME_PROJECTS } from '@/data/projects'
 import { ProjectCard } from './ProjectCard'
 import { AppButton } from '@/components/hero-ui'
 
@@ -20,7 +20,7 @@ export function ProjectsSection() {
 
         {/* Cards grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
-          {PROJECTS.map((project) => (
+          {GAME_PROJECTS.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
         </div>

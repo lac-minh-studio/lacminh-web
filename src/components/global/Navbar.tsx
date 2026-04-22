@@ -5,9 +5,8 @@ import Image from 'next/image'
 import NextLink from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
-import { NAV_LINKS } from '@/data/home'
+import { NAV_LINKS } from '@/data/global'
 import { cn } from '@/lib/utils'
-import { AppButton } from '@/components/hero-ui'
 
 export function Navbar() {
   const [open, setOpen] = useState(false)

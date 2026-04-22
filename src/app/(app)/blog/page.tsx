@@ -25,8 +25,8 @@ export default function BlogPage() {
         stats={BLOG_HERO_STATS}
       />
 
-      {/* Constrained content sections — max-w-7xl (1280px) with 10px side padding */}
-      <div className="max-w-350 mx-auto px-2.5 py-7 flex flex-col gap-7">
+      {/* Constrained content sections */}
+      <div className="content-container py-7 flex flex-col gap-7">
         <BlogCarousel slides={mockCarouselSlides} />
         <BlogSwiper posts={mockGridPosts} />
         <BlogGridSection posts={mockGridPosts} filters={BLOG_FILTERS} />

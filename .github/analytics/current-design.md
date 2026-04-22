@@ -1,47 +1,256 @@
-# Analytics — Projects Screen (R7 Implementation)
+# Analytics — Projects Screen (Editorial R7 Implementation)
 **Source:** `.stitch/designs/projects/round-7-pc.html` + `round-7-mobile.html`
-**Approved round:** 7 | **Date:** 2026-04-21
+**Approved round:** 7 (editorial redesign loop) | **Locked PC ID:** `a1416cb9a17d46eab04c52c0a93c89cb` | **Locked Mobile ID:** `d577387e02ea45c5906962042c42580b`
 
 ---
 
 ## A. Component Hierarchy
 
 ```
-ProjectsPage (Server Component)
-├── ProjectsMiniHero          ← 42vh hero, /hero_background.png + dark overlay + bounce chevron
-├── ProjectsBentoGrid         ← 70/30 layout, imports all 3 card types + ComingSoonStrip
-│   ├── ProjectCardHero       ← Sen-City: large dark bg-image card, glassmorphic bottom panel
-│   ├── ProjectCardTall       ← Khế ước: tall portrait, /cultivation.jpg asset, dark overlay
-│   ├── ProjectCardLite (×2)  ← E-Commerce + Du Học: neumorphic cream cards
-│   └── ComingSoonStrip       ← Dashed bronze border strip below bento
-├── OrnamentalDivider         ← Bronze line + circle motif decorative separator
-├── ProjectsCTAStrip          ← "Sẵn sàng kiến tạo huyền thoại?" — dark moss section
-├── ManifestoSection          ← "Triết Lý Sáng Tạo" — quote on cream neumorphic bg
-└── ContactSection            ← REUSE src/components/global/ContactSection.tsx (no change)
+ProjectsPage (Server Component — src/app/(app)/projects/page.tsx)
+│
+├── ProjectsHero              ← S1: full-width dark hero, 440px height, 3-layer depth
+│   ├── [Watermark Layer]     ← /trongdong.png at 8% opacity via CSS bg-image
+│   ├── [Vignette Layer]      ← radial-gradient rgba(26,45,34,0.6) to transparent
+│   ├── [Bottom Ornament]     ← 12px strip, repeating arc, #C4954A 15% opacity
+│   ├── ProjectsHeroContent   ← section label + H1 + body paragraph
+│   └── ScrollIndicator       ← animated bounce arrow + "Khám phá" label
+│
+├── ProjectsStudioSection     ← S2: cream bg with diagonal-clip bottom, 50/50 grid
+│   ├── StudioTextColumn      ← left col: bronze left-bar + heading + 3 paragraphs
+│   ├── StudioStatsGrid       ← right col: 2×2 neumorphic stat cards (18, 6, 3, 2026)
+│   └── DevelopmentTimeline   ← full-width horizontal timeline strip (5 milestones)
+│
+├── ProjectsGameUniverse      ← S3: dark bg with diagonal-clip top, 3 editorial rows
+│   ├── GameUniverseHeader    ← section label + H2 heading
+│   └── GameRowList           ← ordered list of 3 GameRow components
+│       ├── GameRow (Khế Ước) ← row-A: text-left + /cultivation.jpg right, bronze bar
+│       ├── GameRow (SEN CITY)← row-B: text-right + /void_map.png left (reversed), bronze bar
+│       └── GameRow (Shadow)  ← row-C: text-left + placeholder right, bronze bar
+│
+├── TechPlatformStrip         ← S3.5: very dark bg (#1a2a1f), 6 pill chips horizontal
+│
+├── ProjectsCommercial        ← S4: cream bg, section heading + horizontal bronze rule
+│   └── CommercialCardGrid    ← 2 neumorphic cards: E-Commerce + Du Học
+│       └── CommercialCard    ← icon + heading + desc + tech pills + metric stat
+│
+└── ContactSection            ← S5: REUSE src/components/global/ContactSection.tsx (no change)
     (Footer is in root layout)
 ```
 
-## B. Implementation Order (bottom-up)
+---
 
-1. [x] CSS utilities → `src/app/globals.css`
-2. [x] TypeScript interfaces → `src/types/projects.ts`
-3. [x] Mock data → `src/data/projects.ts`
-4. [x] `ProjectCardHero` → `src/components/projects/ProjectCardHero.tsx`
-5. [x] `ProjectCardTall` → `src/components/projects/ProjectCardTall.tsx`
-6. [x] `ProjectCardLite` → `src/components/projects/ProjectCardLite.tsx`
-7. [x] `ComingSoonStrip` → `src/components/projects/ComingSoonStrip.tsx`
-8. [x] `OrnamentalDivider` → `src/components/projects/OrnamentalDivider.tsx`
-9. [x] `ProjectsBentoGrid` → `src/components/projects/ProjectsBentoGrid.tsx`
-10. [x] `ProjectsMiniHero` → `src/components/projects/ProjectsMiniHero.tsx`
-11. [x] `ProjectsCTAStrip` → `src/components/projects/ProjectsCTAStrip.tsx`
-12. [x] `ManifestoSection` → `src/components/projects/ManifestoSection.tsx`
-13. [x] `index.ts` → `src/components/projects/index.ts`
-14. [x] Layout → `src/app/(app)/projects/layout.tsx`
-15. [x] Page → `src/app/(app)/projects/page.tsx`
+## B. Props & State Mapping
+
+### `ProjectsHero` — Server Component (static)
+- No props — fully static markup, CSS-only animations
+
+### `DevelopmentTimeline`
+```ts
+// Props: milestones: TimelineMilestone[]
+// CSS-only animations (animate-ping for active dot)
+```
+
+### `GameRow`
+```ts
+interface GameRowProps {
+  game: GameProject
+  reversed?: boolean   // true → flex-row-reverse (image left, text right)
+}
+```
+
+### `CommercialCard`
+```ts
+interface CommercialCardProps {
+  icon: string
+  title: string
+  description: string
+  techPills: string[]
+  metric: string
+  metricLabel: string
+}
+```
 
 ---
 
-## (Previous: not-found screen — archived below)
+## C. Data Shape
+
+```ts
+// src/types/projects.ts
+
+export interface GameProject {
+  id: string
+  name: string
+  genre: string
+  status: 'pre-production' | 'in-development' | 'pending'
+  statusLabel: string
+  description: string
+  imageAsset?: string       // "/cultivation.jpg" | "/void_map.png"
+  placeholderIcon?: string  // Material Symbol name when no image
+}
+
+export interface TimelineMilestone {
+  label: string
+  date: string
+  isActive?: boolean
+  isPending?: boolean
+  sublabel?: string
+}
+
+export interface CommercialProject {
+  id: string
+  icon: string
+  title: string
+  description: string
+  techPills: string[]
+  metric: string
+  metricLabel: string
+}
+```
+
+---
+
+## D. Mock Data (src/data/projects.ts)
+
+```ts
+export const gameProjects: GameProject[] = [
+  {
+    id: 'khe-uoc',
+    name: 'KHẾ ƯỢC LẠC HỒNG',
+    genre: 'MMORPG · Huyền Sử · UE5',
+    status: 'pre-production',
+    statusLabel: 'Pre-production',
+    description: 'Sau Đại Chiến Lạc Hồng, Linh Giới tách khỏi trần thế...',
+    imageAsset: '/cultivation.jpg',
+  },
+  {
+    id: 'sen-city',
+    name: 'SEN CITY',
+    genre: 'Social MMO · Simulation · Unity',
+    status: 'in-development',
+    statusLabel: 'Đang phát triển',
+    description: 'Mega-Apartment khổng lồ với 5 tầng lớp nhà ở...',
+    imageAsset: '/void_map.png',
+  },
+  {
+    id: 'shadow-bastion',
+    name: 'SHADOW BASTION',
+    genre: 'Tower Defense · 2.5D · Unity',
+    status: 'in-development',
+    statusLabel: 'Đang phát triển',
+    description: 'Tháp phòng thủ 2.5D với kiến trúc di sản Việt...',
+    placeholderIcon: 'castle',
+  },
+]
+
+export const timelineMilestones: TimelineMilestone[] = [
+  { label: 'Thành Lập', date: 'Jan 2026' },
+  { label: '3 Game', date: 'Apr 2026' },
+  { label: 'SEN CITY', date: 'Q3 2026', isActive: true },
+  { label: 'Shadow Bastion', date: 'Q4 2026', isPending: true, sublabel: 'Pending' },
+  { label: 'Khế Ước', date: '2028+', isPending: true, sublabel: 'Pending' },
+]
+
+export const commercialProjects: CommercialProject[] = [
+  {
+    id: 'ecommerce',
+    icon: 'shopping_cart',
+    title: 'E-Commerce Máy Thổi Khí',
+    description: 'Hệ thống thương mại điện tử B2B...',
+    techPills: ['Next.js', 'WooCommerce', 'i18n'],
+    metric: '+200%',
+    metricLabel: 'Tăng trưởng doanh số Online',
+  },
+  {
+    id: 'study-abroad',
+    icon: 'school',
+    title: 'Nền Tảng Du Học',
+    description: 'Cổng thông tin kết nối học sinh Việt Nam...',
+    techPills: ['React', 'Node.js', 'PostgreSQL'],
+    metric: '1.200+',
+    metricLabel: 'Hồ sơ xử lý thành công',
+  },
+]
+
+export const techPlatforms: string[] = [
+  'Unreal Engine 5', 'Unity 6', 'Blender', 'Next.js 15', 'Steam', 'Mobile',
+]
+```
+
+---
+
+## E. CSS Utilities to Add (globals.css)
+
+```css
+.clip-diagonal-bottom {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 80px), 0 100%);
+  padding-bottom: calc(80px + 80px);
+  margin-bottom: -80px;
+}
+.clip-diagonal-top {
+  clip-path: polygon(0 80px, 100% 0, 100% 100%, 0 100%);
+  padding-top: calc(80px + 80px);
+}
+.timeline-dot { width: 10px; height: 10px; background: #C4954A; border-radius: 50%; }
+.timeline-dot.active { width: 16px; height: 16px; box-shadow: 0 0 12px #C4954A; }
+.timeline-dot.dashed { background: transparent; border: 1px dashed #C4954A; }
+```
+
+---
+
+## F. Implementation Order (bottom-up)
+
+- [ ] Add CSS utilities → `src/app/globals.css`
+- [ ] Update types → `src/types/projects.ts`
+- [ ] Update data → `src/data/projects.ts`
+- [ ] `ScrollIndicator` → `src/components/projects/ScrollIndicator.tsx`
+- [ ] `DevelopmentTimeline` → `src/components/projects/DevelopmentTimeline.tsx`
+- [ ] `GameRow` → `src/components/projects/GameRow.tsx`
+- [ ] `CommercialCard` → `src/components/projects/CommercialCard.tsx`
+- [ ] `TechPlatformStrip` → `src/components/projects/TechPlatformStrip.tsx`
+- [ ] `StudioStatsGrid` → `src/components/projects/StudioStatsGrid.tsx`
+- [ ] `ProjectsHero` → `src/components/projects/ProjectsHero.tsx`
+- [ ] `ProjectsStudioSection` → `src/components/projects/ProjectsStudioSection.tsx`
+- [ ] `ProjectsGameUniverse` → `src/components/projects/ProjectsGameUniverse.tsx`
+- [ ] `ProjectsCommercial` → `src/components/projects/ProjectsCommercial.tsx`
+- [ ] Update `index.ts` → `src/components/projects/index.ts`
+- [ ] Update page → `src/app/(app)/projects/page.tsx`
+
+---
+
+## G. Asset Map
+
+| Asset | Role | Section |
+|-------|------|---------|
+| `/public/trongdong.png` | Watermark + bottom ornamental strip | S1 hero |
+| `/public/cultivation.jpg` | Game card image | S3 Row A (Khế Ước) |
+| `/public/void_map.png` | Game card image | S3 Row B (SEN CITY) |
+| (placeholder) Material Symbol "castle" | Shadow Bastion placeholder | S3 Row C |
+
+---
+
+## H. Key Style Tokens
+
+```
+Sections bg: S1=#2D4538, S2=#EDE0C5, S3=#2D4538, S3.5=#1a2a1f, S4=#EDE0C5, S5=#2D4538
+Content zone: use `.content-container` class (max-width 1440px, padding 2rem L/R, margin auto) — defined in globals.css and shared across Navbar, ContactSection, and all editorial project sections. Never create a custom content-zone class.
+Section side padding: exactly 10px L/R on wrappers
+Glass card dark: rgba(45,69,56,0.65) backdrop-blur-[20px] border rgba(196,149,74,0.3)
+Neumorphic sculpt: bg #EDE0C5, dual-direction box-shadow
+Section label: Inter 12px #C4954A uppercase tracking-[0.15em] font-semibold
+H1: EB Garamond 76px #F5EDD8 leading-[1.1] tracking-[-0.03em]
+H2: EB Garamond 34px #F5EDD8 or #1E1208 depending on section bg
+H3 (game rows): EB Garamond 30px #F5EDD8
+Stat number: EB Garamond 52px #9A7030
+Metric number: EB Garamond 44px #9A7030
+Body: Inter 14px leading-[1.75]
+Bronze rule: 2px h, 60px wide, bg-[#C4954A], mx-auto mt-6
+Left bronze bar: 4px wide, absolute left-0 top-0 bottom-0, gradient rgba(196,149,74,0.4-0.8)→transparent
+Live badge: green dot w-2 h-2 bg-green-500 animate-pulse shadow-glow
+Focus ring: outline 2px solid #C4954A offset 2px
+Submit button: gradient from-[#C4954A] to-[#9A7030] text-white py-4 rounded-lg font-semibold
+```
+
 
 # Analytics: `not-found` — Coming Soon / 404 Page
 

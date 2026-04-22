@@ -1,6 +1,7 @@
-import type { IJobPosition, IValuePillar, ICareerStat } from '@/types/careers'
+import type { IJobPosition, IValuePillar } from '@/types/careers'
+import type { IStatItem } from '@/types/global'
 
-export const CAREER_STATS: ICareerStat[] = [
+export const CAREER_STATS: IStatItem[] = [
   { value: '5+', label: 'Năm phát triển' },
   { value: '3', label: 'Dự án lớn' },
   { value: '18', label: 'Thành viên' },

@@ -249,3 +249,46 @@
 **Contact + Footer:** ✅ Single-column stacked.
 
 ### Round 7 Verdict: APPROVED ✅ — Proceeding to Phase 3 + Phase 4
+
+---
+
+## EDITORIAL REDESIGN LOOP — Round 6 — Polish & Accessibility + Diagonal Section Transitions
+**Date:** 2026-05-01
+**PC ID:** 6619f7b1bba94f5896df005da69afd6a | **Mobile ID:** 8a015be5684a4aacb29ba0864880b4d2
+**Artifacts:** round-6-pc.png (42KB), round-6-mobile.png (20KB)
+**Insight Source:** Naughty Dog, Larian Studios — cinematic diagonal section transitions
+
+### Changes Applied
+- ✅ Diagonal clip-path transition between S2 (cream) and S3 (dark), 80px height on desktop / 40px mobile
+- ✅ WCAG AA contrast audit — heading #F5EDD8 on #2D4538 verified ≥7:1, body text ≥4.5:1
+- ✅ All interactive elements: 2px solid #C4954A focus rings with offset 2px
+- ✅ Icon size ≥20px stroke ≥1.5px globally
+- ✅ Section vertical padding standardized ≥80px (desktop) / ≥60px (mobile)
+- ✅ Touch targets mobile ≥44px — form inputs, buttons, icon rows
+- ✅ Submit button min-height 48px
+- ✅ 10px side-padding on all section wrappers confirmed
+
+### Round 6 Verdict: PASS ✅ — All 6 sections + tech strip present, no hard defects.
+
+---
+
+## EDITORIAL REDESIGN LOOP — Round 7 — Final Cohesion + Monumental Hero + Trống Đồng Ornamentals
+**Date:** 2026-05-01
+**PC ID:** a1416cb9a17d46eab04c52c0a93c89cb | **Mobile ID:** d577387e02ea45c5906962042c42580b
+**Artifacts:** round-7-pc.png (41KB), round-7-mobile.png (20KB), round-7-pc.html (34KB), round-7-mobile.html (33KB)
+**Insight Source:** FromSoftware, CD Projekt RED — layered depth hero, chapter marker accents
+
+### Changes Applied
+- ✅ S1 Hero: 3-layer depth — Trống Đồng 8% watermark + corner vignette + bottom Đông Sơn arc strip 15% opacity
+- ✅ S2 Studio Story: 4px left-edge bronze bar (gradient top→transparent) as chapter marker
+- ✅ S3 Game Universe: 4px bronze left-edge bar per glassmorphic row (3 bars total)
+- ✅ S4 Commercial heading "ĐỐI TÁC & ĐẦU TƯ": 2px centered horizontal bronze rule below H2
+- ✅ S5 Contact section heading: 2px centered horizontal bronze rule below heading
+- ✅ Cross-page cohesion check vs home-r07 (200f705d), careers-r07 (6f877dfc), blogs-r08 (d9542985)
+- ✅ EB Garamond heading weight consistent across all pages
+- ✅ Bronze accent #C4954A consistent in chips, bars, stats
+- ✅ Glass border rgba(196,149,74,0.3) consistent
+- ✅ All 6 sections + tech strip present, no padding creep
+- ✅ Implementation HTML downloaded: round-7-pc.html + round-7-mobile.html
+
+### Round 7 Verdict: APPROVED ✅ — Status set to approved. Proceeding to Phase 3 Analytics.

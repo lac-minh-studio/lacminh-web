@@ -301,6 +301,17 @@ export interface IPullRequest {
 - **Responsive:** Mobile-first. Use `sm:` `md:` `lg:` prefixes. Desktop layouts start at `lg:`
 - **Dark mode:** Use `dark:` prefix only — never hardcode dark colors without a `dark:` paired light version, unless the app only supports one mode (check `.stitch/DESIGN.md`)
 
+### Content Width Convention
+
+The project uses **one** shared content-width utility — `content-container` (defined in `src/app/globals.css`):
+```css
+/* max-width: 1440px, padding: 2rem L/R, margin: auto */
+.content-container { ... }
+```
+- **Always use `content-container`** as the inner wrapper for any full-width section — never invent a custom `max-w-*` wrapper.
+- Do NOT create page-specific content-zone classes (e.g. `proj-content-zone`) — they duplicate this rule.
+- `content-container` is already used by `Navbar`, `ContactSection`, and all editorial projects sections.
+
 - **Utility for conditional classes:**
 
 ```ts
