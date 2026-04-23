@@ -1,0 +1,1 @@
+export { CareerDetailView } from './CareerDetailView'

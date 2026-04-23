@@ -23,6 +23,14 @@
       "currentRound": 7,
       "status": "approved"
     },
+    "careers-detail": {
+      "pcId": "f8d3774693c64020809f3a2f6b7e093c",
+      "mobileId": "0a7f0435618948509926bf9b1da7c821",
+      "pcCanonicalTitle": "careers-detail-r07-desktop",
+      "mobileCanonicalTitle": "careers-detail-r07-mobile",
+      "currentRound": 7,
+      "status": "approved"
+    },
     "blogs": {
       "pcId": "d95429855a3e4d52bd9cc4721e6fa12b",
       "mobileId": "a0385bcf20974e87abba6272646cab1b",

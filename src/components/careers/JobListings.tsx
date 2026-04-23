@@ -46,7 +46,7 @@ export function JobListings() {
             có chung chí hướng.
           </p>
           <a
-            href="#contact"
+            href="/contact"
             className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-primary text-text-light text-md font-semibold hover:bg-secondary transition-colors"
             style={{ boxShadow: 'var(--shadow-neu-cta)' }}
           >

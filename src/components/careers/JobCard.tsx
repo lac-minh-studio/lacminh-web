@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { ArrowRight, Ellipsis } from 'lucide-react'
 import type { IJobPosition } from '@/types/careers'
 
@@ -53,17 +54,17 @@ export function JobCard({ job }: JobCardProps) {
       </div>
 
       {/* CTA */}
-      <a
+      <Link
         href={job.linkHref}
         className="flex items-center gap-2 text-tiny font-semibold text-primary hover:text-secondary transition-colors group mt-1"
       >
-        Ứng tuyển ngay
+        Xem thêm
         <ArrowRight
           size={15}
           strokeWidth={2}
           className="group-hover:translate-x-1 transition-transform"
         />
-      </a>
+      </Link>
     </div>
   )
 }
@@ -85,17 +86,17 @@ export function JobNewCard() {
           Chúng tôi luôn tìm kiếm những tài năng cùng đam mê
         </p>
       </div>
-      <a
-        href="#contact"
+      <Link
+        href="/contact"
         className="flex items-center gap-2 text-tiny font-semibold text-primary hover:text-secondary transition-colors group mt-1"
       >
-        Ứng tuyển ngay
+        Liên hệ ngay
         <ArrowRight
           size={15}
           strokeWidth={2}
           className="group-hover:translate-x-1 transition-transform"
         />
-      </a>
+      </Link>
     </div>
   )
 }

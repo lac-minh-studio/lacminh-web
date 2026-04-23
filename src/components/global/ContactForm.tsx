@@ -13,7 +13,20 @@ import {
 } from '@heroui/react'
 import { AppButton } from '@/components/hero-ui'
 
-const INVESTMENT_TYPES = ['Venture Capital', 'Private Angel', 'Strategic Partner']
+const DEFAULT_CATEGORY_OPTIONS = [
+  'Venture Capital',
+  'Private Angel',
+  'Strategic Partner',
+]
+
+interface ContactFormProps {
+  title?: string
+  categoryLabel?: string
+  categoryOptions?: string[]
+  notesLabel?: string
+  notesPlaceholder?: string
+  submitLabel?: string
+}
 
 function isValidPhone(value: string) {
   return /^[+\d\s()-]{8,20}$/.test(value.trim())
@@ -23,11 +36,21 @@ const labelClass = 'text-text-light/60 text-2xs uppercase tracking-widest mb-1 b
 const inputClass =
   'w-full h-11 bg-white/5 border border-primary/40 rounded-lg text-text-light px-4 focus:ring-2 focus:ring-primary focus:outline-none transition-all text-sm placeholder:text-text-light/20'
 
-export function ContactForm() {
+export function ContactForm({
+  title = 'Gửi đề xuất hợp tác',
+  categoryLabel = 'Lĩnh vực đầu tư',
+  categoryOptions = DEFAULT_CATEGORY_OPTIONS,
+  notesLabel = 'Ghi chú',
+  notesPlaceholder = 'Lời nhắn của bạn...',
+  submitLabel = 'Gửi lời mời hợp tác',
+}: ContactFormProps) {
+  const formCategories =
+    categoryOptions.length > 0 ? categoryOptions : DEFAULT_CATEGORY_OPTIONS
+
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
-  const [investmentType, setInvestmentType] = useState(INVESTMENT_TYPES[0])
+  const [selectedCategory, setSelectedCategory] = useState(formCategories[0])
   const [notes, setNotes] = useState('')
   const [phoneError, setPhoneError] = useState<string | undefined>()
 
@@ -54,7 +77,7 @@ export function ContactForm() {
         className="text-heading-sm text-text-light font-bold mb-10"
         style={{ fontFamily: 'var(--font-headline)' }}
       >
-        Gửi đề xuất hợp tác
+        {title}
       </h3>
 
       <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
@@ -90,20 +113,22 @@ export function ContactForm() {
           </TextField>
         </div>
 
-        {/* Investment type */}
+        {/* Category type */}
         <Select
-          selectedKey={investmentType}
-          onSelectionChange={(key: Key | null) => { if (key !== null) setInvestmentType(String(key)) }}
+          selectedKey={selectedCategory}
+          onSelectionChange={(key: Key | null) => {
+            if (key !== null) setSelectedCategory(String(key))
+          }}
           className="flex flex-col gap-1"
         >
-          <Label className={labelClass}>Lĩnh vực đầu tư</Label>
+          <Label className={labelClass}>{categoryLabel}</Label>
           <Select.Trigger className="w-full h-11 bg-surface-dark border border-primary/40 rounded-lg text-text-light px-4 text-sm flex items-center justify-between">
             <Select.Value />
             <Select.Indicator />
           </Select.Trigger>
           <Select.Popover>
             <ListBox className="bg-surface-dark border border-primary/30 rounded-lg overflow-hidden py-1">
-              {INVESTMENT_TYPES.map((type) => (
+              {formCategories.map((type) => (
                 <ListBoxItem
                   key={type}
                   id={type}
@@ -118,16 +143,16 @@ export function ContactForm() {
 
         {/* Notes */}
         <TextField value={notes} onChange={setNotes} className="flex flex-col gap-1">
-          <Label className={labelClass}>Ghi chú</Label>
+          <Label className={labelClass}>{notesLabel}</Label>
           <TextArea
             rows={3}
-            placeholder="Lời nhắn của bạn..."
+            placeholder={notesPlaceholder}
             className="w-full bg-white/5 border border-primary/40 rounded-lg text-text-light p-4 focus:ring-1 focus:ring-primary transition-all text-sm resize-none placeholder:text-text-light/20"
           />
         </TextField>
 
         <AppButton type="submit" className="w-full h-14 text-base uppercase tracking-widest mt-4">
-          Gửi lời mời hợp tác
+          {submitLabel}
         </AppButton>
       </form>
     </div>

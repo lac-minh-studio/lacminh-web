@@ -63,6 +63,7 @@
 * [ ] `about` → `src/app/about/page.tsx`
 * [x] `projects` → `src/app/(app)/projects/page.tsx` ✅ Round 7 approved
 * [x] `careers` → `src/app/careers/page.tsx` ✅ Round 7 approved
+* [x] `careers-detail` → `src/app/(app)/careers/[slug]/page.tsx` ✅ Round 7 approved
 * [ ] `blog` → `src/app/blog/page.tsx`
 * [ ] `contact` → `src/app/contact/page.tsx`
 
