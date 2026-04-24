@@ -11,7 +11,7 @@ export const HERO_STATS: IStatItem[] = [
 ]
 
 export const SEPARATOR_STATS: IStatItem[] = [
-  { value: 'Thành lập 2024', label: '' },
+  { value: 'Thành lập 2026', label: '' },
   { value: '3 tựa game', label: '' },
   { value: '18 nhân sự', label: '' },
   { value: 'Seed Round 2026', label: '' },
