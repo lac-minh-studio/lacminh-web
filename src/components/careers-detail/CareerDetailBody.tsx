@@ -2,6 +2,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Share2, Sparkles } from 'lucide-react'
 import type { IJobPosition } from '@/types/careers'
+import { SITE_URL } from '@/const'
+import { AppButton } from '@/components/hero-ui'
 
 interface CareerDetailBodyProps {
   job: IJobPosition
@@ -88,15 +90,16 @@ export function CareerDetailBody({ job }: CareerDetailBodyProps) {
             </div>
 
             <div className="mt-8 space-y-3">
-              <Link
-                href="/contact"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold uppercase tracking-widest text-text-light transition-colors hover:bg-secondary"
+              <AppButton
+              isDisabled
+              className="h-11.5 w-full"
               >
                 Ứng tuyển ngay
                 <ArrowRight size={16} strokeWidth={2} />
-              </Link>
+              </AppButton>
               <Link
-                href="/contact#contact-form"
+                href="https://www.facebook.com/profile.php?id=61579501680356"
+                target='_blank'
                 className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-primary/40 px-5 py-3 text-sm font-semibold uppercase tracking-widest text-primary transition-colors hover:bg-primary/10"
               >
                 Liên hệ HR
@@ -121,18 +124,22 @@ export function CareerDetailBody({ job }: CareerDetailBodyProps) {
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                className="rounded-xl border border-primary/15 bg-surface/40 px-3 py-2 text-2xs font-bold uppercase tracking-widest text-text-dark transition-colors hover:bg-primary/10"
+              <Link
+                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`${SITE_URL}/careers/${job.slug}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-xl border border-primary/15 bg-surface/40 px-3 py-2 text-2xs font-bold uppercase tracking-widest text-text-dark transition-colors hover:bg-primary/10 text-center"
               >
                 Facebook
-              </button>
-              <button
-                type="button"
-                className="rounded-xl border border-primary/15 bg-surface/40 px-3 py-2 text-2xs font-bold uppercase tracking-widest text-text-dark transition-colors hover:bg-primary/10"
+              </Link>
+              <Link
+                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`${SITE_URL}/careers/${job.slug}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-xl border border-primary/15 bg-surface/40 px-3 py-2 text-2xs font-bold uppercase tracking-widest text-text-dark transition-colors hover:bg-primary/10 text-center"
               >
                 LinkedIn
-              </button>
+              </Link>
             </div>
           </div>
         </aside>

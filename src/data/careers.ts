@@ -42,8 +42,8 @@ export const JOB_POSITIONS: IJobPosition[] = [
       'Xây dựng giao diện dashboard CMS cho Lạc Minh — từ quản lý bài viết, hình ảnh đến các công cụ hỗ trợ SEO — với Next.js, làm việc bán thời gian linh hoạt và mentor đồng hành sát sao.',
     skills: ['React', 'Next.js', 'Tailwind CSS', 'TypeScript'],
     level: 'intern',
-    location: 'TP. HCM',
-    workType: 'Bán thời gian',
+    location: 'Remote',
+    workType: 'Part time',
     intro:
       'Tại Lạc Minh Studio, bạn sẽ tham gia xây dựng giao diện dashboard cho hệ thống CMS nội bộ — nơi đội ngũ biên tập viết bài, quản lý nội dung và tối ưu SEO hàng ngày. Đây không phải project giả định: bạn làm việc trên sản phẩm thật, xây dựng các tính năng thiết thực như trình soạn thảo bài viết, quản lý hình ảnh và bộ công cụ hỗ trợ SEO trực quan. Vị trí thực tập bán thời gian này phù hợp với các bạn sinh viên yêu thích giao diện có chiều sâu nghiệp vụ, muốn hiểu cách một sản phẩm nội dung vận hành từ bên trong và trưởng thành dưới sự dẫn dắt của mentor nhiều kinh nghiệm.',
     responsibilities: [
@@ -64,7 +64,7 @@ export const JOB_POSITIONS: IJobPosition[] = [
       { label: 'Địa điểm', value: 'Remote' },
       { label: 'Hình thức', value: 'Part time' },
       { label: 'Hỗ trợ', value: 'Mộc thực tập' },
-      { label: 'Kinh nghiệm', value: 'Sinh viên năm 3 trở lên' },
+      { label: 'Kinh nghiệm', value: 'Sinh viên năm 3' },
       { label: 'Hạn nộp', value: '30/06/2026' },
     ],
     linkHref: '/careers/frontend-developer-intern',
@@ -78,8 +78,8 @@ export const JOB_POSITIONS: IJobPosition[] = [
       'Xây dựng và vận hành hệ thống backend CMS cho Lạc Minh — quản lý bài viết, tin tức và nội dung kiến thức — với Next.js và Firebase Firestore, làm việc bán thời gian linh hoạt và mentor đồng hành sát sao.',
     skills: ['Next.js', 'Node.js', 'Firebase', 'TypeScript'],
     level: 'intern',
-    location: 'TP. HCM',
-    workType: 'Bán thời gian',
+    location: 'Remote',
+    workType: 'Part time',
     intro:
       'Tại Lạc Minh Studio, bạn sẽ tham gia xây dựng hệ thống CMS nội bộ — nền tảng quản lý toàn bộ nội dung số của studio, bao gồm bài viết, tin tức, và kho kiến thức chuyên ngành. Đây không phải project giả định: bạn sẽ làm việc trực tiếp trên hệ thống thật, nơi dữ liệu được tổ chức bằng Firebase Firestore và logic nghiệp vụ được xử lý qua Next.js API Routes. Vị trí thực tập bán thời gian này phù hợp với các bạn sinh viên muốn hiểu sâu về thiết kế hệ thống dữ liệu, xây dựng API chuẩn chỉnh và trưởng thành trong môi trường có mentor đồng hành sát sao.',
     responsibilities: [
@@ -100,7 +100,7 @@ export const JOB_POSITIONS: IJobPosition[] = [
       { label: 'Địa điểm', value: 'Remote' },
       { label: 'Hình thức', value: 'Part time' },
       { label: 'Hỗ trợ', value: 'Mộc thực tập' },
-      { label: 'Kinh nghiệm', value: 'Sinh viên năm 3 trở lên' },
+      { label: 'Kinh nghiệm', value: 'Sinh viên năm 3' },
       { label: 'Hạn nộp', value: '30/06/2026' },
     ],
     linkHref: '/careers/backend-developer-intern',
@@ -114,8 +114,8 @@ export const JOB_POSITIONS: IJobPosition[] = [
       'Tạo dựng thế giới 3D cho SEN CITY — tựa game giả lập nuôi thú cưng, trồng cây và setup căn hộ — với Blender, làm việc bán thời gian linh hoạt và mentor đồng hành sát sao.',
     skills: ['Blender', '3D Modeling', 'Texturing', 'Game Art'],
     level: 'intern',
-    location: 'TP. HCM',
-    workType: 'Bán thời gian',
+    location: 'Remote',
+    workType: 'Part time',
     intro:
       'Tại Lạc Minh Studio, bạn sẽ tham gia xây dựng thế giới nghệ thuật 3D cho SEN CITY — một tựa game giả lập đời sống căn hộ với quy mô đầy tham vọng: 5 tầng lớp nhà ở từ studio thô đến penthouse xa hoa, hệ thống thú cưng AI với tính cách 8 chiều, ban công farming theo mùa, và mạng xã hội cư dân sôi động. Đây không phải bài tập nghệ thuật — bạn sẽ tạo ra các asset 3D thật sự xuất hiện trong game, từ nội thất căn hộ, chậu cây ban công đến những chú mèo AI đáng yêu. Vị trí này phù hợp với các bạn yêu thích 3D modeling, muốn hiểu quy trình art production trong một game studio thực chiến và trưởng thành dưới sự dẫn dắt của mentor nhiều kinh nghiệm.',
     responsibilities: [
@@ -136,7 +136,7 @@ export const JOB_POSITIONS: IJobPosition[] = [
       { label: 'Địa điểm', value: 'Remote' },
       { label: 'Hình thức', value: 'Part time' },
       { label: 'Hỗ trợ', value: 'Mộc thực tập' },
-      { label: 'Kinh nghiệm', value: 'Sinh viên năm 3 trở lên' },
+      { label: 'Kinh nghiệm', value: 'Sinh viên năm 3' },
       { label: 'Hạn nộp', value: '30/06/2026' },
     ],
     linkHref: '/careers/game-artist-intern',
@@ -150,8 +150,8 @@ export const JOB_POSITIONS: IJobPosition[] = [
       'Phân tích yêu cầu và xây dựng tài liệu thiết kế cho SEN CITY — từ game mechanics, hệ thống thú cưng AI đến luồng trải nghiệm người chơi — làm việc bán thời gian linh hoạt và mentor đồng hành sát sao.',
     skills: ['Game Design Document', 'User Story', 'Figma', 'Documentation'],
     level: 'intern',
-    location: 'TP. HCM',
-    workType: 'Bán thời gian',
+    location: 'Remote',
+    workType: 'Part time',
     intro:
       'Tại Lạc Minh Studio, bạn sẽ đảm nhận vai trò cầu nối giữa ý tưởng sáng tạo và đội ngũ phát triển trong dự án SEN CITY — tựa game giả lập đời sống căn hộ với 5 tầng lớp nhà ở, hệ thống thú cưng AI tính cách 8 chiều, ban công farming theo mùa và mạng xã hội cư dân sôi động. Công việc của bạn là lắng nghe, đặt câu hỏi đúng, rồi chuyển hóa ý tưởng game thành tài liệu rõ ràng để dev, artist và designer có thể thực thi. Đây là vị trí lý tưởng cho các bạn yêu thích game, có tư duy hệ thống và muốn hiểu sâu cách một tựa game được kiến tạo từ bên trong.',
     responsibilities: [
@@ -172,7 +172,7 @@ export const JOB_POSITIONS: IJobPosition[] = [
       { label: 'Địa điểm', value: 'Remote' },
       { label: 'Hình thức', value: 'Part time' },
       { label: 'Hỗ trợ', value: 'Mộc thực tập' },
-      { label: 'Kinh nghiệm', value: 'Sinh viên năm 3 trở lên' },
+      { label: 'Kinh nghiệm', value: 'Sinh viên năm 3' },
       { label: 'Hạn nộp', value: '30/06/2026' },
     ],
     linkHref: '/careers/business-analyst-game-intern',
@@ -186,8 +186,8 @@ export const JOB_POSITIONS: IJobPosition[] = [
       'Phân tích yêu cầu và xây dựng tài liệu sản phẩm cho hệ thống web Lạc Minh — từ CMS quản lý nội dung, luồng đăng bài đến các tính năng hỗ trợ SEO — làm việc bán thời gian linh hoạt và mentor đồng hành sát sao.',
     skills: ['Business Analysis', 'User Story', 'Figma', 'Documentation'],
     level: 'intern',
-    location: 'TP. HCM',
-    workType: 'Bán thời gian',
+    location: 'Remote',
+    workType: 'Part time',
     intro:
       'Tại Lạc Minh Studio, bạn sẽ đảm nhận vai trò cầu nối giữa đội ngũ nội dung và đội kỹ thuật trong việc phát triển hệ thống web nội bộ — bao gồm CMS quản lý bài viết, tin tức, hình ảnh và bộ công cụ hỗ trợ SEO. Công việc của bạn là lắng nghe nhu cầu từ biên tập viên và stakeholder, rồi chuyển hóa thành tài liệu sản phẩm rõ ràng để đội frontend và backend triển khai đúng hướng. Đây là vị trí lý tưởng cho các bạn có tư duy sản phẩm, quan tâm đến trải nghiệm người dùng và muốn hiểu cách một hệ thống web nội dung được xây dựng từ đầu.',
     responsibilities: [
@@ -208,7 +208,7 @@ export const JOB_POSITIONS: IJobPosition[] = [
       { label: 'Địa điểm', value: 'Remote' },
       { label: 'Hình thức', value: 'Part time' },
       { label: 'Hỗ trợ', value: 'Mộc thực tập' },
-      { label: 'Kinh nghiệm', value: 'Sinh viên năm 3 trở lên' },
+      { label: 'Kinh nghiệm', value: 'Sinh viên năm 3' },
       { label: 'Hạn nộp', value: '30/06/2026' },
     ],
     linkHref: '/careers/business-analyst-web-intern',
@@ -222,8 +222,8 @@ export const JOB_POSITIONS: IJobPosition[] = [
       'Thiết kế gameplay, cơ chế và hành trình người chơi cho các tựa game huyền sử Việt Nam.',
     skills: ['Game Design', 'Unity', 'Prototyping', 'UX Research'],
     level: 'intern',
-    location: 'TP. HCM',
-    workType: 'Toàn thời gian',
+    location: 'Remote',
+    workType: 'Part time',
     intro:
       'Lạc Minh Studio tìm kiếm những bạn yêu thiết kế gameplay và có mong muốn kể chuyện Việt bằng ngôn ngữ game. Bạn sẽ cùng đội sản phẩm định hình trải nghiệm người chơi từ ý tưởng đến prototype.',
     responsibilities: [
@@ -239,7 +239,7 @@ export const JOB_POSITIONS: IJobPosition[] = [
     hiringProcess: ['Lọc hồ sơ', 'Phỏng vấn', 'Playtest case'],
     summary: [
       { label: 'Địa điểm', value: 'Remote' },
-      { label: 'Kinh nghiệm', value: 'Sinh viên năm 3 trở lên' },
+      { label: 'Kinh nghiệm', value: 'Sinh viên năm 3' },
       { label: 'Hạn nộp', value: '30/06/2026' },
     ],
     linkHref: '/careers/game-designer-intern',

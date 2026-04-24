@@ -12,8 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    ".github/**",
-    ".stitch/**",
+    "node_modules",
+    ".github",
+    ".stitch",
+    ".vscode",
   ]),
 ]);
 
