@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { EB_Garamond, Inter } from 'next/font/google'
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next"
 import './globals.css'
 import { Footer, Navbar } from '@/components/global'
 const ebGaramond = EB_Garamond({
@@ -31,7 +32,8 @@ export default function RootLayout({
   return (
     <html lang="vi" data-theme="light" className={`${ebGaramond.variable} ${inter.variable}`}>
       <head>
-        <meta name="google-site-verification" content="wsFe-SNqNCWEzU_ZZMwPrQKxR_Bg9bxnTyx8udmE1KA" />
+        <meta name="google-site-verification" content="vAsFyLZZhpGD4O8qYJ8OQOAwPPbTdFAb5V74n0-eq-s" />
+        <meta name="msvalidate.01" content="6509FBFAD944143EB4B947A82889A140" />
         <script async src={`https://www.googletagmanager.com/gtag/js?id=G-KTZTHNJ5CN`} />
         <script
           dangerouslySetInnerHTML={{
@@ -47,6 +49,7 @@ export default function RootLayout({
       </head>
       <body>
         <SpeedInsights/>
+        <Analytics />
         <Navbar />
         {children}
         <Footer />
