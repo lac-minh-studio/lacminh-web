@@ -54,6 +54,14 @@
       "mobileCanonicalTitle": "projects-r07-mobile",
       "currentRound": 7,
       "status": "approved"
+    },
+    "projects-detail-sen-city": {
+      "pcId": "e245533d76774c7c8ee4807fc2c02f40",
+      "mobileId": "e4eee67754cc429c83d838f639a575c2",
+      "pcCanonicalTitle": "projects-detail-sen-city-r06-desktop",
+      "mobileCanonicalTitle": "projects-detail-sen-city-r06-mobile",
+      "currentRound": 6,
+      "status": "approved"
     }
   }
 }

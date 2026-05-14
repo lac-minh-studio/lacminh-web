@@ -1,0 +1,522 @@
+---
+name: stitch-unified
+description: 'Autonomous UI design workflow using Stitch MCP with mandatory 6-round refinement. Combines bold aesthetic direction, prompt optimization, and iterative polish. Each round produces PC + Mobile designs. Auto-generates DESIGN.md from distinctive design principles. Use for: building new screens, designing app interfaces, creating production-ready UI from scratch.'
+argument-hint: 'screen name or "continue" to resume'
+---
+
+# Stitch Unified Skill
+
+Execute a mandatory 6-round design refinement workflow. Each round generates two device variants (PC + Mobile). Download PNG artifacts after every round. Download HTML only after approval. Auto-generate DESIGN.md if missing.
+
+## Unified Components
+
+1. **Design aesthetic direction** — Generate distinctive visual identity from design-philosophy.md
+2. **Prompt optimization** — Enhance user input with Stitch-specific terminology and canvas constraints
+3. **Baton-driven iteration** — Track round state per screen; never skip rounds
+
+## Core Principles
+
+> **HARD RULE 1:** Every screen MUST complete 6 refinement rounds before approval. Auto-pilot mode runs all 6 continuously.
+> **HARD RULE 2:** Every round produces TWO designs — PC (DESKTOP) and Mobile (MOBILE, ≤450px).
+> **HARD RULE 3:** Code is generated from HTML downloads, not PNG screenshots.
+> **HARD RULE 4:** All pages share a cohesive visual language — cross-page style consistency is mandatory.
+> **HARD RULE 5:** Mobile artifacts saved at highest export resolution; never downscale.
+> **HARD RULE 6:** HTML downloaded only for the approved implementation round.
+> **HARD RULE 7:** Canonical local titles: `{screen}-r{round:02d}-desktop` and `{screen}-r{round:02d}-mobile`.
+> **HARD RULE 8:** If `.stitch/DESIGN.md` does not exist, auto-generate it from [design-philosophy.md](resources/design-philosophy.md) before Round 1.
+
+## The 6-Round Auto-Pilot Protocol
+
+Auto-pilot mode executes all 6 rounds in sequence without pause:
+
+| Round | Focus | Aesthetic Integration |
+|-------|-------|---------------------|
+| **1** | **Concept & Layout** | 🎨 **DESIGN THINKING REQUIRED** — Choose bold aesthetic direction, distinctive typography, conceptual tone |
+| **2** | **Visual Identity** | 🎨 **DESIGN THINKING REQUIRED** — Apply color system, motion strategy, spatial composition philosophy |
+| **3** | **Component Detail** | Refine components using established aesthetic; micro-states (hover, active, disabled) |
+| **4** | **Data & Content** | Fill with realistic mock data; test aesthetic under real content density |
+| **5** | **Edge Cases & Density** | Empty/error/loading states; overflow/truncation; stress-test the design system |
+| **6** | **Polish & Accessibility** | Final contrast, focus indicators, spacing consistency, responsive behavior |
+
+After Round 6, **auto-approve** if all quality criteria pass, then download HTML for code implementation.
+
+## Design Thinking (Rounds 1 & 2 Only)
+
+Before Stitch generation in Round 1 and Round 2, conduct a **Design Thinking Exercise**:
+
+**1. Context Understanding:**
+- Purpose: What problem does this screen solve? Who uses it?
+- User workflow: What actions do they take?
+- Content hierarchy: What's most important?
+
+**2. Aesthetic Direction (BOLD CHOICE):**
+Pick an extreme and commit:
+- Brutally minimal / Maximalist chaos / Retro-futuristic / Organic natural / Luxury refined / Playful toy-like / Editorial magazine / Brutalist raw / Art Deco geometric / Soft pastel / Industrial utilitarian
+
+**3. Typography (DISTINCTIVE CHOICES):**
+- FORBIDDEN: Inter, Roboto, Arial, system fonts
+- REQUIRED: Pair a distinctive display font with a refined body font
+- Examples: [See design-philosophy.md](resources/design-philosophy.md)
+
+**4. Color & Visual System:**
+- Dominant colors with sharp accents (avoid evenly-distributed palettes)
+- CSS variables for consistency
+- Contextual backgrounds (gradients, noise, textures, patterns) over solid colors
+
+**5. Motion Strategy:**
+- High-impact page load with staggered reveals (animation-delay)
+- Scroll-triggered effects
+- Hover states that surprise
+
+**6. Spatial Composition:**
+- Asymmetry / Overlap / Diagonal flow / Grid-breaking elements
+- Generous negative space OR controlled density (never timid middle ground)
+
+**7. One Unforgettable Element:**
+- What makes this screen MEMORABLE? What will people screenshot and share?
+
+The output of this exercise becomes the foundation for `.stitch/DESIGN.md` (if auto-generated) and drives the prompt for Rounds 1 and 2.
+
+## Prompt Enhancement Pipeline
+
+Run before every `generate_screen_from_text` or `edit_screens` call:
+
+**1. Context Check:**
+- Get `projectId` from `.stitch/metadata.json` or call `list_projects`
+- Load design tokens from `.stitch/DESIGN.md` — if missing, auto-generate using design thinking output
+- Scan `public/**/*.{png,jpg,jpeg,webp,avif,svg}` for reusable assets
+- Review screenshots from other approved pages for style consistency
+
+**2. Asset Grounding:**
+- Public asset paths are canonical references, not binary uploads
+- Add `PROJECT ASSETS (LOCKED - REUSE EXACT FILES)` block with exact paths
+- For brand-critical visuals, prefer locked media slot over approximate redraw
+
+**3. Terminology Mapping:**
+- Map vague terms → professional UI/UX terminology
+- See [design-mappings.md](resources/design-mappings.md)
+
+**4. Dual-Device Generation (MANDATORY):**
+Every round produces TWO Stitch calls:
+1. **PC version** — `deviceType: "DESKTOP"` — full desktop layout
+2. **Mobile version** — `deviceType: "MOBILE"` — Sequential strategy: adapt PC prompt to mobile (single-column stacks, hamburger nav, 44px+ touch targets, simplified grids)
+
+**5. Canonical Title Rule:**
+- PC: `{screen}-r{round:02d}-desktop`
+- Mobile: `{screen}-r{round:02d}-mobile`
+- Save to `.stitch/metadata.json` as `pcCanonicalTitle` and `mobileCanonicalTitle`
+
+**6. Prompt Size Discipline:**
+- Round 1 generate: ≤5000 chars
+- Round 2+ edit: 2000-3500 chars (delta-only; target changes, not full spec)
+- If `.stitch/DESIGN.md` is authoritative, use compact 4-line canvas spec
+
+## Round 1 Prompt Structure
+
+```
+[DESIGN THINKING OUTPUT — aesthetic direction, typography, color, motion, spatial philosophy]
+
+CANVAS & RESPONSIVE SPEC:
+- Stitch canvas: 1280px max desktop frame
+- Desktop scaling: pc 1280/1920, laptop 1280/1600
+- Content width targets: pc 1180-1220px, laptop 1040-1120px within the 1280px frame
+- Overflow rule: no element may exceed the 1280px frame
+- Scale behavior: scale typography, spacing, imagery, and component footprints proportionally
+- Density rule: fill leftover space with secondary modules, metadata, or supporting content instead of oversizing hero elements
+- PC outer padding (HARDCODED): padding-left: 10px, padding-right: 10px on all section wrappers
+- Full-bleed backgrounds: extend to canvas edge; 10px applies to inner content offset only
+- Responsive tiers: pc 1920-1600, laptop 1600-1200, macbook 1200-900, tablet 900-700, mini-tablet 700-450, mobile <450
+
+DESIGN TOKENS (FROM AUTO-GENERATED DESIGN.md):
+[Aesthetic tokens from design thinking exercise]
+
+PROJECT ASSETS (LOCKED - REUSE EXACT FILES):
+- /path/in/public.ext — [role and visual description]
+
+SCREEN STRUCTURE:
+1. [Section]: [component breakdown]
+2. [Section]: [component breakdown]
+```
+
+## Round 2+ Prompt Structure (Delta-Only)
+
+```md
+ROUND [N] FOCUS: [focus area]
+
+BASE VERSION (REQUIRED):
+- Previous round: [N-1]
+- PC screen id: [pc-id]
+- Mobile screen id: [mobile-id]
+- Instruction: update from previous version only; do not regenerate from scratch
+- Preserve all unchanged areas as locked
+
+CANVAS LAYOUT (PERMANENT CONSTRAINT — DO NOT CHANGE):
+- PC outer padding (HARDCODED): padding-left: 10px, padding-right: 10px — no more, no less
+- Full-bleed backgrounds: extend to canvas edge; 10px applies to inner content only
+- 1280px max desktop frame
+- Overflow rule: no element may exceed the 1280px frame
+- Scale behavior: scale typography, spacing, imagery, and component footprints proportionally
+- Density rule: fill leftover space with secondary modules, not oversized heroes
+
+SECTION-BY-SECTION REVIEW (REQUIRED):
+- Section 1 — [current state / missing elements / required changes]
+- Section 2 — [current state / missing elements / required changes]
+
+CROSS-DEVICE SECTION PARITY (REQUIRED):
+- Section 1 — [present in both / intentionally merged on mobile / missing on mobile]
+- Section 2 — [present in both / intentionally merged on mobile / missing on mobile]
+
+LAYOUT ISSUES (CRITICAL):
+- [Overlapping elements, broken alignment, content overflow, missing components]
+
+STYLE CONSISTENCY CHECK (vs other approved pages):
+- [Compare nav, footer, color usage, typography; flag drift]
+
+ASSETS IN THIS ROUND (LOCKED):
+- /path/in/public.ext — [role]
+
+THIS ROUND'S CHANGES ONLY:
+- [net change 1]
+- [net change 2]
+```
+
+## The Baton System
+
+Each screen owns `.stitch/designs/{screen}/baton.md`:
+
+```markdown
+---
+screen: dashboard
+round: 3
+mode: edit
+base-pc-id: d7237c7d78f44befa4f60afb17c818c1
+base-mobile-id: a1b2c3d4e5f64789abcdef0123456789
+status: refining
+---
+ROUND 3 FOCUS: Component Detail
+
+**CANONICAL TITLES (REQUIRED):**
+- PC: `dashboard-r03-desktop`
+- Mobile: `dashboard-r03-mobile`
+
+BASE VERSION (REQUIRED):
+- Previous round: 2
+- PC screen id: d7237c7d78f44befa4f60afb17c818c1
+- Mobile screen id: a1b2c3d4e5f64789abcdef0123456789
+- Instruction: update from previous version only; do not regenerate from scratch
+
+[Round-specific review and changes]
+```
+
+**Baton Rules:**
+- `round` is an integer; never skip
+- `mode` is `generate` for round 1, `edit` for round 2+
+- `status`: `refining` (in-progress), `final-review` (round 6 candidate), `approved` (after quality check)
+- Never set `approved` before completing round 6
+- Tracks both `base-pc-id` and `base-mobile-id`
+
+## Auto-Pilot Execution Flow
+
+**Step 1: Initialize**
+- Parse user request for screen name
+- Check if `.stitch/designs/{screen}/baton.md` exists
+  - If yes → resume from current round
+  - If no → start fresh at round 1
+- Load `.stitch/APP.md` for project context
+- Check `.stitch/DESIGN.md`
+  - If missing → **auto-generate** using design thinking exercise from [design-philosophy.md](resources/design-philosophy.md)
+
+**Step 2: Design Thinking (Rounds 1 & 2 Only)**
+- Conduct the 7-step exercise
+- Document aesthetic direction, typography, color, motion, spatial strategy
+- Update or create `.stitch/DESIGN.md` with tokens
+
+**Step 3: Pre-Generation Review (Rounds 2+ Only)**
+
+For rounds 2 and later, **MANDATORY before generating**:
+1. Read previous round screenshots:
+   - `.stitch/designs/{screen}/round-{N-1}-pc.png`
+   - `.stitch/designs/{screen}/round-{N-1}-mobile.png`
+2. Write **section-by-section critique** covering:
+   - **What currently exists** in each visible section
+   - **What is missing or incomplete** from previous rounds
+   - **Cross-device section parity** — is each section present on both PC and Mobile? If missing on mobile, is it intentional or a defect?
+   - **Layout defects** — elements overlapping, clipping, misaligned, or overflowing containers
+   - **Full-bleed integrity** — confirm every section wrapper extends to canvas edge with zero outer horizontal margin
+   - **What must change** in the next version
+3. Compare with other approved pages for **style consistency** (nav, footer, colors, typography)
+4. Document the critique — this becomes the foundation for the edit prompt
+
+**Step 4: Generate Round**
+1. Read baton for current round focus
+2. Enhance prompt using optimization pipeline (context check, asset grounding, terminology mapping, dual-device, canonical titles, prompt size discipline)
+3. Call Stitch MCP:
+   - **PC version**: `generate_screen_from_text` (round 1) or `edit_screens` (round 2+) with `deviceType: "DESKTOP"`
+   - **Mobile version**: Sequential adaptation of PC prompt with `deviceType: "MOBILE"` (single-column stacks, hamburger nav, 44px+ touch targets)
+4. After each Stitch call, **immediately call `get_screen`** to retrieve the full screen details including the `screenshot` object
+
+**Step 5: Download PNG Screenshots (MANDATORY After Every Round)**
+
+For **both PC and Mobile** screens generated in this round:
+1. Call `get_screen` with the screen ID to retrieve screen details
+2. From the response, extract the `screenshot.url` (or `screenshot.imageUrl` depending on API schema)
+3. Download the PNG from the screenshot URL
+4. Save as:
+   - `.stitch/designs/{screen}/round-{N}-pc.png` (PC version)
+   - `.stitch/designs/{screen}/round-{N}-mobile.png` (Mobile version — **HIGHEST EXPORT RESOLUTION**, never downscale after download)
+5. These PNGs are used for:
+   - Visual review in subsequent rounds
+   - Cross-page style consistency checks
+   - User preview and approval decisions
+
+**Step 6: Document Round Results**
+
+Append a new round section to `.stitch/designs/{screen}/review.md` (single file, cumulative across all rounds):
+
+```markdown
+## Round {N} Review — {screen}
+
+**Focus:** {round topic}
+**Base version:** round {N-1} (or "initial generation" for round 1)
+
+**PC Review:**
+- Section 1 — [what exists / what improved / what still fails]
+- Section 2 — [what exists / what improved / what still fails]
+- [Continue for all sections]
+
+**Mobile Review:**
+- Section 1 — [what exists / what improved / what still fails]
+- Section 2 — [what exists / what improved / what still fails]
+- [Continue for all sections]
+
+**Canonical Titles:**
+- PC: `{screen}-r{N:02d}-desktop`
+- Mobile: `{screen}-r{N:02d}-mobile`
+
+**Cross-Device Section Parity:**
+- Section 1 — [present in both / intentionally merged on mobile / missing on mobile]
+- Section 2 — [present in both / intentionally merged on mobile / missing on mobile]
+- [Continue for all sections]
+
+**Layout Issues Found:**
+- [List any overlapping elements, broken alignment, content overflow, missing components, full-bleed violations]
+
+**Style Consistency Check:**
+- Nav: [matches / drifts from] {other-page}
+- Footer: [matches / drifts from] {other-page}
+- Color usage: [matches / drifts from] {other-page}
+- Typography: [matches / drifts from] {other-page}
+
+**Issues resolved from previous round:** [what was fixed]
+**Remaining issues for next round:** [what still needs work]
+**Quality gate:** [PASS / NEEDS WORK]
+```
+
+**Step 7: Update Metadata**
+- Update `.stitch/metadata.json` with the latest screen IDs and canonical titles:
+  ```json
+  "screens": {
+    "{screen}": {
+      "latestPcId": "new-pc-screen-id",
+      "latestMobileId": "new-mobile-screen-id",
+      "pcCanonicalTitle": "{screen}-r{N:02d}-desktop",
+      "mobileCanonicalTitle": "{screen}-r{N:02d}-mobile",
+      "currentRound": N
+    }
+  }
+  ```
+
+**Step 8: Advance Baton**
+- Increment `round` counter
+- Update `base-pc-id` and `base-mobile-id` with current round's screen IDs
+- Set `mode: edit` for round 2+
+- Set `status: final-review` when round = 6
+- Write next round's focus and prompt template based on review findings
+
+**Step 9: Loop or Complete**
+- If round < 6 → jump back to **Step 2** (Design Thinking for Round 2, then Step 3 for subsequent rounds; auto-pilot continues)
+- If round = 6 → run **Quality Check**:
+  - ✅ Layout integrity: no overlaps, overflows, misalignments
+  - ✅ Cross-device parity: all core sections present on both PC and Mobile
+  - ✅ Full-bleed integrity: every section wrapper extends to canvas edge
+  - ✅ Style consistency: nav, footer, colors, typography match other approved pages
+  - ✅ Aesthetic execution: design thinking vision realized
+  - ✅ Accessibility: contrast ratios, focus indicators, touch target sizes
+  - ✅ Content fidelity: realistic data, not lorem ipsum placeholders
+- If quality **PASSES** → set `status: approved`, proceed to **Step 10**
+- If quality **FAILS** → document defects in review.md, set round = 7, continue refinement from Step 3
+
+**Step 10: HTML Download & Code Implementation (After Approval Only)**
+
+**ONLY execute when a round has been approved for implementation** (normally Round 6+ after passing quality check):
+
+1. **Download HTML (SOURCE OF TRUTH FOR CODE):**
+   - Call `get_screen` for both PC and Mobile screen IDs
+   - From the response, extract the HTML download URL (e.g., `screenshot.htmlUrl` or dedicated HTML export endpoint)
+   - Download the HTML files
+   - Save as:
+     - `.stitch/designs/{screen}/round-{N}-pc.html`
+     - `.stitch/designs/{screen}/round-{N}-mobile.html`
+   - These HTML files are the **primary source** for code conversion — not the PNG screenshots
+
+2. **Hand off to `coding-fe` skill:**
+   - Provide the HTML file paths
+   - Provide the screen name and route
+   - `coding-fe` will convert HTML to Next.js based on the structure, CSS classes, and design tokens
+
+**Important:** Do NOT download HTML for exploratory or intermediate review rounds. HTML is downloaded ONLY for the approved implementation round.
+
+## Quality Criteria (Round 6 Gate)
+
+Before approval, verify:
+- ✅ No layout defects (overlaps, overflows, clipping, misalignment)
+- ✅ Full-bleed integrity: every section wrapper extends to canvas edge with zero outer horizontal margin
+- ✅ Cross-device section parity: all core sections present on both PC and Mobile (or explicitly justified mobile simplification)
+- ✅ Style consistency: nav, footer, colors, typography match other approved pages
+- ✅ Aesthetic vision: design thinking choices (typography, color, motion, spatial) fully realized
+- ✅ Accessibility: contrast ratios, focus indicators, touch target sizes
+- ✅ Content fidelity: realistic data, not lorem ipsum placeholders
+
+If any criterion fails → document as defect, add round 7+, continue refinement.
+
+## Cross-Page Style Consistency
+
+When starting a new page:
+1. Review screenshots from previously approved pages
+2. Extract established visual patterns (nav style, color treatment, typography, spacing rhythm, component patterns)
+3. Include in Round 1 prompt: `"Maintain visual consistency with [page name] — use the same nav, footer, color system, typography hierarchy, and component patterns"`
+4. After each round, compare against existing pages and flag drift as defect
+
+## File Artifacts
+
+Per screen:
+```
+.stitch/designs/{screen}/
+├── baton.md                    # Round state and next prompt
+├── review.md                   # Cumulative findings across all rounds
+├── round-01-pc.png             # Desktop screenshot
+├── round-01-mobile.png         # Mobile screenshot (highest res)
+├── round-02-pc.png
+├── round-02-mobile.png
+├── ...
+├── round-06-pc.png
+├── round-06-mobile.png
+├── round-06-pc.html            # Only for approved implementation round
+└── round-06-mobile.html        # Only for approved implementation round
+```
+
+Project-wide:
+```
+.stitch/
+├── metadata.json               # Project ID, screen IDs, canonical titles
+├── DESIGN.md                   # Auto-generated design tokens (if missing)
+└── APP.md                      # App structure, feature backlog
+```
+
+## Resources
+
+- [design-philosophy.md](resources/design-philosophy.md) — Bold aesthetic principles, typography choices, anti-generic patterns
+- [design-mappings.md](resources/design-mappings.md) — Vague → professional UI/UX terminology
+- [prompt-keywords.md](resources/prompt-keywords.md) — Stitch UI vocabulary
+- [tool-schemas.md](resources/tool-schemas.md) — MCP call signatures
+- [baton-schema.md](resources/baton-schema.md) — Baton file structure and frontmatter rules
+
+## Example Invocation
+
+```
+User: "Design the pricing page"
+
+Agent:
+1. Check .stitch/designs/pricing/baton.md → not found, start fresh at Round 1
+2. Check .stitch/DESIGN.md → missing, auto-generate from design-philosophy.md
+
+=== ROUND 1 ===
+3. Design thinking exercise:
+   - Aesthetic: Brutalist raw with sharp typography
+   - Typography: Display (Space Mono Bold), Body (IBM Plex Sans)
+   - Color: Monochrome with neon green accent (#00FF41)
+   - Motion: Staggered fade-in on scroll
+   - Spatial: Asymmetric grid with diagonal pricing cards
+   - Unforgettable element: Oversized pricing numbers that break grid bounds
+4. Generate Round 1 PC design (generate_screen_from_text, DESKTOP)
+5. get_screen → download PC PNG → save as round-01-pc.png
+6. Generate Round 1 Mobile design (generate_screen_from_text, MOBILE)
+7. get_screen → download Mobile PNG → save as round-01-mobile.png
+8. Append Round 1 review to review.md
+9. Update baton → round: 2, base-pc-id, base-mobile-id
+
+=== ROUND 2 ===
+10. Design thinking exercise (Visual Identity focus)
+11. Review round-01-pc.png and round-01-mobile.png:
+    - Section-by-section critique
+    - Cross-device parity check
+    - Layout issues
+    - Style consistency (first page, so establish baseline)
+12. Generate Round 2 PC edit (edit_screens, DESKTOP, base = round 1 PC)
+13. get_screen → download PC PNG → save as round-02-pc.png
+14. Generate Round 2 Mobile edit (edit_screens, MOBILE, base = round 1 Mobile)
+15. get_screen → download Mobile PNG → save as round-02-mobile.png
+16. Append Round 2 review to review.md
+17. Update baton → round: 3
+
+=== ROUNDS 3-5 ===
+18. For each round:
+    - Review previous round PNGs
+    - Section-by-section critique
+    - Edit PC + Mobile
+    - Download PC + Mobile PNGs
+    - Append review
+    - Update baton
+
+=== ROUND 6 ===
+19. Review round-05-pc.png and round-05-mobile.png
+20. Edit PC + Mobile for final polish
+21. Download round-06-pc.png and round-06-mobile.png
+22. Append Round 6 review to review.md
+23. Quality check:
+    ✅ No layout defects
+    ✅ Cross-device parity maintained
+    ✅ Full-bleed integrity confirmed
+    ✅ Aesthetic vision realized
+    ✅ Accessibility criteria met
+24. Quality PASSES → set status: approved
+
+=== CODE IMPLEMENTATION ===
+25. get_screen (approved PC screen) → download HTML → save as round-06-pc.html
+26. get_screen (approved Mobile screen) → download HTML → save as round-06-mobile.html
+27. Hand off to coding-fe:
+    - HTML paths: round-06-pc.html, round-06-mobile.html
+    - Route: /pricing
+    - Screen name: pricing
+```
+
+**If quality check FAILS at step 23:**
+```
+23. Quality FAILS → document defects in review.md
+24. Update baton → round: 7, status: refining
+25. Continue from Step 3 (pre-generation review) for Round 7
+```
+
+## Anti-Patterns
+
+❌ **Skipping rounds** — Every screen needs all 6 rounds  
+❌ **Generic aesthetics** — Inter font, purple gradients, cookie-cutter layouts  
+❌ **Missing design thinking** — Rounds 1 & 2 require aesthetic exercise  
+❌ **Code before approval** — HTML downloaded only after round 6 passes quality check  
+❌ **Style drift** — New pages must match existing pages' visual language  
+❌ **Mobile downscaling** — Keep mobile PNGs at highest export resolution  
+❌ **Skipping PNG downloads** — Every round MUST download both PC and Mobile PNGs  
+❌ **Skipping review** — Rounds 2+ require section-by-section critique before editing  
+❌ **Downloading HTML for review rounds** — HTML only for approved implementation round  
+
+## Success Patterns
+
+✅ **Bold aesthetic choices** — Commit to an extreme and execute with precision  
+✅ **Distinctive typography** — Avoid generic fonts, pair display + body thoughtfully  
+✅ **Delta-only edits** — Round 2+ prompts describe changes, not full spec  
+✅ **Section-by-section review** — Explicit critique before each edit round  
+✅ **Cross-device parity** — All core sections present on PC and Mobile  
+✅ **Style consistency** — Every page feels part of the same design system  
+✅ **PNG downloads mandatory** — After every round, download both PC and Mobile screenshots for review  
+✅ **Cumulative review log** — Single review.md file per screen with all rounds documented  
+✅ **HTML only when approved** — Download HTML exclusively for the locked implementation round  

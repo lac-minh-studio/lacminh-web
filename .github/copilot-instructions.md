@@ -30,7 +30,11 @@
 ## Hard Routing
 
 1. Read `.github/document/**` first when relevant docs exist.
-2. UI design generation from prompt: use `.github/skills/stitch-design` and `.github/skills/stitch-loop`.
+2. UI design generation from prompt: use `.github/skills/stitch-unified`.
+   - Unified workflow combining stitch-design, stitch-loop, and design-suggestion
+   - Auto-pilot 6-round refinement with design thinking (Rounds 1 & 2)
+   - Auto-generates DESIGN.md, sequential mobile adaptation, quality gate after Round 6
+   - Bold aesthetic direction, distinctive typography, anti-generic design
 3. `coding-fe`:
 - Create-only.
 - Use only when the target does not yet exist in `src/`.
