@@ -107,7 +107,7 @@ export const JOB_POSITIONS: IJobPosition[] = [
       { label: 'Hình thức', value: 'Part time' },
       { label: 'Hỗ trợ', value: 'Mộc thực tập' },
       { label: 'Kinh nghiệm', value: 'Sinh viên năm 3' },
-      { label: 'Hạn nộp', value: '30/05/2026' },
+      { label: 'Hạn nộp', value: '30/06/2026' },
     ],
     linkHref: '/careers/game-artist-intern',
   },
