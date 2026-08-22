@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
-import { JOB_POSITIONS } from '@/data/careers'
-import { SITE_URL } from '@/const'
+import { JOB_POSITIONS } from '@/domain/home/recruitment/application'
+import { SITE_URL } from '@/domain/home/config/site-config'
 
 const BASE_URL = SITE_URL || 'https://lacminhstudio.com'
 

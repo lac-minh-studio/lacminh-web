@@ -3,7 +3,6 @@ import { EB_Garamond, Inter } from 'next/font/google'
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/next"
 import './globals.css'
-import { Footer, Navbar } from '@/components/global'
 const ebGaramond = EB_Garamond({
   variable: '--font-eb-garamond',
   subsets: ['vietnamese'],
@@ -50,9 +49,7 @@ export default function RootLayout({
       <body>
         <SpeedInsights/>
         <Analytics />
-        <Navbar />
         {children}
-        <Footer />
       </body>
     </html>
   )
