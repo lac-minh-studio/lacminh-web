@@ -1,11 +1,13 @@
 import {
   ContactSection,
+} from '@/domain/home/partnership/presentation'
+import {
   ProjectsHero,
-  ProjectsStudioSection,
   ProjectsGameUniverse,
-  TechPlatformStrip,
   ProjectsCommercial,
-} from '@/domain/home/presentation'
+  TechPlatformStrip,
+} from '@/domain/home/portfolio/presentation'
+import { ProjectsStudioSection } from '@/domain/home/studio/presentation'
 
 export default function ProjectsPage() {
   return (

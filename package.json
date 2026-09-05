@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint .",
+    "lint": "npm run lint:architecture && eslint .",
+    "lint:architecture": "node scripts/check-architecture-boundaries.mjs",
     "lint-fix": "eslint . --fix"
   },
   "dependencies": {

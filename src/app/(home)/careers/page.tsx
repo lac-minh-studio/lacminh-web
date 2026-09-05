@@ -1,5 +1,6 @@
-import { JobListings, StudioVision } from '@/domain/home/presentation'
 import { CAREER_STATS } from '@/domain/home/recruitment/application'
+import { JobListings } from '@/domain/home/recruitment/presentation'
+import { StudioVision } from '@/domain/home/studio/presentation'
 import { HeroSection } from '@/domain/home/ui'
 
 export default function CareersPage() {
