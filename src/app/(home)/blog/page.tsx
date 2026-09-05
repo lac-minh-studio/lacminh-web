@@ -2,14 +2,14 @@ import {
   BlogCarousel,
   BlogGridSection,
   BlogSwiper,
-  ContactSection,
-} from '@/domain/home/presentation'
+} from '@/domain/home/editorial/presentation'
 import {
   mockCarouselSlides,
   mockGridPosts,
   BLOG_FILTERS,
   BLOG_HERO_STATS,
 } from '@/domain/home/editorial/application'
+import { ContactSection } from '@/domain/home/partnership/presentation'
 import { HeroSection } from '@/domain/home/ui'
 
 export default function BlogPage() {

@@ -1,4 +1,4 @@
-import { PublicNotFoundContent } from './_not-found/PublicNotFoundContent'
+import { PublicNotFoundContent } from '@/domain/home/shell/presentation'
 
 export default function NotFound() {
   return <PublicNotFoundContent />

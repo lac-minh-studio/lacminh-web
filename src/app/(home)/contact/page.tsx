@@ -1,4 +1,4 @@
-import { ContactSection } from '@/domain/home/presentation'
+import { ContactSection } from '@/domain/home/partnership/presentation'
 
 export default function CareersPage() {
   return (
