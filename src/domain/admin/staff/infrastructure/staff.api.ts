@@ -43,7 +43,7 @@ export const STAFF_LIST: IStaffItem[] = [
         fullName: 'Nguyễn Văn E',
         phone: '+84901236385',
         department: 'UI/UX Design',
-        title: 'UX Designer (User Experience Designer)',
+        title: 'UX Designer',
         status: "Inactive",
     },
 

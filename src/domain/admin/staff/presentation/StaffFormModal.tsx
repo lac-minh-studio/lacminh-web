@@ -1,4 +1,6 @@
 'use client';
+
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { staffFormSchema, StaffFormValues } from '../application/staff.schema';
@@ -11,6 +13,7 @@ interface StaffFormModalProps {
 }
 
 export function StaffFormModal({ isOpen, onClose, onSubmit }: StaffFormModalProps) {
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const {
         register,
         handleSubmit,
@@ -22,15 +25,29 @@ export function StaffFormModal({ isOpen, onClose, onSubmit }: StaffFormModalProp
 
     if (!isOpen) return null;
 
-    const handleFormSubmit = (data: StaffFormValues) => {
-        onSubmit({
-            fullName: data.fullName,
-            email: data.email,
-            phone: data.phone,
-            department: data.department as Department,
-            title: data.title as Title,
-        });
+    //khi đóng sẽ reset toàn bộ input trong form
+    const handleClose = () => {
         reset();
+        onClose();
+    };
+    //
+    const handleFormSubmit = async (data: StaffFormValues) => {
+        try {
+            setIsSubmitting(true);
+            //giả lập độ trễ để test disable  button
+            await new Promise((resolve) => setTimeout(resolve, 400));
+
+            onSubmit({
+                fullName: data.fullName,
+                email: data.email,
+                phone: data.phone,
+                department: data.department as Department,
+                title: data.title as Title,
+            });
+            reset()
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -39,7 +56,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit }: StaffFormModalProp
                 <div className="flex justify-between items-center border-b border-white/10 pb-4">
                     <h3 className="text-xl font-bold text-text-light">Thêm mới nhân sự</h3>
                     <button
-                        onClick={onClose}
+                        onClick={handleClose}
                         className="text-text-light/50 hover:text-text-light text-xl font-bold"
                     >
                         &times;
@@ -142,16 +159,25 @@ export function StaffFormModal({ isOpen, onClose, onSubmit }: StaffFormModalProp
                     <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
                         <button
                             type="button"
-                            onClick={onClose}
+                            onClick={handleClose}
+                            disabled={isSubmitting}
                             className="px-4 py-2 bg-white/10 text-text-light rounded-lg text-sm font-medium hover:bg-white/20 transition-all"
                         >
                             Hủy
                         </button>
                         <button
                             type="submit"
+                            disabled={isSubmitting}
                             className="px-5 py-2 bg-primary text-text-light rounded-lg text-sm font-medium hover:bg-primary/90 transition-all shadow-md"
                         >
-                            Lưu nhân sự
+                            {isSubmitting ? (
+                                <span className="flex items-center gap-2">
+                                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block"></span>
+                                    <span>Đang xử lý...</span>
+                                </span>
+                            ) : (
+                                'Lưu nhân sự'
+                            )}
                         </button>
                     </div>
                 </form>
