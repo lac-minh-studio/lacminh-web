@@ -1,10 +1,10 @@
+import { ContactSection } from '@/domain/home/partnership/presentation'
+import { ProjectsSection } from '@/domain/home/portfolio/presentation'
 import {
-  ContactSection,
-  ProjectsSection,
   RoadmapSection,
   StatSeparator,
   VisionSection,
-} from '@/domain/home/presentation'
+} from '@/domain/home/studio/presentation'
 import { HERO_STATS } from '@/domain/home/studio/application'
 import { HeroSection } from '@/domain/home/ui'
 

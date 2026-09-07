@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { CareerDetailView } from '@/domain/home/presentation'
 import {
   JOB_POSITIONS,
   getJobBySlug,
   getRelatedJobs,
 } from '@/domain/home/recruitment/application'
+import { CareerDetailView } from '@/domain/home/recruitment/presentation'
 
 interface CareerDetailPageProps {
   params: Promise<{
