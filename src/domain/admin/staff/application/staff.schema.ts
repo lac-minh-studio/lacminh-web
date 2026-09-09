@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+const VALID_EMAIL_DOMAINS = ['lacminh.com', 'lacminh.vn', 'gmail.com', 'gmail.vn'];
 export const staffFormSchema = z.object({
     // Họ và tên: Bắt buộc, loại bỏ khoảng trắng thừa ở 2 đầu
     fullName: z
@@ -12,9 +13,12 @@ export const staffFormSchema = z.object({
         .trim()
         .min(1, { message: 'Email không được để trống' })
         .email({ message: 'Email không đúng định dạng' })
-        .refine((val) => val.endsWith('@lacminh.com'), {
-            message: 'Email bắt buộc phải có đuôi @lacminh.com',
-        }),
+        .refine(
+            (val) => VALID_EMAIL_DOMAINS.some((domain) => val.endsWith(`@${domain}`)),
+            {
+                message: `Email bắt buộc phải thuộc các domain: ${VALID_EMAIL_DOMAINS.map((d) => `@${d}`).join(' | ')}`,
+            }
+        ),
     // Số điện thoại: Bắt buộc, kiểm tra định dạng khớp với biểu thức chính quy (cho phép dấu +, khoảng trắng, ngoặc)
     phone: z
         .string()
