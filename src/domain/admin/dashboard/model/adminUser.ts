@@ -39,3 +39,29 @@ export interface ActivityData {
     time: string;
     status: 'Success' | 'Pending' | 'Failed';
 }
+
+export interface LineChartPoint {
+    period: string;
+    users: number;
+    revenue: number;
+}
+
+export interface PieChartSegment {
+    name: string;
+    value: number;
+    color?: string;
+}
+
+export enum QuickActionKey {
+    BROADCAST_NOTICE = 'BROADCAST_NOTICE',
+    EXPORT_REPORT = 'EXPORT_REPORT',
+    LOCK_ACCOUNT = 'LOCK_ACCOUNT',
+    ADD_STAFF = 'ADD_STAFF',
+}
+
+export interface QuickAction {
+    key: QuickActionKey;
+    label: string;
+    icon: LucideIcon;
+    color?: 'primary' | 'danger' | 'warning' | 'default';
+}

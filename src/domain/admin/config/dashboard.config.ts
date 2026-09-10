@@ -6,8 +6,12 @@ import {
     TrendingUp,
     UserCheck,
     DollarSign,
+    Megaphone,
+    FileDown,
+    UserPlus,
+    Lock
 } from 'lucide-react';
-import { ActivityData, DashboardColumn, MetricCardConfig, SidebarItem } from '../dashboard/model/adminUser';
+import { ActivityData, DashboardColumn, LineChartPoint, MetricCardConfig, PieChartSegment, QuickAction, QuickActionKey, SidebarItem } from '../dashboard/model/adminUser';
 
 
 
@@ -20,9 +24,9 @@ export const sidebarConfig: SidebarItem[] = [
         permission: 'ADMIN',
     },
     {
-        id: 'users',
+        id: 'staff',
         title: 'Quản lý Người dùng',
-        route: '/admin/users',
+        route: '/admin/staff',
         icon: Users,
         permission: 'ADMIN',
     },
@@ -114,4 +118,41 @@ export const recentActivities: ActivityData[] = [
         time: '2 giờ trước',
         status: 'Pending',
     },
+    {
+        id: '5',
+        user: 'Hoàng Văn E',
+        action: 'Xuất báo cáo tài chính',
+        target: 'Doanh thu Q3',
+        time: 'Vừa xong',
+        status: 'Success',
+    },
+    {
+        id: '6',
+        user: 'Hoàng Văn E',
+        action: 'Xuất báo cáo tài chính',
+        target: 'Doanh thu Q3',
+        time: 'Vừa xong',
+        status: 'Success',
+    }
+];
+
+export const lineChartData: LineChartPoint[] = [
+    { period: 'T1', users: 400, revenue: 2400000 },
+    { period: 'T2', users: 520, revenue: 2210000 },
+    { period: 'T3', users: 610, revenue: 2900000 },
+    { period: 'T4', users: 700, revenue: 3100000 },
+    { period: 'T5', users: 890, revenue: 3800000 },
+];
+
+export const pieChartData: PieChartSegment[] = [
+    { name: 'Kỹ thuật', value: 45, color: '#6366f1' },
+    { name: 'Kinh doanh', value: 30, color: '#22c55e' },
+    { name: 'Vận hành', value: 25, color: '#f59e0b' },
+];
+
+export const quickActionsConfig: QuickAction[] = [
+    { key: QuickActionKey.BROADCAST_NOTICE, label: 'Thông báo toàn hệ thống', icon: Megaphone, color: 'primary' },
+    { key: QuickActionKey.EXPORT_REPORT, label: 'Export Báo cáo', icon: FileDown, color: 'default' },
+    { key: QuickActionKey.LOCK_ACCOUNT, label: 'Khóa tài khoản khẩn cấp', icon: Lock, color: 'danger' },
+    { key: QuickActionKey.ADD_STAFF, label: 'Thêm nhân sự mới', icon: UserPlus, color: 'primary' },
 ];
