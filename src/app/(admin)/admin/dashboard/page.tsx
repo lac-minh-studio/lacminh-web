@@ -1,5 +1,7 @@
-export default function Dashboard() {
+import DashboardSection from "@/domain/admin/dashboard/presentation/DashboardSection";
+
+export default function DashboardPage() {
     return (
-        <>Dashboard</>
+        <DashboardSection />
     )
 }
