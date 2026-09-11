@@ -8,6 +8,7 @@ import { useAdminDashboard } from '@/domain/admin/dashboard/application/useAdmin
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { adminInfo, handleLogout, isLoggingOut } = useAdminDashboard();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -15,6 +16,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         currentRole={adminInfo.role}
         onClose={() => setIsSidebarOpen(false)}
         isOpen={isSidebarOpen}
+        isCollapsed={isCollapsed}
+        onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
       />
 
       <div className="flex min-w-0 flex-1 flex-col">

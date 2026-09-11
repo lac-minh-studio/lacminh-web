@@ -3,12 +3,9 @@
 import { MetricsGrid } from '@/domain/admin/dashboard/presentation/MetricsGrid';
 import { QuickActionsBar } from '@/domain/admin/dashboard/presentation/QuickActionsBar';
 import { AnalyticsCharts } from '@/domain/admin/dashboard/presentation/AnalyticsCharts';
-import { RecentActivityTable } from '@/domain/admin/dashboard/presentation/RecentActivityTable';
 
 import {
-    activityColumns,
     metricsConfig,
-    recentActivities,
     lineChartData,
     pieChartData,
     quickActionsConfig,
@@ -29,15 +26,10 @@ export default function DashboardSection() {
 
             {/* KPI Cards */}
             <MetricsGrid configs={metricsConfig} />
-
-            {/* Tác vụ Nhanh */}
-            <QuickActionsBar actions={quickActionsConfig} onActionClick={handleQuickAction} />
-
             {/* Biểu đồ Analytics */}
             <AnalyticsCharts lineData={lineChartData} pieData={pieChartData} />
-
-            {/* Bảng Hoạt động Gần đây */}
-            <RecentActivityTable columns={activityColumns} data={recentActivities} />
+            {/* Tác vụ Nhanh */}
+            <QuickActionsBar actions={quickActionsConfig} onActionClick={handleQuickAction} />
         </div>
     );
 }

@@ -1,4 +1,5 @@
-// components/dashboard/MetricCards.tsx
+'use client';
+
 import { Card } from '@heroui/react';
 import { MetricCardConfig } from '@/domain/admin/dashboard/model/adminUser';
 import { ArrowUp, ArrowDown } from 'lucide-react';
@@ -14,25 +15,45 @@ export function MetricsGrid({ configs, isLoading }: MetricCardsProps) {
             {configs.map((item) => {
                 const Icon = item.icon;
                 return (
-                    <Card key={item.id}>
-                        <Card.Content className="flex flex-row items-center gap-4">
-                            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-accent-soft text-accent shrink-0">
-                                <Icon size={22} />
+                    <Card
+                        key={item.id}
+                        className="rounded-xl border border-border bg-surface p-5 hover:bg-background/60 transition-colors shadow-xs"
+                    >
+                        <Card.Content className="p-0 space-y-4">
+                            {/* Header: Icon + Title */}
+                            <div className="flex items-center gap-3">
+                                <Icon className="w-5 h-5 text-text-secondary shrink-0" />
+                                <span className="text-sm font-medium text-text-secondary truncate">
+                                    {item.title}
+                                </span>
                             </div>
-                            <div className="flex flex-col min-w-0">
-                                <span className="text-sm text-default-500">{item.title}</span>
+
+                            {/* Value + Change Rate */}
+                            <div className="flex items-baseline justify-between gap-2">
                                 {isLoading ? (
-                                    <div className="h-6 w-24 bg-default-soft rounded animate-pulse mt-1" />
+                                    <div className="h-9 w-28 bg-border/40 rounded-lg animate-pulse" />
                                 ) : (
-                                    <span className="text-xl font-semibold truncate">{item.value}</span>
+                                    <p className="text-3xl font-bold tracking-tight text-text-dark">
+                                        {item.value}
+                                    </p>
                                 )}
-                                <div
-                                    className={`flex items-center gap-1 text-xs mt-1 ${item.isPositive ? 'text-success-600' : 'text-danger-600'
-                                        }`}
-                                >
-                                    {item.isPositive ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
-                                    <span>{item.change}</span>
-                                </div>
+
+                                {/* Chỉ số biến động (%) nếu có */}
+                                {item.change && (
+                                    <div
+                                        className={`flex items-center gap-0.5 text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 ${item.isPositive
+                                            ? 'bg-success/10 text-success'
+                                            : 'bg-danger/10 text-danger'
+                                            }`}
+                                    >
+                                        {item.isPositive ? (
+                                            <ArrowUp size={12} />
+                                        ) : (
+                                            <ArrowDown size={12} />
+                                        )}
+                                        <span>{item.change}</span>
+                                    </div>
+                                )}
                             </div>
                         </Card.Content>
                     </Card>

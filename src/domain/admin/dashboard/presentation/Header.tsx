@@ -4,8 +4,11 @@ import React from 'react';
 import { Button } from '@heroui/react';
 import { LogOut, Menu, User } from 'lucide-react';
 import { AdminUser } from '../model/adminUser';
+import { ActivityNotificationPopover } from './ActivityNotificationPopover';
 
-
+import {
+    recentActivities
+} from '@/domain/admin/config/dashboard.config';
 interface HeaderProps {
     adminInfo: AdminUser;
     onLogout: () => void;
@@ -33,7 +36,7 @@ export const Header: React.FC<HeaderProps> = ({
                     <Menu className="h-5 w-5" />
                 </Button>
 
-                <h2 className="truncate text-lg font-bold text-text-dark">
+                <h2 className="hidden md:block lg:block truncate text-lg font-bold text-text-dark">
                     Tổng quan hệ thống
                 </h2>
             </div>
@@ -41,15 +44,9 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Right */}
             <div className="flex shrink-0 items-center gap-3">
                 <div className="flex items-center gap-3 text-right">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full border border-primary/20 bg-primary/10 font-bold text-primary">
-                        <User className="h-5 w-5" />
-                    </div>
+                    <ActivityNotificationPopover data={recentActivities} />
 
                     <div className="hidden sm:block">
-                        <p className="text-sm font-semibold leading-none text-text-dark">
-                            {adminInfo.name}
-                        </p>
-
                         <p className="mt-1 text-xs text-text-secondary">
                             {adminInfo.email}
                         </p>
@@ -58,18 +55,20 @@ export const Header: React.FC<HeaderProps> = ({
                             {adminInfo.role}
                         </p>
                     </div>
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full border border-primary/20 bg-primary/10 font-bold text-primary">
+                        <User className="h-5 w-5" />
+                    </div>
                 </div>
 
                 <Button
                     size="sm"
-                    variant="danger"
+                    variant="ghost"
                     isPending={isLoggingOut}
                     isDisabled={isLoggingOut}
                     onPress={onLogout}
-                    className="ml-1 flex items-center gap-1.5 font-medium"
+                    className="ml-1 flex items-center gap-1.5 font-medium hover:bg-red-500"
                 >
                     <LogOut className="h-4 w-4" />
-                    <span className="hidden sm:inline">Đăng xuất</span>
                 </Button>
             </div>
         </header>

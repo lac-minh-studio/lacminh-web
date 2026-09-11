@@ -6,12 +6,12 @@ export function proxy(request: NextRequest) {
     const token = request.cookies.get('admin_token')?.value;
     const { pathname } = request.nextUrl;
 
-    const isLoginPage = pathname === '/admin/login';
+    const isLoginPage = pathname === '/login';
     const isAdminRoute = pathname.startsWith('/admin');
 
     // 2. Auth Guard
     if (isAdminRoute && !isLoginPage && !token) {
-        const loginUrl = new URL('/admin/login', request.url);
+        const loginUrl = new URL('/login', request.url);
 
         // Lưu lại vị trí trang người dùng định vào để redirect lại sau khi login (tùy chọn)
         loginUrl.searchParams.set('from', pathname);
