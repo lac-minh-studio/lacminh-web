@@ -26,7 +26,7 @@ export const sidebarConfig: SidebarItem[] = [
     {
         id: 'staff',
         title: 'Quản lý Người dùng',
-        route: '/admin/staff',
+        route: '/admin/users',
         icon: Users,
         permission: 'ADMIN',
     },
@@ -250,5 +250,5 @@ export const quickActionsConfig: QuickAction[] = [
     { key: QuickActionKey.BROADCAST_NOTICE, label: 'Thông báo toàn hệ thống', icon: Megaphone, color: 'primary' },
     { key: QuickActionKey.EXPORT_REPORT, label: 'Export Báo cáo', icon: FileDown, color: 'default' },
     { key: QuickActionKey.LOCK_ACCOUNT, label: 'Khóa tài khoản khẩn cấp', icon: Lock, color: 'danger' },
-    { key: QuickActionKey.ADD_STAFF, label: 'Thêm nhân sự mới', icon: UserPlus, color: 'primary' },
+    { key: QuickActionKey.ADD_STAFF, label: 'Thêm người dùng mới', icon: UserPlus, color: 'primary' },
 ];
