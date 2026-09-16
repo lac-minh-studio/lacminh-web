@@ -6,6 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "emulator": "firebase emulators:start --import=./firebase-data --export-on-exit",
+    "dev:firebase": "concurrently -k -p \"[{name}]\" -c \"cyan.bold,yellow.bold\" -n \"NEXT,EMULATOR\" \"npm run dev\" \"npm run emulator\"",
     "lint": "npm run lint:architecture && eslint .",
     "lint:architecture": "node scripts/check-architecture-boundaries.mjs",
     "lint-fix": "eslint . --fix"
@@ -16,6 +18,7 @@
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "clsx": "^2.1.1",
+    "firebase": "^12.19.0",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.7.0",
     "next": "^16.2.4",
@@ -30,9 +33,11 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
+    "concurrently": "^10.0.5",
     "critters": "^0.0.23",
     "eslint": "^9",
     "eslint-config-next": "16.2.2",
+    "firebase-tools": "^15.30.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   },
