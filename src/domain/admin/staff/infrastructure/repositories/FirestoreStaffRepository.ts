@@ -1,49 +1,60 @@
 import {
-    collection,
-    doc,
-    getDocs,
     addDoc,
-    updateDoc,
+    collection,
     deleteDoc,
-    QueryDocumentSnapshot,
-    SnapshotOptions,
-    Timestamp,
-    serverTimestamp,
-    FirestoreDataConverter,
     DocumentData,
-    WithFieldValue
+    getDocs,
+    limit,
+    orderBy,
+    query,
+    QueryConstraint,
+    QueryDocumentSnapshot,
+    serverTimestamp,
+    startAfter,
+    Timestamp,
+    updateDoc,
+    doc,
 } from 'firebase/firestore';
+import { z } from 'zod';
 import { db } from '@/config/firebase';
-import { IStaffItem, IStaffFormInput, IStaffRepository } from '../../model/Staff';
+import {
+    DepartmentSchema,
+    IStaffFormInput,
+    IStaffItem,
+    IStaffRepository,
+    StaffFormSchema,
+    TitleSchema,
+} from '../../model/Staff';
 
-//  Định nghĩa Type của Document lưu dưới Firebase để mapping an toàn
-interface IFirestoreStaffDoc {
-    fullName: string;
-    email: string;
-    phone: string;
-    department: string;
-    title: string;
-    status: boolean;
-    created_at: Timestamp | ReturnType<typeof serverTimestamp>;
+const FirestoreStaffSchema = z.object({
+    fullName: z.string(),
+    email: z.string().email(),
+    phone: z.string(),
+    department: DepartmentSchema,
+    title: TitleSchema,
+    status: z.boolean(),
+    created_at: z.instanceof(Timestamp),
+    updated_at: z.instanceof(Timestamp).optional(),
+});
+
+export type StaffPageCursor = QueryDocumentSnapshot<DocumentData> | null;
+
+export interface StaffPage {
+    items: IStaffItem[];
+    nextCursor: StaffPageCursor;
 }
 
-// Data Converter với Generic Type chuẩn xác
-const staffConverter: FirestoreDataConverter<IStaffItem> = {
-    toFirestore(staff: WithFieldValue<IStaffItem>): DocumentData {
-        const firestoreDoc: IFirestoreStaffDoc = {
-            fullName: staff.fullName as string,
-            email: staff.email as string,
-            phone: staff.phone as string,
-            department: staff.department as string,
-            title: staff.title as string,
-            status: staff.status === 'Active',
-            created_at: staff.createdAt ? Timestamp.fromDate(staff.createdAt as Date) : serverTimestamp(),
-        };
-        return firestoreDoc as DocumentData;
-    },
+export class FirestoreStaffRepository implements IStaffRepository {
+    private readonly collRef = collection(db, 'staffs');
 
-    fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): IStaffItem {
-        const data = snapshot.data(options);
+    private handleError(context: string, error: unknown): never {
+        const message = error instanceof Error ? error.message : 'Lỗi Firebase không xác định.';
+        console.error(`[${context}]`, error);
+        throw new Error(`${context}: ${message}`);
+    }
+
+    private toStaff(snapshot: QueryDocumentSnapshot<DocumentData>): IStaffItem {
+        const data = FirestoreStaffSchema.parse(snapshot.data());
         return {
             id: snapshot.id,
             fullName: data.fullName,
@@ -51,78 +62,62 @@ const staffConverter: FirestoreDataConverter<IStaffItem> = {
             phone: data.phone,
             department: data.department,
             title: data.title,
-            status: data.status === true ? 'Active' : 'Inactive',
-            createdAt: data.created_at instanceof Timestamp ? data.created_at.toDate() : new Date(),
+            status: data.status ? 'Active' : 'Inactive',
+            createdAt: data.created_at.toDate(),
         };
     }
-};
 
-export class FirestoreStaffRepository implements IStaffRepository {
-    private collRef = collection(db, 'staffs').withConverter(staffConverter);
-
-    //  function để xử lý lỗi
-    private handleError(context: string, error: unknown): never {
-        if (error instanceof Error) {
-            console.error(`[${context}] Error:`, error.message);
-            throw new Error(error.message);
-        }
-        console.error(`[${context}] Unknown Error:`, error);
-        throw new Error('Đã xảy ra lỗi không xác định từ Firebase Emulator.');
-    }
-
-    //fun async fetch all data staff
-    async getAll(): Promise<IStaffItem[]> {
+    async getPage(pageSize: number, cursor?: StaffPageCursor): Promise<StaffPage> {
         try {
-            const snapshot = await getDocs(this.collRef);
-            return snapshot.docs.map(doc => doc.data());
-        } catch (error: unknown) {
-            this.handleError('Fetch staffs', error);
+            const constraints: QueryConstraint[] = [orderBy('created_at', 'desc'), limit(pageSize + 1)];
+            if (cursor) constraints.splice(1, 0, startAfter(cursor));
+            const snapshot = await getDocs(query(this.collRef, ...constraints));
+            const pageDocuments = snapshot.docs.slice(0, pageSize);
+            return {
+                items: pageDocuments.map((item) => this.toStaff(item)),
+                nextCursor: snapshot.docs.length > pageSize ? pageDocuments.at(-1) ?? null : null,
+            };
+        } catch (error) {
+            this.handleError('Không thể tải danh sách nhân sự', error);
         }
     }
 
-    //fun async create staff
-    async create(data: IStaffFormInput): Promise<string> {
+    async create(input: IStaffFormInput): Promise<string> {
         try {
-            // Ép kiểu an toàn 
-            const docRef = await addDoc(this.collRef, data as IStaffItem);
+            const data = StaffFormSchema.parse(input);
+            const docRef = await addDoc(this.collRef, {
+                ...data,
+                status: data.status === 'Active',
+                created_at: serverTimestamp(),
+                updated_at: serverTimestamp(),
+            });
             return docRef.id;
-        } catch (error: unknown) {
-            this.handleError('Create staff', error);
+        } catch (error) {
+            this.handleError('Không thể tạo nhân sự', error);
         }
     }
 
-    //fun async update staff
-    async update(id: string, data: Partial<IStaffFormInput>): Promise<void> {
+    async update(id: string, input: Partial<IStaffFormInput>): Promise<void> {
         try {
-            const docRef = doc(db, 'staffs', id);
-
-            // Khởi tạo updatePayload sử dụng Record an toàn của TS
-            const updatePayload: Record<string, string | boolean> = {};
-
-            if (data.fullName) updatePayload.fullName = data.fullName;
-            if (data.email) updatePayload.email = data.email;
-            if (data.phone) updatePayload.phone = data.phone;
-            if (data.department) updatePayload.department = data.department;
-            if (data.title) updatePayload.title = data.title;
-
-            // Xử lý status 
-            if (data.status) {
-                updatePayload.status = data.status === 'Active';
-            }
-
-            await updateDoc(docRef, updatePayload);
-        } catch (error: unknown) {
-            this.handleError('Update staff', error);
+            const data = StaffFormSchema.partial().parse(input);
+            const updatePayload: Record<string, unknown> = { updated_at: serverTimestamp() };
+            if (data.fullName !== undefined) updatePayload.fullName = data.fullName;
+            if (data.email !== undefined) updatePayload.email = data.email;
+            if (data.phone !== undefined) updatePayload.phone = data.phone;
+            if (data.department !== undefined) updatePayload.department = data.department;
+            if (data.title !== undefined) updatePayload.title = data.title;
+            if (data.status !== undefined) updatePayload.status = data.status === 'Active';
+            await updateDoc(doc(this.collRef, id), updatePayload);
+        } catch (error) {
+            this.handleError('Không thể cập nhật nhân sự', error);
         }
     }
 
-    //fun async delete staff
     async delete(id: string): Promise<void> {
         try {
-            const docRef = doc(db, 'staffs', id);
-            await deleteDoc(docRef);
-        } catch (error: unknown) {
-            this.handleError('Delete staff', error);
+            await deleteDoc(doc(this.collRef, id));
+        } catch (error) {
+            this.handleError('Không thể xóa nhân sự', error);
         }
     }
 }

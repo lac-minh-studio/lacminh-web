@@ -21,7 +21,7 @@ import {
 interface StaffFormModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (data: IStaffFormInput) => void;
+    onSubmit: (data: IStaffFormInput) => Promise<void>;
     editingStaff?: IStaffItem | null;
 }
 
@@ -99,9 +99,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
     const handleFormSubmit = async (data: StaffFormValues) => {
         try {
             setIsSubmitting(true);
-            await new Promise((resolve) => setTimeout(resolve, 300));
-
-            onSubmit({
+            await onSubmit({
                 fullName: data.fullName,
                 email: data.email,
                 phone: data.phone,

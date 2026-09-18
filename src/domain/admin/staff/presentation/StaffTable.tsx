@@ -17,9 +17,9 @@ const TABLE_HEADER = [
 
 export function StaffTable() {
     const {
-        staffList, isLoading, error, isModalOpen, editingStaff,
+        staffList, isLoading, error, isModalOpen, editingStaff, currentPage, hasNextPage,
         handleOpenModal, handleCloseModal, handleSubmitStaff,
-        handleToggleStatus, handleDeleteStaff
+        handleToggleStatus, handleDeleteStaff, goToNextPage, goToPreviousPage
     } = useStaffList();
 
     const renderSkeleton = () => (
@@ -152,6 +152,12 @@ export function StaffTable() {
                         </Table.Content>
                     </Table.ScrollContainer>
                 </Table>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 text-sm text-text-secondary">
+                <span>Trang {currentPage + 1}</span>
+                <Button size="sm" variant="secondary" isDisabled={isLoading || currentPage === 0} onPress={goToPreviousPage}>Trước</Button>
+                <Button size="sm" variant="secondary" isDisabled={isLoading || !hasNextPage} onPress={goToNextPage}>Sau</Button>
             </div>
 
             <StaffFormModal
