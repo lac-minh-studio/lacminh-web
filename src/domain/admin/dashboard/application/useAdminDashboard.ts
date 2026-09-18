@@ -7,6 +7,7 @@ import { dashboardService } from './DashboardService';
 import { activityLogService } from './activityLogService';
 import { Activity, Eye, Users } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { seedService } from '../infrastructure/seeding/seedService';
 
 export function useAdminDashboard() {
     const router = useRouter();
@@ -26,6 +27,7 @@ export function useAdminDashboard() {
     const fetchDashboardData = useCallback(async () => {
         try {
             setIsLoading(true);
+            await seedService.seedIfEmpty();
             const [total, active, deptDistribution, metrics, chartData] = await Promise.all([
                 dashboardService.getTotalStaffCount(),
                 dashboardService.getStaffCountByStatus('Active'),

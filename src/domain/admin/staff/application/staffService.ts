@@ -1,12 +1,14 @@
 import { FirestoreStaffRepository } from '../infrastructure/repositories/FirestoreStaffRepository';
 import { IStaffFormInput } from '../model/Staff';
 import { activityLogService } from '../../dashboard/application/activityLogService';
+import { seedService } from '../../dashboard/infrastructure/seeding/seedService';
 
 const staffRepository = new FirestoreStaffRepository();
 
 export const staffService = {
     //fetch all data staff gọi hàm getAll thông qua staffstaffRepository
     async getStaffPage(pageSize: number, cursor?: Parameters<FirestoreStaffRepository['getPage']>[1]) {
+        await seedService.seedIfEmpty();
         return staffRepository.getPage(pageSize, cursor);
     },
 
