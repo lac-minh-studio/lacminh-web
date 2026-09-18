@@ -1,6 +1,6 @@
 import { LucideIcon } from "lucide-react";
 
-export type AdminRole = 'ADMIN' | 'STAFF';
+export type AdminRole = 'ADMIN';
 export interface MetricCardConfig {
     id: string;
     title: string;
@@ -15,13 +15,13 @@ export interface SidebarItem {
     title: string;
     route: string;
     icon: LucideIcon;
-    permission: AdminRole[];
+    permission: AdminRole;
 }
 
 export interface AdminUser {
     name: string;
     email: string;
-    role: AdminRole[];
+    role: AdminRole;
     avatarUrl?: string;
 }
 
