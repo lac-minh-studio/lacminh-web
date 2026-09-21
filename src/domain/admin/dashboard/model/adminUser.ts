@@ -1,6 +1,7 @@
 import { LucideIcon } from "lucide-react";
 
-export type AdminRole = 'ADMIN';
+export type AdminRole = 'SUPER_ADMIN' | 'MANAGER' | 'STAFF';
+
 export interface MetricCardConfig {
     id: string;
     title: string;
@@ -19,6 +20,7 @@ export interface SidebarItem {
 }
 
 export interface AdminUser {
+    id: string;
     name: string;
     email: string;
     role: AdminRole;
@@ -50,5 +52,11 @@ export interface PieChartSegment {
     value: number;
     color?: string;
 }
+
+export const RoleHierarchy: Record<AdminRole, number> = {
+    SUPER_ADMIN: 3,
+    MANAGER: 2,
+    STAFF: 1,
+};
 
 

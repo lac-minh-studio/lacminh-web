@@ -2,10 +2,10 @@ import { addDoc, collection, getCountFromServer, Timestamp } from 'firebase/fire
 import { db } from '@/config/firebase';
 
 const STAFFS = [
-    { fullName: 'Trần Hoàng Anh', email: 'hoanganh@lacminh.com', phone: '0374352511', department: 'Engineering', title: 'Frontend Developer', status: true },
-    { fullName: 'Nguyễn Lê Hữu', email: 'huunl@lacminh.com', phone: '0912345678', department: 'Product', title: 'Product Manager', status: true },
-    { fullName: 'Phạm Minh Tâm', email: 'tam.pm@lacminh.com', phone: '0987654321', department: 'UI/UX Design', title: 'UX Designer', status: false },
-    { fullName: 'Lê Cường', email: 'cuongle@lacminh.com', phone: '0909123123', department: 'Helpdesk', title: 'IT Support Engineer', status: true },
+    { fullName: 'Trần Hoàng Anh', email: 'hoanganh@lacminh.com', phone: '0374352511', department: 'Engineering', title: 'Frontend Developer', role: 'SUPER_ADMIN', status: true },
+    { fullName: 'Nguyễn Lê Hữu', email: 'huunl@lacminh.com', phone: '0912345678', department: 'Product', title: 'Product Manager', role: 'STAFF', status: true },
+    { fullName: 'Phạm Minh Tâm', email: 'tam.pm@lacminh.com', phone: '0987654321', department: 'UI/UX Design', title: 'UX Designer', role: 'STAFF', status: false },
+    { fullName: 'Lê Cường', email: 'cuongle@lacminh.com', phone: '0909123123', department: 'Helpdesk', title: 'IT Support Engineer', role: 'STAFF', status: true },
 ] as const;
 
 const METRICS = [

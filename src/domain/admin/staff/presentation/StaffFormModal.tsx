@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { StaffEntitySchema, IStaffItem, IStaffFormInput, Department, Title } from '../model/Staff';
+import { StaffEntitySchema, IStaffItem, IStaffFormInput, Department, Title, Role } from '../model/Staff';
 import type { Key } from '@heroui/react';
 import {
     Modal,
@@ -41,6 +41,11 @@ const TITLE_OPTIONS = [
     'UX Designer',
 ] as const;
 
+const ROLE_OPTIONS = [
+    'MANAGER',
+    'STAFF'
+] as const;
+
 const StaffFormSchema = StaffEntitySchema.omit({ id: true, createdAt: true });
 type StaffFormValues = z.infer<typeof StaffFormSchema>;
 
@@ -75,6 +80,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
                     phone: editingStaff.phone || '',
                     department: editingStaff.department || 'Engineering',
                     title: editingStaff.title || 'Frontend Developer',
+                    role: editingStaff.role || 'STAFF',
                     status: editingStaff.status || 'Active',
                 });
             } else {
@@ -84,6 +90,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
                     phone: '',
                     department: 'Engineering',
                     title: 'Frontend Developer',
+                    role: 'STAFF',
                     status: 'Active',
                 });
             }
@@ -105,6 +112,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
                 phone: data.phone,
                 department: data.department as Department,
                 title: data.title as Title,
+                role: data.role as Role,
                 status: data.status,
             });
             reset();
@@ -287,6 +295,48 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
                                             </Select>
                                         )}
                                     />
+                                    {/* role */}
+                                    <Controller
+                                        name="role"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <Select
+                                                aria-label='role'
+                                                isRequired
+                                                className="flex flex-col gap-2 col-span-2"
+                                                selectedKey={field.value}
+                                                onSelectionChange={(key: Key | null) => {
+                                                    if (key) field.onChange(String(key) as Role);
+                                                }}
+                                            >
+                                                <Label className="block text-xs uppercase tracking-widest text-text-secondary mb-1 font-semibold">
+                                                    Vai trò
+                                                </Label>
+                                                <Select.Trigger className="w-full h-11 bg-background/50 border border-border rounded-xl text-text-dark px-4 text-base flex items-center justify-between hover:border-primary transition-colors">
+                                                    <Select.Value aria-placeholder="Chọn vai trò" className="text-text-muted" />
+                                                    <Select.Indicator className="text-text-secondary" />
+                                                </Select.Trigger>
+                                                <Select.Popover>
+                                                    <ListBox className="bg-surface border border-border rounded-xl overflow-hidden py-1 shadow-xl backdrop-blur-md">
+                                                        {ROLE_OPTIONS.map((role) => (
+                                                            <ListBoxItem
+                                                                key={role}
+                                                                id={role}
+                                                                textValue={role}
+                                                                className="px-4 py-2.5 text-text-dark text-base hover:bg-primary/20 hover:text-text-dark cursor-pointer outline-none transition-colors"
+                                                            >
+                                                                {role}
+                                                            </ListBoxItem>
+                                                        ))}
+                                                    </ListBox>
+                                                </Select.Popover>
+                                                {errors.title && (
+                                                    <p className="text-destructive text-xs mt-1 italic">{errors.title.message}</p>
+                                                )}
+                                            </Select>
+                                        )}
+                                    />
+
                                 </div>
                             </Modal.Body>
 

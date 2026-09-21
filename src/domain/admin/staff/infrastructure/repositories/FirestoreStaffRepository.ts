@@ -22,6 +22,7 @@ import {
     IStaffFormInput,
     IStaffItem,
     IStaffRepository,
+    RoleSchema,
     StaffFormSchema,
     TitleSchema,
 } from '../../model/Staff';
@@ -32,6 +33,7 @@ const FirestoreStaffSchema = z.object({
     phone: z.string(),
     department: DepartmentSchema,
     title: TitleSchema,
+    role: RoleSchema,
     status: z.boolean(),
     created_at: z.instanceof(Timestamp),
     updated_at: z.instanceof(Timestamp).optional(),
@@ -62,6 +64,7 @@ export class FirestoreStaffRepository implements IStaffRepository {
             phone: data.phone,
             department: data.department,
             title: data.title,
+            role: data.role,
             status: data.status ? 'Active' : 'Inactive',
             createdAt: data.created_at.toDate(),
         };

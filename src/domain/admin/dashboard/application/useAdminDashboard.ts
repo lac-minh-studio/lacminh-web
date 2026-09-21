@@ -22,7 +22,7 @@ export function useAdminDashboard() {
     const [visits, setVisits] = useState(0);
     const [recentLogs, setRecentLogs] = useState<(ActivityData & { time: string })[]>([]);
 
-    const adminInfo: AdminUser = { name: 'Nguyễn Văn A', email: 'nva@lacminh.com', role: 'ADMIN' };
+    const adminInfo: AdminUser = { id: 'RzrV8Ceq2U04P93rdC1r', name: 'Hoàng Anh', email: 'hoanganh@lacminh.com', role: 'SUPER_ADMIN' };
 
     const fetchDashboardData = useCallback(async () => {
         try {

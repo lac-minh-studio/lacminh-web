@@ -1,16 +1,18 @@
 'use client';
 
-import { Button, Table, Skeleton } from '@heroui/react';
+import { Button, Table, Skeleton, Tooltip } from '@heroui/react';
 import { Pencil, Trash2, Lock, Unlock } from 'lucide-react';
 import { useStaffList } from '../application/useStaffList';
 import { StaffFormModal } from './StaffFormModal';
-
+import { useAdminDashboard } from '../../dashboard/application/useAdminDashboard';
+import { usePermission } from '@/domain/admin/dashboard/application/usePermission';
 const TABLE_HEADER = [
     "Họ và tên",
     "Email",
     "Số điện thoại",
     "Phòng ban",
     "Chức vụ",
+    "Vai trò",
     "Trạng thái",
     "Hành động"
 ];
@@ -22,6 +24,15 @@ export function StaffTable() {
         handleToggleStatus, handleDeleteStaff, goToNextPage, goToPreviousPage
     } = useStaffList();
 
+    //  Lấy thông tin người đang đăng nhập
+    const {
+        adminInfo
+    } = useAdminDashboard();
+
+    const {
+        checkActionPermission
+    } = usePermission(adminInfo);
+
     const renderSkeleton = () => (
         Array.from({ length: 5 }).map((_, index) => (
             <Table.Row key={`skeleton-${index}`} aria-label="Đang tải">
@@ -32,20 +43,23 @@ export function StaffTable() {
                 <Table.Cell className="py-4 px-4 text-center"><Skeleton className="h-6 w-16 rounded-md mx-auto" /></Table.Cell>
                 <Table.Cell className="py-4 px-4 text-center"><Skeleton className="h-6 w-24 rounded-md mx-auto" /></Table.Cell>
                 <Table.Cell className="py-4 px-4 text-center"><Skeleton className="h-6 w-24 rounded-md mx-auto" /></Table.Cell>
+                <Table.Cell className="py-4 px-4 text-center"><Skeleton className="h-6 w-24 rounded-md mx-auto" /></Table.Cell>
             </Table.Row>
         ))
     );
+
     const TableError = () => (
         <Table.Row key="error" aria-label="Lỗi hệ thống">
-            <Table.Cell colSpan={7} className="text-center py-8 text-destructive bg-destructive/10">
+            <Table.Cell colSpan={8} className="text-center py-8 text-destructive bg-destructive/10">
                 <p className="font-bold">⚠️ Lỗi hệ thống</p>
                 <p className="text-xs mt-1">{error}</p>
             </Table.Cell>
         </Table.Row>
     )
+
     const TableEmpty = () => (
         <Table.Row key="empty" aria-label="Trống">
-            <Table.Cell colSpan={7} className="text-center py-10 text-text-muted italic">
+            <Table.Cell colSpan={8} className="text-center py-10 text-text-muted italic">
                 Chưa có nhân sự nào trong hệ thống.
             </Table.Cell>
         </Table.Row>
@@ -91,62 +105,97 @@ export function StaffTable() {
                                 ) : staffList.length === 0 ? (
                                     TableEmpty()
                                 ) : (
-                                    staffList.map((staff) => (
-                                        <Table.Row
-                                            key={staff.id}
-                                            aria-label={staff.fullName}
-                                            className="hover:bg-surface-dark/5 transition-colors"
-                                        >
-                                            <Table.Cell className="py-4 px-4 font-medium text-text-dark text-center">
-                                                {staff.fullName}
-                                            </Table.Cell>
-                                            <Table.Cell className="py-4 px-4 text-text-secondary text-center">
-                                                {staff.email}
-                                            </Table.Cell>
-                                            <Table.Cell className="py-4 px-4 text-text-secondary text-center">
-                                                {staff.phone}
-                                            </Table.Cell>
-                                            <Table.Cell className="py-4 px-4 text-center">
-                                                <span className="px-3 py-1 text-xs font-semibold bg-primary/15 text-text-secondary border border-primary/30 rounded-full inline-block">
-                                                    {staff.department}
-                                                </span>
-                                            </Table.Cell>
-                                            <Table.Cell className="py-4 px-4 text-text-secondary text-center">
-                                                {staff.title}
-                                            </Table.Cell>
-                                            <Table.Cell className="py-4 px-4 text-center">
-                                                <span
-                                                    className={`px-3 py-1 text-xs font-medium rounded-md border inline-block ${staff.status === 'Active'
-                                                        ? 'bg-success/15 text-success border-success/30'
-                                                        : 'bg-destructive/15 text-destructive border-destructive/30'
-                                                        }`}
-                                                >
-                                                    {staff.status}
-                                                </span>
-                                            </Table.Cell>
-                                            <Table.Cell className="py-4 px-4 text-center">
-                                                {/* Action */}
-                                                <div className="flex items-center justify-center gap-2">
-                                                    {/* Edit */}
-                                                    <Button isIconOnly size="sm" variant="secondary" onPress={() => handleOpenModal(staff)} className="text-primary hover:bg-primary/10">
-                                                        <Pencil size={16} />
-                                                    </Button>
-                                                    {/* Change status */}
-                                                    <Button
-                                                        isIconOnly size="sm" variant="secondary"
-                                                        onPress={() => handleToggleStatus(staff)}
-                                                        className={staff.status === 'Active' ? 'text-warning hover:bg-warning/10' : 'text-success hover:bg-success/10'}
+                                    staffList.map((staff) => {
+                                        const { canEditInfo, canChangeStatus, canDelete } = checkActionPermission(staff.id!, staff.role);
+                                        return (
+                                            <Table.Row
+                                                key={staff.id}
+                                                aria-label={staff.fullName}
+                                                className="hover:bg-surface-dark/5 transition-colors"
+                                            >
+                                                <Table.Cell className="py-4 px-4 font-medium text-text-dark text-center">
+                                                    {staff.fullName}
+                                                </Table.Cell>
+                                                <Table.Cell className="py-4 px-4 text-text-secondary text-center">
+                                                    {staff.email}
+                                                </Table.Cell>
+                                                <Table.Cell className="py-4 px-4 text-text-secondary text-center">
+                                                    {staff.phone}
+                                                </Table.Cell>
+                                                <Table.Cell className="py-4 px-4 text-center">
+                                                    <span className="px-3 py-1 text-xs font-semibold bg-primary/15 text-text-secondary border border-primary/30 rounded-full inline-block">
+                                                        {staff.department}
+                                                    </span>
+                                                </Table.Cell>
+                                                <Table.Cell className="py-4 px-4 text-text-secondary text-center">
+                                                    {staff.title}
+                                                </Table.Cell>
+                                                <Table.Cell className="py-4 px-4 text-text-secondary text-center">
+                                                    {staff.role}
+                                                </Table.Cell>
+                                                <Table.Cell className="py-4 px-4 text-center">
+                                                    <span
+                                                        className={`px-3 py-1 text-xs font-medium rounded-md border inline-block ${staff.status === 'Active'
+                                                            ? 'bg-success/15 text-success border-success/30'
+                                                            : 'bg-destructive/15 text-destructive border-destructive/30'
+                                                            }`}
                                                     >
-                                                        {staff.status === 'Active' ? <Lock size={16} /> : <Unlock size={16} />}
-                                                    </Button>
-                                                    {/* delete */}
-                                                    <Button isIconOnly size="sm" variant="secondary" onPress={() => handleDeleteStaff(staff.id!)} className="text-destructive hover:bg-destructive/10">
-                                                        <Trash2 size={16} />
-                                                    </Button>
-                                                </div>
-                                            </Table.Cell>
-                                        </Table.Row>
-                                    ))
+                                                        {staff.status}
+                                                    </span>
+                                                </Table.Cell>
+                                                <Table.Cell className="py-4 px-4 text-center">
+                                                    {/* Action */}
+                                                    <div className="flex items-center justify-center gap-2">
+                                                        {/* Edit */}
+                                                        {canEditInfo ? (
+                                                            <Button isIconOnly size="sm" variant="secondary" onPress={() => handleOpenModal(staff)} className="text-primary hover:bg-primary/10">
+                                                                <Pencil size={16} />
+                                                            </Button>
+                                                        ) : (
+                                                            <Tooltip >
+                                                                <div className="cursor-not-allowed opacity-50">
+                                                                    <Button isIconOnly size="sm" variant="ghost" isDisabled><Pencil size={16} /></Button>
+                                                                </div>
+                                                            </Tooltip>
+                                                        )}
+
+                                                        {/* Change status */}
+                                                        {canChangeStatus ? (
+                                                            <Button
+                                                                isIconOnly size="sm" variant="secondary"
+                                                                onPress={() => handleToggleStatus(staff)}
+                                                                className={staff.status === 'Active' ? 'text-warning hover:bg-warning/10' : 'text-success hover:bg-success/10'}
+                                                            >
+                                                                {staff.status === 'Active' ? <Lock size={16} /> : <Unlock size={16} />}
+                                                            </Button>
+                                                        ) : (
+                                                            <Tooltip >
+                                                                <div className="cursor-not-allowed opacity-50">
+                                                                    <Button isIconOnly size="sm" variant="ghost" isDisabled>
+                                                                        {staff.status === 'Active' ? <Lock size={16} /> : <Unlock size={16} />}
+                                                                    </Button>
+                                                                </div>
+                                                            </Tooltip>
+                                                        )}
+
+                                                        {/* delete */}
+                                                        {canDelete ? (
+                                                            <Button isIconOnly size="sm" variant="secondary" onPress={() => handleDeleteStaff(staff.id!)} className="text-destructive hover:bg-destructive/10">
+                                                                <Trash2 size={16} />
+                                                            </Button>
+                                                        ) : (
+                                                            <Tooltip >
+                                                                <div className="cursor-not-allowed opacity-50">
+                                                                    <Button isIconOnly size="sm" variant="ghost" isDisabled><Trash2 size={16} /></Button>
+                                                                </div>
+                                                            </Tooltip>
+                                                        )}
+
+                                                    </div>
+                                                </Table.Cell>
+                                            </Table.Row>
+                                        )
+                                    })
                                 )}
                             </Table.Body>
                         </Table.Content>

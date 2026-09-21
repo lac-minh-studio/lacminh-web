@@ -8,14 +8,14 @@ import { Button, Tooltip } from '@heroui/react';
 import Image from 'next/image';
 import Logo from "../../../../../public/logo.png";
 import { sidebarConfig } from '@/domain/admin/config/dashboard.config';
-import type { AdminRole } from '@/domain/admin/dashboard/model/adminUser';
+// import type { AdminRole } from '@/domain/admin/dashboard/model/adminUser';
 
 interface SidebarProps {
     isOpen: boolean;
     onClose: () => void;
     isCollapsed: boolean;
     onToggleCollapse: () => void;
-    currentRole: AdminRole;
+    // currentRole: AdminRole;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -23,13 +23,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
     onClose,
     isCollapsed,
     onToggleCollapse,
-    currentRole,
+    // currentRole,
 }) => {
     const pathname = usePathname();
 
-    const visibleItems = sidebarConfig.filter((item) =>
-        item.permission.includes(currentRole)
-    );
+    // const visibleItems = sidebarConfig.filter((item) =>
+    //     item.permission.includes(currentRole)
+    // );
 
     return (
         <>
@@ -107,7 +107,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
                     {/* Navigation Menu */}
                     <nav className="space-y-1.5">
-                        {visibleItems.map((item) => {
+                        {sidebarConfig.map((item) => {
                             const Icon = item.icon;
                             const isActive =
                                 pathname === item.route ||

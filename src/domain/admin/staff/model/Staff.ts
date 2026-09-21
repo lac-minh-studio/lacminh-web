@@ -3,6 +3,7 @@ import { z } from 'zod';
 export const DepartmentSchema = z.enum(['Product', 'Engineering', 'Helpdesk', 'UI/UX Design']);
 export const StatusSchema = z.enum(['Active', 'Inactive']);
 export const TitleSchema = z.enum(['Frontend Developer', 'Backend Developer', 'Product Manager', 'IT Support Engineer', 'UI/UX Researcher', 'UX Designer']);
+export const RoleSchema = z.enum(['SUPER_ADMIN', 'MANAGER', 'STAFF']);
 
 export const StaffFormSchema = z.object({
     fullName: z.string().trim().min(2, 'Tên phải từ 2 ký tự trở lên'),
@@ -10,6 +11,7 @@ export const StaffFormSchema = z.object({
     phone: z.string().regex(/(84|0[3|5|7|8|9])+([0-9]{8})\b/, 'Số điện thoại không hợp lệ'),
     department: DepartmentSchema,
     title: TitleSchema,
+    role: RoleSchema,
     status: StatusSchema,
 });
 
@@ -21,6 +23,7 @@ export const StaffEntitySchema = StaffFormSchema.extend({
 export type Department = z.infer<typeof DepartmentSchema>;
 export type Title = z.infer<typeof TitleSchema>;
 export type Status = z.infer<typeof StatusSchema>;
+export type Role = z.infer<typeof RoleSchema>;
 export type IStaffItem = z.infer<typeof StaffEntitySchema>;
 export type IStaffFormInput = z.infer<typeof StaffFormSchema>;
 
