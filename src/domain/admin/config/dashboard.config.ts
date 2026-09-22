@@ -12,28 +12,28 @@ export const sidebarConfig: SidebarItem[] = [
         title: 'Tổng quan',
         route: '/admin/dashboard',
         icon: LayoutDashboard,
-        permission: 'ADMIN',
+        // permission: 'ADMIN',
     },
     {
         id: 'staff',
         title: 'Quản lý nhân sự',
         route: '/admin/staff',
         icon: Users,
-        permission: 'ADMIN',
+        // permission: 'ADMIN',
     },
     {
         id: 'products',
         title: 'Quản lý Sản phẩm',
         route: '/admin/products',
         icon: ShoppingBag,
-        permission: 'ADMIN',
+        // permission: 'ADMIN',
     },
     {
         id: 'settings',
         title: 'Cấu hình Hệ thống',
         route: '/admin/settings',
         icon: Settings,
-        permission: 'ADMIN',
+        // permission: 'ADMIN',
     },
 ];
 

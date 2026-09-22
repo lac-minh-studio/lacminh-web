@@ -14,7 +14,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex min-h-screen bg-background">
       <Sidebar
-        currentRole={adminInfo.role}
+        // currentRole={adminInfo.role}
         onClose={() => setIsSidebarOpen(false)}
         isOpen={isSidebarOpen}
         isCollapsed={isCollapsed}

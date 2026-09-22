@@ -1,11 +1,14 @@
 'use client';
 
-import { Button, Table, Skeleton, Tooltip } from '@heroui/react';
-import { Pencil, Trash2, Lock, Unlock } from 'lucide-react';
+import { Button, Table, Skeleton, Tooltip, Input, Spinner } from '@heroui/react';
+import { Pencil, Trash2, Lock, Unlock, Search, X } from 'lucide-react';
 import { useStaffList } from '../application/useStaffList';
 import { StaffFormModal } from './StaffFormModal';
 import { useAdminDashboard } from '../../dashboard/application/useAdminDashboard';
 import { usePermission } from '@/domain/admin/dashboard/application/usePermission';
+import { useDebounce } from '../application/useDebounce';
+import { useEffect, useState } from 'react';
+import { staffService } from '../application/staffService';
 const TABLE_HEADER = [
     "Họ và tên",
     "Email",
@@ -18,20 +21,49 @@ const TABLE_HEADER = [
 ];
 
 export function StaffTable() {
+    // search state
+    const [searchTerm, setSearchTerm] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
+    const debouncedSearchTerm = useDebounce(searchTerm, 350);
+
+    // action staff
     const {
         staffList, isLoading, error, isModalOpen, editingStaff, currentPage, hasNextPage,
         handleOpenModal, handleCloseModal, handleSubmitStaff,
-        handleToggleStatus, handleDeleteStaff, goToNextPage, goToPreviousPage
+        handleToggleStatus, handleDeleteStaff, goToNextPage, goToPreviousPage,
+        setStaffList, setError, fetchStaff
     } = useStaffList();
 
-    //  Lấy thông tin người đang đăng nhập
-    const {
-        adminInfo
-    } = useAdminDashboard();
+    // Lấy thông tin người đang đăng nhập
+    const { adminInfo } = useAdminDashboard();
+    const { checkActionPermission } = usePermission(adminInfo);
 
-    const {
-        checkActionPermission
-    } = usePermission(adminInfo);
+    // Loading when admin nhập input
+    useEffect(() => {
+        if (searchTerm !== debouncedSearchTerm) {
+            setIsSearching(true);
+        }
+    }, [searchTerm, debouncedSearchTerm]);
+
+    // Call api sau khoảng 350ms
+    useEffect(() => {
+        async function fetchSearchData() {
+            try {
+                if (debouncedSearchTerm.trim() !== '') {
+                    const results = await staffService.searchStaffByName(debouncedSearchTerm.trim());
+
+                    setStaffList(results);
+                } else {
+                    await fetchStaff(0); // Trả lại danh sách gốc
+                }
+            } catch (_err) {
+                setError('Lỗi tìm kiếm' + _err);
+            } finally {
+                setIsSearching(false);
+            }
+        }
+        void fetchSearchData();
+    }, [debouncedSearchTerm, fetchStaff, setStaffList, setError]);
 
     const renderSkeleton = () => (
         Array.from({ length: 5 }).map((_, index) => (
@@ -72,26 +104,61 @@ export function StaffTable() {
                     <h1 className="text-2xl font-bold font-headline text-text-dark">Quản lý Nhân sự</h1>
                     <p className="text-sm text-text-secondary">Danh sách toàn bộ nhân sự nội bộ hệ thống.</p>
                 </div>
-                <Button
-                    onPress={() => handleOpenModal()}
-                    aria-label="Thêm nhân sự mới"
-                    className="px-5 py-2.5 bg-primary text-text-light rounded-xl font-medium hover:bg-secondary transition-all shadow-[var(--shadow-neu-cta)] border border-border"
-                >
-                    + Thêm nhân sự mới
-                </Button>
+
+                <div className="flex items-center gap-4">
+                    {/* Thanh Search tích hợp Debounce đúng chuẩn HeroUI Input */}
+                    <div className="relative flex items-center w-72">
+                        <span className="absolute left-3 z-10 flex items-center pointer-events-none text-default-400">
+                            <Search className="w-4 h-4" />
+                        </span>
+
+                        <Input
+                            type="text"
+                            variant="secondary"
+                            placeholder="Tìm kiếm nhân sự..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            fullWidth
+                            aria-label="Tìm kiếm nhân sự"
+                            className="pl-9 pr-9"
+                        />
+
+                        {isSearching ? (
+                            <span className="absolute right-3 z-10 flex items-center">
+                                <Spinner size="sm" />
+                            </span>
+                        ) : searchTerm ? (
+                            <button
+                                onClick={() => setSearchTerm('')}
+                                className="absolute right-3 z-10 flex items-center text-default-400 hover:text-text-dark"
+                                aria-label="Xóa tìm kiếm"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        ) : null}
+                    </div>
+
+                    <Button
+                        onPress={() => handleOpenModal()}
+                        aria-label="Thêm nhân sự mới"
+                        className="px-5 py-2.5 bg-primary text-text-light rounded-xl font-medium hover:bg-secondary transition-all shadow-md border border-border"
+                    >
+                        + Thêm nhân sự mới
+                    </Button>
+                </div>
             </div>
 
             <div className="w-full bg-surface border border-border rounded-2xl overflow-hidden shadow-xl backdrop-blur-md overflow-x-auto">
                 <Table aria-label="Danh sách nhân sự" className="w-full">
                     <Table.ScrollContainer className="w-full overflow-x-auto">
-                        <Table.Content className="w-full min-w-[1000px]">
+                        <Table.Content className="w-full min-w-250">
                             <Table.Header className="border-b border-border bg-surface-dark/10">
                                 {TABLE_HEADER.map((title) => (
                                     <Table.Column
                                         isRowHeader
                                         key={title}
                                         aria-label={title}
-                                        className="py-4 px-4 text-[length:var(--text-2xs)] uppercase tracking-[0.15em] font-semibold text-text-secondary text-center"
+                                        className="py-4 px-4 text-2xs uppercase tracking-[0.15em] font-semibold text-text-secondary text-center"
                                     >
                                         {title}
                                     </Table.Column>
@@ -144,22 +211,19 @@ export function StaffTable() {
                                                     </span>
                                                 </Table.Cell>
                                                 <Table.Cell className="py-4 px-4 text-center">
-                                                    {/* Action */}
                                                     <div className="flex items-center justify-center gap-2">
-                                                        {/* Edit */}
                                                         {canEditInfo ? (
                                                             <Button isIconOnly size="sm" variant="secondary" onPress={() => handleOpenModal(staff)} className="text-primary hover:bg-primary/10">
                                                                 <Pencil size={16} />
                                                             </Button>
                                                         ) : (
-                                                            <Tooltip >
+                                                            <Tooltip>
                                                                 <div className="cursor-not-allowed opacity-50">
                                                                     <Button isIconOnly size="sm" variant="ghost" isDisabled><Pencil size={16} /></Button>
                                                                 </div>
                                                             </Tooltip>
                                                         )}
 
-                                                        {/* Change status */}
                                                         {canChangeStatus ? (
                                                             <Button
                                                                 isIconOnly size="sm" variant="secondary"
@@ -169,7 +233,7 @@ export function StaffTable() {
                                                                 {staff.status === 'Active' ? <Lock size={16} /> : <Unlock size={16} />}
                                                             </Button>
                                                         ) : (
-                                                            <Tooltip >
+                                                            <Tooltip>
                                                                 <div className="cursor-not-allowed opacity-50">
                                                                     <Button isIconOnly size="sm" variant="ghost" isDisabled>
                                                                         {staff.status === 'Active' ? <Lock size={16} /> : <Unlock size={16} />}
@@ -178,19 +242,17 @@ export function StaffTable() {
                                                             </Tooltip>
                                                         )}
 
-                                                        {/* delete */}
                                                         {canDelete ? (
                                                             <Button isIconOnly size="sm" variant="secondary" onPress={() => handleDeleteStaff(staff.id!)} className="text-destructive hover:bg-destructive/10">
                                                                 <Trash2 size={16} />
                                                             </Button>
                                                         ) : (
-                                                            <Tooltip >
+                                                            <Tooltip>
                                                                 <div className="cursor-not-allowed opacity-50">
                                                                     <Button isIconOnly size="sm" variant="ghost" isDisabled><Trash2 size={16} /></Button>
                                                                 </div>
                                                             </Tooltip>
                                                         )}
-
                                                     </div>
                                                 </Table.Cell>
                                             </Table.Row>

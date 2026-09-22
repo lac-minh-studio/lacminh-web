@@ -16,7 +16,7 @@ export interface SidebarItem {
     title: string;
     route: string;
     icon: LucideIcon;
-    permission: AdminRole;
+    // permission: AdminRole;
 }
 
 export interface AdminUser {

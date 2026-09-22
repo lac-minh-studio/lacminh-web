@@ -95,7 +95,7 @@ export function useStaffList() {
     //retutrn
     return {
         staffList, isLoading, error, isModalOpen, editingStaff, currentPage, hasNextPage,
-        handleOpenModal, handleCloseModal, handleSubmitStaff, handleToggleStatus, handleDeleteStaff,
+        fetchStaff, setError, setStaffList, handleOpenModal, handleCloseModal, handleSubmitStaff, handleToggleStatus, handleDeleteStaff,
         goToNextPage: () => fetchStaff(currentPage + 1),
         goToPreviousPage: () => fetchStaff(currentPage - 1),
     };

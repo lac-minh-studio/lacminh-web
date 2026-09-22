@@ -123,4 +123,24 @@ export class FirestoreStaffRepository implements IStaffRepository {
             this.handleError('Không thể xóa nhân sự', error);
         }
     }
+
+    // Tìm kiếm
+    async searchStaffByName(searchTerm: string): Promise<IStaffItem[]> {
+        try {
+            // Lấy toàn bộ danh sách nhân sự từ collection 'staffs'
+            const snapshot = await getDocs(this.collRef);
+            const allStaffs = snapshot.docs.map(doc => this.toStaff(doc));
+
+            const keyword = searchTerm.trim().toLowerCase();
+            if (!keyword) return allStaffs;
+
+            return allStaffs.filter(staff =>
+                staff.fullName.toLowerCase().includes(keyword) ||
+                staff.email.toLowerCase().includes(keyword)
+            );
+        } catch (error) {
+            console.error("Lỗi khi search staff:", error);
+            return [];
+        }
+    }
 }

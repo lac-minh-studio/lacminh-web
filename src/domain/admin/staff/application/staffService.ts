@@ -1,8 +1,7 @@
 import { FirestoreStaffRepository } from '../infrastructure/repositories/FirestoreStaffRepository';
-import { IStaffFormInput } from '../model/Staff';
+import { IStaffFormInput, IStaffItem, } from '../model/Staff';
 import { activityLogService } from '../../dashboard/application/activityLogService';
 import { seedService } from '../../dashboard/infrastructure/seeding/seedService';
-
 const staffRepository = new FirestoreStaffRepository();
 
 export const staffService = {
@@ -80,6 +79,15 @@ export const staffService = {
             });
         } catch (error) {
             console.error('Không thể ghi log:', error);
+        }
+    },
+
+    async searchStaffByName(searchTerm: string): Promise<IStaffItem[]> {
+        try {
+            return await staffRepository.searchStaffByName(searchTerm);
+        } catch (error) {
+            console.error("Lỗi service tìm kiếm:", error);
+            return [];
         }
     }
 };
