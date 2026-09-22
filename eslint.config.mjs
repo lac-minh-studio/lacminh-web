@@ -16,6 +16,7 @@ const eslintConfig = defineConfig([
     ".github",
     ".stitch",
     ".vscode",
+    "coverage/**",
   ]),
 ]);
 
