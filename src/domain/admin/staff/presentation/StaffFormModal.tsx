@@ -17,6 +17,8 @@ import {
     ListBoxItem,
     Button,
 } from '@heroui/react';
+import { useAdminDashboard } from '../../dashboard/application/useAdminDashboard';
+import { usePermission } from '../../dashboard/application/usePermission';
 
 interface StaffFormModalProps {
     isOpen: boolean;
@@ -42,7 +44,7 @@ const TITLE_OPTIONS = [
 ] as const;
 
 const ROLE_OPTIONS = [
-    'MANAGER',
+    'ADMIN',
     'STAFF'
 ] as const;
 
@@ -52,6 +54,13 @@ type StaffFormValues = z.infer<typeof StaffFormSchema>;
 export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: StaffFormModalProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const isEditMode = !!editingStaff;
+
+    const { adminInfo } = useAdminDashboard();
+    const { checkActionPermission } = usePermission(adminInfo);
+    const targetUserId = editingStaff?.id ?? '';
+    const targetUserRole = editingStaff?.role ?? 'STAFF';
+
+    const { canChangeRole } = checkActionPermission(targetUserId, targetUserRole);
 
     const {
         handleSubmit,
@@ -66,6 +75,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
             phone: '',
             department: 'Engineering',
             title: 'Frontend Developer',
+            role: 'STAFF',
             status: 'Active',
         },
     });
@@ -301,6 +311,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
                                         control={control}
                                         render={({ field }) => (
                                             <Select
+                                                isDisabled={!canChangeRole}
                                                 aria-label='role'
                                                 isRequired
                                                 className="flex flex-col gap-2 col-span-2"

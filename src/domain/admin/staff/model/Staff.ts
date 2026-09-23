@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const DepartmentSchema = z.enum(['Product', 'Engineering', 'Helpdesk', 'UI/UX Design']);
 export const StatusSchema = z.enum(['Active', 'Inactive']);
 export const TitleSchema = z.enum(['Frontend Developer', 'Backend Developer', 'Product Manager', 'IT Support Engineer', 'UI/UX Researcher', 'UX Designer']);
-export const RoleSchema = z.enum(['SUPER_ADMIN', 'MANAGER', 'STAFF']);
+export const RoleSchema = z.enum(['SUPER_ADMIN', 'ADMIN', 'STAFF']);
 
 export const StaffFormSchema = z.object({
     fullName: z.string().trim().min(2, 'Tên phải từ 2 ký tự trở lên'),

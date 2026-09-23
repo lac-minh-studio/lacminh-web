@@ -38,7 +38,7 @@ export function usePermission(currentUser: CurrentUser | null) {
         permissions.canChangeStatus = !isSelf && (isSuperAdmin || hasHigherPower);
 
         // CẤM tự đổi role của chính mình.
-        permissions.canChangeRole = !isSelf && (isSuperAdmin || hasHigherPower);
+        permissions.canChangeRole = !isSelf && isSuperAdmin;
 
         return permissions;
     };

@@ -36,7 +36,8 @@ export function StaffTable() {
 
     // Lấy thông tin người đang đăng nhập
     const { adminInfo } = useAdminDashboard();
-    const { checkActionPermission } = usePermission(adminInfo);
+    const { checkActionPermission, isSuperAdmin } = usePermission(adminInfo);
+    const canCreate = isSuperAdmin;
 
     // Loading when admin nhập input
     useEffect(() => {
@@ -138,13 +139,26 @@ export function StaffTable() {
                         ) : null}
                     </div>
 
-                    <Button
-                        onPress={() => handleOpenModal()}
-                        aria-label="Thêm nhân sự mới"
-                        className="px-5 py-2.5 bg-primary text-text-light rounded-xl font-medium hover:bg-secondary transition-all shadow-md border border-border"
-                    >
-                        + Thêm nhân sự mới
-                    </Button>
+                    {canCreate ? (
+                        <Button
+                            onPress={() => handleOpenModal()}
+                            aria-label="Thêm nhân sự mới"
+                            className="px-5 py-2.5 bg-primary text-text-light rounded-xl font-medium hover:bg-secondary transition-all shadow-md border border-border"
+                        >
+                            + Thêm nhân sự mới
+                        </Button>
+                    )
+                        : (
+                            <Button
+                                isDisabled={true}
+                                onPress={() => handleOpenModal()}
+                                aria-label="Thêm nhân sự mới"
+                                className="px-5 py-2.5 bg-primary text-text-light rounded-xl font-medium hover:bg-secondary transition-all shadow-md border border-border"
+                            >
+                                + Thêm nhân sự mới
+                            </Button>)
+
+                    }
                 </div>
             </div>
 
@@ -242,7 +256,7 @@ export function StaffTable() {
                                                             </Tooltip>
                                                         )}
 
-                                                        {canDelete ? (
+                                                        {canDelete && isSuperAdmin ? (
                                                             <Button isIconOnly size="sm" variant="secondary" onPress={() => handleDeleteStaff(staff.id!)} className="text-destructive hover:bg-destructive/10">
                                                                 <Trash2 size={16} />
                                                             </Button>

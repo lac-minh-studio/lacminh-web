@@ -109,6 +109,7 @@ export class FirestoreStaffRepository implements IStaffRepository {
             if (data.phone !== undefined) updatePayload.phone = data.phone;
             if (data.department !== undefined) updatePayload.department = data.department;
             if (data.title !== undefined) updatePayload.title = data.title;
+            if (data.role !== undefined) updatePayload.role = data.role;
             if (data.status !== undefined) updatePayload.status = data.status === 'Active';
             await updateDoc(doc(this.collRef, id), updatePayload);
         } catch (error) {
