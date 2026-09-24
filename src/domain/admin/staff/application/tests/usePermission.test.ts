@@ -41,7 +41,7 @@ describe('usePermission hook (RBAC)', () => {
     });
 
     it('MANAGER không có quyền chỉnh sửa/xóa SUPER_ADMIN (cấp cao hơn)', () => {
-        const manager: MockUser = { id: 'ik9EYDL3QyZ8EZHSMOCD', email: 'minhcong@gmail.com', role: 'MANAGER' };
+        const manager: MockUser = { id: 'ik9EYDL3QyZ8EZHSMOCD', email: 'minhcong@gmail.com', role: 'ADMIN' };
         const { result } = renderHook(() => usePermission(manager));
         const permissions = result.current.checkActionPermission('RzrV8Ceq2U04P93rdC1r', 'SUPER_ADMIN');
 

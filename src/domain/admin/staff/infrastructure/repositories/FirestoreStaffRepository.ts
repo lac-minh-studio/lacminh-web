@@ -57,7 +57,7 @@ export class FirestoreStaffRepository implements IStaffRepository {
         throw new Error(`${context}: ${message}`);
     }
 
-    private toStaff(snapshot: QueryDocumentSnapshot<DocumentData>): IStaffItem {
+    public static toStaff(snapshot: QueryDocumentSnapshot<DocumentData>): IStaffItem {
         const data = FirestoreStaffSchema.parse(snapshot.data());
         return {
             id: snapshot.id,
@@ -79,7 +79,7 @@ export class FirestoreStaffRepository implements IStaffRepository {
             const snapshot = await getDocs(query(this.collRef, ...constraints));
             const pageDocuments = snapshot.docs.slice(0, pageSize);
             return {
-                items: pageDocuments.map((item) => this.toStaff(item)),
+                items: pageDocuments.map((item) => FirestoreStaffRepository.toStaff(item)),
                 nextCursor: snapshot.docs.length > pageSize ? pageDocuments.at(-1) ?? null : null,
             };
         } catch (error) {
@@ -150,7 +150,7 @@ export class FirestoreStaffRepository implements IStaffRepository {
 
         const snapshot = await getDocs(staffQuery);
         return snapshot.docs.map(
-            doc => this.toStaff(doc)
+            doc => FirestoreStaffRepository.toStaff(doc)
         );
     }
 }

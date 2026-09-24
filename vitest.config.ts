@@ -13,6 +13,7 @@ export default defineConfig({
             reporter: ['text', 'html'],
             include: [
                 'src/domain/admin/staff/application/useDebounce.ts',
+                'src/domain/admin/staff/application/useStaffFilter.ts',
                 'src/domain/admin/dashboard/application/usePermission.ts'
             ],
             exclude: ['node_modules/', '.next/', '**/*.d.ts', '**/*.test.ts'],
