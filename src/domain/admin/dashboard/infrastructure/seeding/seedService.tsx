@@ -30,7 +30,7 @@ export const seedService = {
             const [staffsEmpty, metricsEmpty, logsEmpty] = await Promise.all([
                 isEmpty('staffs'),
                 isEmpty('metrics'),
-                isEmpty('activity_logs'),
+                isEmpty('audit_logs'),
             ]);
 
             if (staffsEmpty) {
@@ -49,7 +49,7 @@ export const seedService = {
             }
 
             if (logsEmpty) {
-                await addDoc(collection(db, 'activity_logs'), {
+                await addDoc(collection(db, 'audit_logs'), {
                     user: 'Hệ thống',
                     action: 'Khởi tạo dữ liệu mẫu',
                     target: 'Firestore Emulator',

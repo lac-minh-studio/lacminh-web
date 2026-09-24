@@ -13,7 +13,7 @@ const ActivityLogSchema = z.object({
 
 export const activityLogService = {
     async createLog(data: Omit<z.infer<typeof ActivityLogSchema>, 'createdAt'>): Promise<void> {
-        await addDoc(collection(db, 'activity_logs'), { ...data, createdAt: Timestamp.now() });
+        await addDoc(collection(db, 'audit_logs'), { ...data, createdAt: Timestamp.now() });
     },
     //
     subscribeToRecentLogs(
@@ -21,7 +21,7 @@ export const activityLogService = {
         limitCount = 10,
         onError?: (error: Error) => void,
     ) {
-        const recentLogsQuery = query(collection(db, 'activity_logs'), orderBy('createdAt', 'desc'), limit(limitCount));
+        const recentLogsQuery = query(collection(db, 'audit_logs'), orderBy('createdAt', 'desc'), limit(limitCount));
         return onSnapshot(recentLogsQuery, (snapshot) => {
             try {
                 callback(snapshot.docs.map((item) => {

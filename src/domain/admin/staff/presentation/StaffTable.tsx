@@ -273,7 +273,7 @@ export function StaffTable() {
                                                             </Tooltip>
                                                         )}
 
-                                                        {canDelete ? (
+                                                        {canDelete && isSuperAdmin ? (
                                                             <Button isIconOnly size="sm" variant="secondary" onPress={() => handleDeleteStaff(staff.id!)} className="text-destructive hover:bg-destructive/10">
                                                                 <Trash2 size={16} />
                                                             </Button>
