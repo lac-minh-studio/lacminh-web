@@ -1,14 +1,12 @@
 'use client';
 
-import { Button, Table, Skeleton, Tooltip, Input, Spinner } from '@heroui/react';
+import { Button, Table, Skeleton, Tooltip, Input, Spinner, Select, ListBox } from '@heroui/react';
 import { Pencil, Trash2, Lock, Unlock, Search, X } from 'lucide-react';
 import { useStaffList } from '../application/useStaffList';
 import { StaffFormModal } from './StaffFormModal';
 import { useAdminDashboard } from '../../dashboard/application/useAdminDashboard';
 import { usePermission } from '@/domain/admin/dashboard/application/usePermission';
-import { useDebounce } from '../application/useDebounce';
-import { useEffect, useState } from 'react';
-import { staffService } from '../application/staffService';
+import { useStaffFilter } from '../application/useStaffFilter';
 const TABLE_HEADER = [
     "Họ và tên",
     "Email",
@@ -20,51 +18,40 @@ const TABLE_HEADER = [
     "Hành động"
 ];
 
-export function StaffTable() {
-    // search state
-    const [searchTerm, setSearchTerm] = useState('');
-    const [isSearching, setIsSearching] = useState(false);
-    const debouncedSearchTerm = useDebounce(searchTerm, 350);
+const TITLE_OPTIONS = [
+    { key: 'ALL', label: 'Mọi chức vụ' },
+    { key: 'Frontend Developer', label: 'Frontend Developer' },
+    { key: 'Backend Developer', label: 'Backend Developer' },
+    { key: 'Product Manager', label: 'Product Manager' },
+    { key: 'IT Support Engineer', label: 'IT Support Engineer' },
+    { key: 'UI/UX Researcher', label: 'UI/UX Researcher' },
+    { key: 'UX Designer', label: 'UX Designer' },
+];
 
-    // action staff
+
+export function StaffTable() {
+    //  Dữ liệu gốc và action
     const {
-        staffList, isLoading, error, isModalOpen, editingStaff, currentPage, hasNextPage,
+        // staffList,
+        isLoading, error, isModalOpen, editingStaff, currentPage, hasNextPage,
         handleOpenModal, handleCloseModal, handleSubmitStaff,
-        handleToggleStatus, handleDeleteStaff, goToNextPage, goToPreviousPage,
-        setStaffList, setError, fetchStaff
+        handleToggleStatus, handleDeleteStaff, goToNextPage, goToPreviousPage
     } = useStaffList();
 
-    // Lấy thông tin người đang đăng nhập
+    // Custom hook lọc & tìm kiếm
+    const {
+        searchTerm,
+        setSearchTerm,
+        titleFilter,
+        setTitleFilter,
+        filteredStaffList,
+        isSearching,
+    } = useStaffFilter();
+
+    //  Phân quyền
     const { adminInfo } = useAdminDashboard();
     const { checkActionPermission, isSuperAdmin } = usePermission(adminInfo);
     const canCreate = isSuperAdmin;
-
-    // Loading when admin nhập input
-    useEffect(() => {
-        if (searchTerm !== debouncedSearchTerm) {
-            setIsSearching(true);
-        }
-    }, [searchTerm, debouncedSearchTerm]);
-
-    // Call api sau khoảng 350ms
-    useEffect(() => {
-        async function fetchSearchData() {
-            try {
-                if (debouncedSearchTerm.trim() !== '') {
-                    const results = await staffService.searchStaffByName(debouncedSearchTerm.trim());
-
-                    setStaffList(results);
-                } else {
-                    await fetchStaff(0); // Trả lại danh sách gốc
-                }
-            } catch (_err) {
-                setError('Lỗi tìm kiếm' + _err);
-            } finally {
-                setIsSearching(false);
-            }
-        }
-        void fetchSearchData();
-    }, [debouncedSearchTerm, fetchStaff, setStaffList, setError]);
 
     const renderSkeleton = () => (
         Array.from({ length: 5 }).map((_, index) => (
@@ -100,14 +87,14 @@ export function StaffTable() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold font-headline text-text-dark">Quản lý Nhân sự</h1>
                     <p className="text-sm text-text-secondary">Danh sách toàn bộ nhân sự nội bộ hệ thống.</p>
                 </div>
 
-                <div className="flex items-center gap-4">
-                    {/* Thanh Search tích hợp Debounce đúng chuẩn HeroUI Input */}
+                <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    {/* Ô Tìm kiếm */}
                     <div className="relative flex items-center w-72">
                         <span className="absolute left-3 z-10 flex items-center pointer-events-none text-default-400">
                             <Search className="w-4 h-4" />
@@ -138,6 +125,36 @@ export function StaffTable() {
                             </button>
                         ) : null}
                     </div>
+
+                    {/* Filter */}
+                    <Select
+                        aria-label="Lọc theo chức vụ"
+                        value={titleFilter}
+                        onChange={(key) => {
+                            setTitleFilter(String(key));
+                        }}
+                        className="w-37.5"
+                    >
+                        <Select.Trigger>
+                            <Select.Value />
+                            <Select.Indicator />
+                        </Select.Trigger>
+
+                        <Select.Popover>
+                            <ListBox>
+                                {TITLE_OPTIONS.map((item) => (
+                                    <ListBox.Item
+                                        key={item.key}
+                                        id={item.key}
+                                        textValue={item.label}
+                                    >
+                                        {item.label}
+                                        <ListBox.ItemIndicator />
+                                    </ListBox.Item>
+                                ))}
+                            </ListBox>
+                        </Select.Popover>
+                    </Select>
 
                     {canCreate ? (
                         <Button
@@ -183,10 +200,10 @@ export function StaffTable() {
                                     renderSkeleton()
                                 ) : error ? (
                                     TableError()
-                                ) : staffList.length === 0 ? (
+                                ) : filteredStaffList.length === 0 ? (
                                     TableEmpty()
                                 ) : (
-                                    staffList.map((staff) => {
+                                    filteredStaffList.map((staff) => {
                                         const { canEditInfo, canChangeStatus, canDelete } = checkActionPermission(staff.id!, staff.role);
                                         return (
                                             <Table.Row
@@ -247,7 +264,7 @@ export function StaffTable() {
                                                                 {staff.status === 'Active' ? <Lock size={16} /> : <Unlock size={16} />}
                                                             </Button>
                                                         ) : (
-                                                            <Tooltip>
+                                                            <Tooltip >
                                                                 <div className="cursor-not-allowed opacity-50">
                                                                     <Button isIconOnly size="sm" variant="ghost" isDisabled>
                                                                         {staff.status === 'Active' ? <Lock size={16} /> : <Unlock size={16} />}
@@ -256,12 +273,12 @@ export function StaffTable() {
                                                             </Tooltip>
                                                         )}
 
-                                                        {canDelete && isSuperAdmin ? (
+                                                        {canDelete ? (
                                                             <Button isIconOnly size="sm" variant="secondary" onPress={() => handleDeleteStaff(staff.id!)} className="text-destructive hover:bg-destructive/10">
                                                                 <Trash2 size={16} />
                                                             </Button>
                                                         ) : (
-                                                            <Tooltip>
+                                                            <Tooltip >
                                                                 <div className="cursor-not-allowed opacity-50">
                                                                     <Button isIconOnly size="sm" variant="ghost" isDisabled><Trash2 size={16} /></Button>
                                                                 </div>
@@ -270,7 +287,7 @@ export function StaffTable() {
                                                     </div>
                                                 </Table.Cell>
                                             </Table.Row>
-                                        )
+                                        );
                                     })
                                 )}
                             </Table.Body>

@@ -1,5 +1,5 @@
 import { FirestoreStaffRepository } from '../infrastructure/repositories/FirestoreStaffRepository';
-import { IStaffFormInput, IStaffItem, } from '../model/Staff';
+import { IStaffFormInput, IStaffItem, StaffFilterQuery } from '../model/Staff';
 import { activityLogService } from '../../dashboard/application/activityLogService';
 import { seedService } from '../../dashboard/infrastructure/seeding/seedService';
 
@@ -54,12 +54,12 @@ export const staffService = {
         await recordStaffActivity(`Chuyển trạng thái sang ${newStatus}`, `Nhân sự #${id.slice(0, 6)}`);
     },
 
-    async searchStaffByName(searchTerm: string): Promise<IStaffItem[]> {
+    async filterStaff(query: StaffFilterQuery): Promise<IStaffItem[]> {
         try {
-            return await staffRepository.searchStaffByName(searchTerm);
+            return await staffRepository.filterStaff(query);
         } catch (error) {
-            console.error("Lỗi service tìm kiếm:", error);
-            return [];
+            console.error('Lỗi service Tìm kiếm nhân sự:', error);
+            throw error;
         }
     }
 };

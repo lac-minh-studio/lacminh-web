@@ -32,3 +32,8 @@ export interface IStaffRepository {
     update(id: string, data: Partial<IStaffFormInput>): Promise<void>;
     delete(id: string): Promise<void>;
 }
+
+export interface StaffFilterQuery {
+    searchTerm: string;
+    title: string;
+}

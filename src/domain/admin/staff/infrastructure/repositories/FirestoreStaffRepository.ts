@@ -14,6 +14,7 @@ import {
     Timestamp,
     updateDoc,
     doc,
+    where,
 } from 'firebase/firestore';
 import { z } from 'zod';
 import { db } from '@/config/firebase';
@@ -23,6 +24,7 @@ import {
     IStaffItem,
     IStaffRepository,
     RoleSchema,
+    StaffFilterQuery,
     StaffFormSchema,
     TitleSchema,
 } from '../../model/Staff';
@@ -125,23 +127,30 @@ export class FirestoreStaffRepository implements IStaffRepository {
         }
     }
 
-    // Tìm kiếm
-    async searchStaffByName(searchTerm: string): Promise<IStaffItem[]> {
-        try {
-            // Lấy toàn bộ danh sách nhân sự từ collection 'staffs'
-            const snapshot = await getDocs(this.collRef);
-            const allStaffs = snapshot.docs.map(doc => this.toStaff(doc));
 
-            const keyword = searchTerm.trim().toLowerCase();
-            if (!keyword) return allStaffs;
+    async filterStaff(filter: StaffFilterQuery): Promise<IStaffItem[]> {
 
-            return allStaffs.filter(staff =>
-                staff.fullName.toLowerCase().includes(keyword) ||
-                staff.email.toLowerCase().includes(keyword)
+        const constraints: QueryConstraint[] = [];
+        if (filter.title !== 'ALL') {
+            constraints.push(
+                where('title', '==', filter.title)
             );
-        } catch (error) {
-            console.error("Lỗi khi search staff:", error);
-            return [];
         }
+
+        const keyword = filter.searchTerm
+        if (keyword) {
+            constraints.push(
+                where('fullName', '>=', keyword),
+                where('fullName', '<=', keyword + '\uf8ff'
+                )
+            )
+
+        }
+        const staffQuery = query(this.collRef, ...constraints);
+
+        const snapshot = await getDocs(staffQuery);
+        return snapshot.docs.map(
+            doc => this.toStaff(doc)
+        );
     }
 }
