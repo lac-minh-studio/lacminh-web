@@ -14,7 +14,9 @@ export default defineConfig({
             include: [
                 'src/domain/admin/staff/application/useDebounce.ts',
                 'src/domain/admin/staff/application/useStaffFilter.ts',
-                'src/domain/admin/dashboard/application/usePermission.ts'
+                'src/domain/admin/hooks/useFirestoreRealtime.ts',
+                'src/domain/admin/dashboard/application/usePermission.ts',
+                'src/domain/admin/dashboard/application/activityLogService.ts'
             ],
             exclude: ['node_modules/', '.next/', '**/*.d.ts', '**/*.test.ts'],
         },
