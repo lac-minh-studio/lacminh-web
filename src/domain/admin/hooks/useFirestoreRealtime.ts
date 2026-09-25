@@ -1,22 +1,43 @@
-import { useEffect, useState } from "react";
+'use client';
+
+import { useEffect, useState } from 'react';
 import {
     DocumentData,
     Query,
     QueryDocumentSnapshot,
     onSnapshot,
-} from "firebase/firestore";
+} from 'firebase/firestore';
+import { useNetworkStatus } from './useNetworkStatus';
+
+export type FirestoreConnectionState =
+    | 'connecting'
+    | 'connected'
+    | 'reconnecting'
+    | 'error';
+
+interface UseFirestoreRealtimeResult<T> {
+    data: T[];
+    isLoading: boolean;
+    error: Error | null;
+    connectionState: FirestoreConnectionState;
+}
 
 export function useFirestoreRealtime<T>(
-    query: Query,
+    firestoreQuery: Query,
     mapper: (doc: QueryDocumentSnapshot<DocumentData>) => T
-) {
+): UseFirestoreRealtimeResult<T> {
+    const isOnline = useNetworkStatus();
+
     const [data, setData] = useState<T[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
+    const [connectionState, setConnectionState] =
+        useState<FirestoreConnectionState>('connecting');
+
     useEffect(() => {
         const unsubscribe = onSnapshot(
-            query,
+            firestoreQuery,
             (snapshot) => {
                 try {
                     const parsedData = snapshot.docs.map(mapper);
@@ -24,6 +45,7 @@ export function useFirestoreRealtime<T>(
                     setData(parsedData);
                     setIsLoading(false);
                     setError(null);
+                    setConnectionState('connected');
                 } catch (err) {
                     const parseError =
                         err instanceof Error
@@ -37,6 +59,7 @@ export function useFirestoreRealtime<T>(
 
                     setError(parseError);
                     setIsLoading(false);
+                    setConnectionState('error');
                 }
             },
             (err) => {
@@ -47,15 +70,22 @@ export function useFirestoreRealtime<T>(
 
                 setError(err);
                 setIsLoading(false);
+                setConnectionState('error');
             }
         );
 
         return unsubscribe;
-    }, [query, mapper]);
+    }, [firestoreQuery, mapper]);
+
+    const effectiveConnectionState =
+        !isOnline
+            ? 'reconnecting'
+            : connectionState;
 
     return {
         data,
         isLoading,
         error,
+        connectionState: effectiveConnectionState,
     };
 }

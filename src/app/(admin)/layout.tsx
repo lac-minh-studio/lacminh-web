@@ -6,13 +6,15 @@ import { Header } from '@/domain/admin/dashboard/presentation/Header';
 import { useAdminDashboard } from '@/domain/admin/dashboard/application/useAdminDashboard';
 import { Toaster } from 'react-hot-toast';
 import { useAdminIdentity } from '@/domain/admin/dashboard/application/useAdminIdentity';
+import { useNetworkStatus } from '@/domain/admin/hooks/useNetworkStatus';
+import { ReconnectionBanner } from '@/domain/admin/ui/ReconnectionBanner';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { adminInfo } = useAdminIdentity();
   const { handleLogout, isLoggingOut, recentLogs } = useAdminDashboard();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
-
+  const isOnline = useNetworkStatus();
   return (
     <div className="flex min-h-screen bg-background">
       <Sidebar
@@ -31,7 +33,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           isLoggingOut={isLoggingOut}
           onMenuClick={() => setIsSidebarOpen(true)}
         />
-
+        <ReconnectionBanner
+          isVisible={!isOnline}
+        />
         {/* render children */}
         <main className="flex-1 space-y-6 overflow-y-auto p-4 md:p-6 lg:p-8">
           {children}
@@ -63,6 +67,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               },
             }}
           />
+
         </main>
       </div>
     </div>
