@@ -4,9 +4,10 @@ import { Button, Table, Skeleton, Tooltip, Input, Spinner, Select, ListBox } fro
 import { Pencil, Trash2, Lock, Unlock, Search, X } from 'lucide-react';
 import { useStaffList } from '../application/useStaffList';
 import { StaffFormModal } from './StaffFormModal';
-import { useAdminDashboard } from '../../dashboard/application/useAdminDashboard';
+import { useStaffPagination } from '@/domain/admin/hooks/useStaffPagination';
 import { usePermission } from '@/domain/admin/dashboard/application/usePermission';
 import { useStaffFilter } from '../application/useStaffFilter';
+import { useAdminIdentity } from '../../dashboard/application/useAdminIdentity';
 const TABLE_HEADER = [
     "Họ và tên",
     "Email",
@@ -32,10 +33,10 @@ const TITLE_OPTIONS = [
 export function StaffTable() {
     //  Dữ liệu gốc và action
     const {
-        // staffList,
-        isLoading, error, isModalOpen, editingStaff, currentPage, hasNextPage,
+        staffList,
+        isLoading, isModalOpen, editingStaff, error,
         handleOpenModal, handleCloseModal, handleSubmitStaff,
-        handleToggleStatus, handleDeleteStaff, goToNextPage, goToPreviousPage
+        handleToggleStatus, handleDeleteStaff,
     } = useStaffList();
 
     // Custom hook lọc & tìm kiếm
@@ -46,10 +47,23 @@ export function StaffTable() {
         setTitleFilter,
         filteredStaffList,
         isSearching,
-    } = useStaffFilter();
+    } = useStaffFilter(staffList);
+
+    const {
+        currentPage,
+        totalPages,
+        paginatedItems,
+        hasNextPage,
+        hasPreviousPage,
+        goToNextPage,
+        goToPreviousPage,
+    } = useStaffPagination({
+        items: filteredStaffList,
+        pageSize: 6,
+    });
 
     //  Phân quyền
-    const { adminInfo } = useAdminDashboard();
+    const { adminInfo } = useAdminIdentity();
     const { checkActionPermission, isSuperAdmin } = usePermission(adminInfo);
     const canCreate = isSuperAdmin;
 
@@ -72,7 +86,7 @@ export function StaffTable() {
         <Table.Row key="error" aria-label="Lỗi hệ thống">
             <Table.Cell colSpan={8} className="text-center py-8 text-destructive bg-destructive/10">
                 <p className="font-bold">⚠️ Lỗi hệ thống</p>
-                <p className="text-xs mt-1">{error}</p>
+                <p className="text-xs mt-1">{error?.message ?? 'Đã xảy ra lỗi khi tải danh sách nhân sự.'}</p>
             </Table.Cell>
         </Table.Row>
     )
@@ -203,7 +217,7 @@ export function StaffTable() {
                                 ) : filteredStaffList.length === 0 ? (
                                     TableEmpty()
                                 ) : (
-                                    filteredStaffList.map((staff) => {
+                                    paginatedItems.map((staff) => {
                                         const { canEditInfo, canChangeStatus, canDelete } = checkActionPermission(staff.id!, staff.role);
                                         return (
                                             <Table.Row
@@ -296,11 +310,37 @@ export function StaffTable() {
                 </Table>
             </div>
 
-            <div className="flex items-center justify-end gap-3 text-sm text-text-secondary">
-                <span>Trang {currentPage + 1}</span>
-                <Button size="sm" variant="secondary" isDisabled={isLoading || currentPage === 0} onPress={goToPreviousPage}>Trước</Button>
-                <Button size="sm" variant="secondary" isDisabled={isLoading || !hasNextPage} onPress={goToNextPage}>Sau</Button>
-            </div>
+            {filteredStaffList.length > 0 && (
+                <div className="flex items-center justify-between gap-4 px-2">
+                    <span className="text-sm text-text-secondary">
+                        Trang {currentPage} / {totalPages}
+                    </span>
+
+                    <div className="flex items-center gap-2">
+                        <Button
+                            size="sm"
+                            variant="secondary"
+                            isDisabled={!hasPreviousPage || isLoading}
+                            onPress={goToPreviousPage}
+                        >
+                            Trước
+                        </Button>
+
+                        <span className="min-w-20 text-center text-sm text-text-secondary">
+                            {currentPage} / {totalPages}
+                        </span>
+
+                        <Button
+                            size="sm"
+                            variant="secondary"
+                            isDisabled={!hasNextPage || isLoading}
+                            onPress={goToNextPage}
+                        >
+                            Sau
+                        </Button>
+                    </div>
+                </div>
+            )}
 
             <StaffFormModal
                 isOpen={isModalOpen}

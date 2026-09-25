@@ -1,65 +1,99 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { ActivityData, AdminUser, LineChartPoint, MetricCardConfig, PieChartSegment } from '../model/adminUser';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useRouter, } from 'next/navigation';
+import { ActivityData, LineChartPoint, MetricCardConfig, PieChartSegment } from '../model/adminUser';
+import { IStaffItem } from '@/domain/admin/staff/model/Staff'
 import { dashboardService } from './DashboardService';
 import { activityLogService } from './activityLogService';
 import { Activity, Eye, Users } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { seedService } from '../infrastructure/seeding/seedService';
-
+import { useFirestoreRealtime } from '../../hooks/useFirestoreRealtime';
+import { useStaffRealtime } from '@/domain/admin/staff/application/useStaffRealtime';
+import { useAdminIdentity } from './useAdminIdentity';
 export function useAdminDashboard() {
     const router = useRouter();
-    const pathname = usePathname();
-    const [isLoggingOut, setIsLoggingOut] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isLogsLoading, setIsLogsLoading] = useState(true);
-    const [totalStaff, setTotalStaff] = useState(0);
-    const [activeStaff, setActiveStaff] = useState(0);
-    const [departmentData, setDepartmentData] = useState<PieChartSegment[]>([]);
-    const [visitChartData, setVisitChartData] = useState<LineChartPoint[]>([]);
-    const [visits, setVisits] = useState(0);
-    const [recentLogs, setRecentLogs] = useState<(ActivityData & { time: string })[]>([]);
 
-    const adminInfo: AdminUser = { id: 'JCKX6LhfBbqcq0ZrT5xS', name: 'Hoàng Anh', email: 'hoanganh@lacminh.com', role: 'SUPER_ADMIN' };
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const [isLoadingDashboard, setIsLoadingDashboard] = useState(true);
+
+    const [visitChartData, setVisitChartData] = useState<
+        LineChartPoint[]
+    >([]);
+    const [visits, setVisits] = useState(0);
+
+    const {
+        staffList: staffRealtime,
+        isLoading: isStaffLoading,
+    } = useStaffRealtime();
+    const { adminInfo } = useAdminIdentity();
+
+    /**
+     * Realtime Activity Logs
+     */
+    const recentLogsQuery = useMemo(
+        () => activityLogService.getRecentLogsQuery(10),
+        []
+    );
+
+    const {
+        data: recentLogs,
+        isLoading: isLogsLoading,
+        error: logsError,
+    } = useFirestoreRealtime<ActivityData>(
+        recentLogsQuery,
+        activityLogService.mapActivityLog
+    );
+
 
     const fetchDashboardData = useCallback(async () => {
         try {
-            setIsLoading(true);
+            setIsLoadingDashboard(true);
+
             await seedService.seedIfEmpty();
-            const [total, active, deptDistribution, metrics, chartData] = await Promise.all([
-                dashboardService.getTotalStaffCount(),
-                dashboardService.getStaffCountByStatus('Active'),
-                dashboardService.getDepartmentDistribution(),
+
+            const [metrics, chartData] = await Promise.all([
                 dashboardService.getMetricsTrend(1),
                 dashboardService.getVisitChartData(),
             ]);
-            setTotalStaff(total);
-            setActiveStaff(active);
-            setDepartmentData(deptDistribution);
+
             setVisits(metrics[0]?.visits ?? 0);
             setVisitChartData(chartData);
         } catch (error) {
             console.error('Không thể tải Dashboard:', error);
-            toast.error(error instanceof Error ? error.message : 'Không thể tải số liệu Dashboard.');
+
+            toast.error(
+                error instanceof Error
+                    ? error.message
+                    : 'Không thể tải số liệu Dashboard.'
+            );
         } finally {
-            setIsLoading(false);
+            setIsLoadingDashboard(false);
         }
     }, []);
 
     useEffect(() => {
-        const unsubscribe = activityLogService.subscribeToRecentLogs(
-            (logs) => { setRecentLogs(logs); setIsLogsLoading(false); },
-            10,
-            () => { setIsLogsLoading(false); toast.error('Không thể tải nhật ký hoạt động.'); },
-        );
-        return unsubscribe;
-    }, []);
+        void fetchDashboardData();
+    }, [fetchDashboardData]);
+    //
+    const totalStaff = staffRealtime.length;
+    //
+    const activeStaff = staffRealtime.filter(
+        (staff) => staff.status === 'Active'
+    ).length;
+    //
+    const departmentData = useMemo(
+        () => buildDepartmentDistribution(staffRealtime),
+        [staffRealtime]
+    );
+    //
+    const activityRate =
+        totalStaff === 0
+            ? 0
+            : (activeStaff / totalStaff) * 100;
 
-    useEffect(() => { void fetchDashboardData(); }, [fetchDashboardData, pathname]);
-
-    const activityRate = totalStaff === 0 ? 0 : (activeStaff / totalStaff) * 100;
+    const isLoading = isStaffLoading || isLoadingDashboard;
     const metricsConfig: MetricCardConfig[] = [
         { id: 'total-staff', title: 'Tổng số nhân sự', value: totalStaff.toLocaleString(), change: 'Firestore', isPositive: true, icon: Users },
         { id: 'visits', title: 'Lượt truy cập', value: visits.toLocaleString(), change: 'Metrics mới nhất', isPositive: true, icon: Eye },
@@ -80,7 +114,46 @@ export function useAdminDashboard() {
     };
 
     return {
-        adminInfo, metricsConfig, departmentData, visitChartData, recentLogs,
-        isLoading, isLogsLoading, isLoggingOut, handleLogout, refreshDashboard: fetchDashboardData,
+        adminInfo,
+
+        // Dashboard
+        metricsConfig,
+        departmentData,
+        visitChartData,
+
+        // Activity logs
+        recentLogs,
+        isLogsLoading,
+        logsError,
+
+        // General state
+        isLoading,
+        isLoggingOut,
+
+        // Actions
+        handleLogout,
+        refreshDashboard: fetchDashboardData,
     };
+}
+function buildDepartmentDistribution(
+    staffList: IStaffItem[]
+): PieChartSegment[] {
+    const departmentCounts = new Map<string, number>();
+
+    for (const staff of staffList) {
+        const currentCount =
+            departmentCounts.get(staff.department) ?? 0;
+
+        departmentCounts.set(
+            staff.department,
+            currentCount + 1
+        );
+    }
+
+    return Array.from(departmentCounts.entries()).map(
+        ([name, value]) => ({
+            name,
+            value,
+        })
+    );
 }

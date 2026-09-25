@@ -61,5 +61,10 @@ export const staffService = {
             console.error('Lỗi service Tìm kiếm nhân sự:', error);
             throw error;
         }
-    }
+    },
+    getRealtimeStaffQuery() {
+        return staffRepository.getRealtimeQuery();
+    },
+    mapStaff: FirestoreStaffRepository.toStaff,
+
 };

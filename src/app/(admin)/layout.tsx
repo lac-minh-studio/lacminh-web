@@ -5,9 +5,11 @@ import { Sidebar } from '@/domain/admin/dashboard/presentation/SideBar';
 import { Header } from '@/domain/admin/dashboard/presentation/Header';
 import { useAdminDashboard } from '@/domain/admin/dashboard/application/useAdminDashboard';
 import { Toaster } from 'react-hot-toast';
+import { useAdminIdentity } from '@/domain/admin/dashboard/application/useAdminIdentity';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { adminInfo, handleLogout, isLoggingOut, recentLogs } = useAdminDashboard();
+  const { adminInfo } = useAdminIdentity();
+  const { handleLogout, isLoggingOut, recentLogs } = useAdminDashboard();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 

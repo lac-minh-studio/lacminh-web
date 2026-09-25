@@ -17,8 +17,8 @@ import {
     ListBoxItem,
     Button,
 } from '@heroui/react';
-import { useAdminDashboard } from '../../dashboard/application/useAdminDashboard';
 import { usePermission } from '../../dashboard/application/usePermission';
+import { useAdminIdentity } from '../../dashboard/application/useAdminIdentity';
 
 interface StaffFormModalProps {
     isOpen: boolean;
@@ -55,7 +55,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
     const [isSubmitting, setIsSubmitting] = useState(false);
     const isEditMode = !!editingStaff;
 
-    const { adminInfo } = useAdminDashboard();
+    const { adminInfo } = useAdminIdentity();
     const { checkActionPermission } = usePermission(adminInfo);
     const targetUserId = editingStaff?.id ?? '';
     const targetUserRole = editingStaff?.role ?? 'STAFF';

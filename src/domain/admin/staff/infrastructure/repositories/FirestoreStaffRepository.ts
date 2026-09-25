@@ -15,6 +15,7 @@ import {
     updateDoc,
     doc,
     where,
+    Query,
 } from 'firebase/firestore';
 import { z } from 'zod';
 import { db } from '@/config/firebase';
@@ -151,6 +152,12 @@ export class FirestoreStaffRepository implements IStaffRepository {
         const snapshot = await getDocs(staffQuery);
         return snapshot.docs.map(
             doc => FirestoreStaffRepository.toStaff(doc)
+        );
+    }
+    public getRealtimeQuery(): Query {
+        return query(
+            this.collRef,
+            orderBy('created_at', 'desc')
         );
     }
 }

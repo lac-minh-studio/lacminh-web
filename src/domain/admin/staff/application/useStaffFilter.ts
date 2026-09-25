@@ -1,67 +1,36 @@
-import { useEffect, useState } from "react";
-import { staffService } from "./staffService";
-import { useDebounce } from "./useDebounce";
+import { useMemo, useState } from "react";
 import { IStaffItem } from "../model/Staff";
+import { useDebounce } from "./useDebounce";
 
-export function useStaffFilter() {
+export function useStaffFilter(staffList: IStaffItem[]) {
     const [searchTerm, setSearchTerm] = useState('');
     const [titleFilter, setTitleFilter] = useState('ALL');
 
-    const [filteredStaffList, setFilteredStaffList] =
-        useState<IStaffItem[]>([]);
+    const debouncedSearchTerm = useDebounce(searchTerm, 400);
 
-    const [isSearching, setIsSearching] =
-        useState(false);
+    const filteredStaffList = useMemo(() => {
+        const keyword = debouncedSearchTerm.trim().toLowerCase();
 
-    const [error, setError] =
-        useState<string | null>(null);
+        return staffList.filter((staff) => {
+            const matchesSearch =
+                keyword === "" ||
+                staff.fullName.toLowerCase().includes(keyword) ||
+                staff.email.toLowerCase().includes(keyword);
 
-    const debouncedSearchTerm =
-        useDebounce(searchTerm, 400);
+            const matchesTitle =
+                titleFilter === "ALL" ||
+                staff.title === titleFilter;
 
-    useEffect(() => {
-        const filterStaff = async () => {
-            setIsSearching(true);
-            setError(null);
-
-            try {
-                const result =
-                    await staffService.filterStaff({
-                        searchTerm: debouncedSearchTerm,
-                        title: titleFilter,
-                    });
-
-                setFilteredStaffList(result);
-            } catch (error) {
-                console.error(
-                    'Lỗi khi tìm kiếm/lọc nhân sự:',
-                    error
-                );
-
-                setError(
-                    'Không thể tìm kiếm nhân sự'
-                );
-            } finally {
-                setIsSearching(false);
-            }
-        };
-
-        filterStaff();
-    }, [
-        debouncedSearchTerm,
-        titleFilter,
-    ]);
+            return matchesSearch && matchesTitle;
+        });
+    }, [staffList, debouncedSearchTerm, titleFilter]);
 
     return {
         searchTerm,
         setSearchTerm,
-
         titleFilter,
         setTitleFilter,
-
-        isSearching,
         filteredStaffList,
-
-        error,
+        isSearching: searchTerm !== debouncedSearchTerm,
     };
 }

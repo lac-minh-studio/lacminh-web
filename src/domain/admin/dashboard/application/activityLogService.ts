@@ -1,4 +1,4 @@
-import { addDoc, collection, limit, onSnapshot, orderBy, query, Timestamp } from 'firebase/firestore';
+import { addDoc, collection, DocumentData, limit, orderBy, Query, query, QueryDocumentSnapshot, Timestamp } from 'firebase/firestore';
 import { z } from 'zod';
 import { db } from '@/config/firebase';
 import { ActivityData } from '../model/adminUser';
@@ -11,28 +11,47 @@ const ActivityLogSchema = z.object({
     createdAt: z.instanceof(Timestamp),
 });
 
+type ActivityLogInput = Omit<
+    z.infer<typeof ActivityLogSchema>,
+    'createdAt'
+>;
+
 export const activityLogService = {
-    async createLog(data: Omit<z.infer<typeof ActivityLogSchema>, 'createdAt'>): Promise<void> {
-        await addDoc(collection(db, 'audit_logs'), { ...data, createdAt: Timestamp.now() });
+    /**
+     * Create a new activity log.
+     */
+    async createLog(data: ActivityLogInput): Promise<void> {
+        await addDoc(collection(db, 'audit_logs'), {
+            ...data,
+            createdAt: Timestamp.now(),
+        });
     },
-    //
-    subscribeToRecentLogs(
-        callback: (logs: ActivityData[]) => void,
-        limitCount = 10,
-        onError?: (error: Error) => void,
-    ) {
-        const recentLogsQuery = query(collection(db, 'audit_logs'), orderBy('createdAt', 'desc'), limit(limitCount));
-        return onSnapshot(recentLogsQuery, (snapshot) => {
-            try {
-                callback(snapshot.docs.map((item) => {
-                    const data = ActivityLogSchema.parse(item.data());
-                    const createdAt = data.createdAt.toDate();
-                    return { id: item.id, ...data, time: formatRelativeTime(createdAt) };
-                }));
-            } catch (error) {
-                onError?.(error instanceof Error ? error : new Error('Dữ liệu activity log không hợp lệ.'));
-            }
-        }, (error) => onError?.(error));
+
+    /**
+     * Create Firestore query for recent activity logs.
+     */
+    getRecentLogsQuery(limitCount = 10): Query {
+        return query(
+            collection(db, 'audit_logs'),
+            orderBy('createdAt', 'desc'),
+            limit(limitCount)
+        );
+    },
+
+    /**
+     * Map and validate Firestore document
+     * into ActivityData.
+     */
+    mapActivityLog(
+        doc: QueryDocumentSnapshot<DocumentData>
+    ): ActivityData {
+        const data = ActivityLogSchema.parse(doc.data());
+
+        return {
+            id: doc.id,
+            ...data,
+            time: formatRelativeTime(data.createdAt.toDate()),
+        };
     },
 };
 
