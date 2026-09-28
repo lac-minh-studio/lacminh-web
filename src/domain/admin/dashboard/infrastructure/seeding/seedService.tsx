@@ -1,13 +1,6 @@
 import { addDoc, collection, getCountFromServer, Timestamp } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 
-const STAFFS = [
-    { fullName: 'Trần Hoàng Anh', email: 'hoanganh@lacminh.com', phone: '0374352511', department: 'Engineering', title: 'Frontend Developer', role: 'SUPER_ADMIN', status: true },
-    { fullName: 'Nguyễn Lê Hữu', email: 'huunl@lacminh.com', phone: '0912345678', department: 'Product', title: 'Product Manager', role: 'STAFF', status: true },
-    { fullName: 'Phạm Minh Tâm', email: 'tam.pm@lacminh.com', phone: '0987654321', department: 'UI/UX Design', title: 'UX Designer', role: 'STAFF', status: false },
-    { fullName: 'Lê Cường', email: 'cuongle@lacminh.com', phone: '0909123123', department: 'Helpdesk', title: 'IT Support Engineer', role: 'STAFF', status: true },
-] as const;
-
 const METRICS = [
     { date: '2026-09-14', visits: 120, activeUsers: 83, totalUsers: 100 },
     { date: '2026-09-15', visits: 145, activeUsers: 86, totalUsers: 104 },
@@ -23,23 +16,15 @@ async function isEmpty(collectionName: string): Promise<boolean> {
 
 export const seedService = {
     async seedIfEmpty(): Promise<void> {
-        if (process.env.NODE_ENV !== 'development') return;
 
         try {
             const now = Timestamp.now();
-            const [staffsEmpty, metricsEmpty, logsEmpty] = await Promise.all([
-                isEmpty('staffs'),
-                isEmpty('metrics'),
-                isEmpty('audit_logs'),
-            ]);
+            const [
 
-            if (staffsEmpty) {
-                await Promise.all(STAFFS.map((staff) => addDoc(collection(db, 'staffs'), {
-                    ...staff,
-                    created_at: now,
-                    updated_at: now,
-                })));
-            }
+                metricsEmpty, logsEmpty] = await Promise.all([
+                    isEmpty('metrics'),
+                    isEmpty('audit_logs'),
+                ]);
 
             if (metricsEmpty) {
                 await Promise.all(METRICS.map((metric) => addDoc(collection(db, 'metrics'), {
