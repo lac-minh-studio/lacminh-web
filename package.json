@@ -10,6 +10,7 @@
     "test:coverage": "vitest run --coverage",
     "seed:auth": "node --env-file=.env.emulator scripts/seed-auth.mjs",
     "deploy:rules": "firebase deploy --only firestore:rules",
+    "seed:prod": "node scripts/seed-prod.mjs",
     "emulator": "firebase emulators:start --import=./firebase-data --export-on-exit",
     "dev:firebase": "concurrently -k -p \"[{name}]\" -c \"cyan.bold,yellow.bold\" -n \"NEXT,EMULATOR\" \"npm run dev\" \"npm run emulator\"",
     "lint": "npm run lint:architecture && eslint .",
