@@ -1,0 +1,353 @@
+'use client';
+
+import { Button, Table, Skeleton, Tooltip, Input, Spinner, Select, ListBox } from '@heroui/react';
+import { Pencil, Trash2, Lock, Unlock, Search, X } from 'lucide-react';
+import { useStaffList } from '../application/useStaffList';
+import { StaffFormModal } from './StaffFormModal';
+import { useStaffPagination } from '@/domain/admin/hooks/useStaffPagination';
+import { usePermission } from '@/domain/admin/dashboard/application/usePermission';
+import { useStaffFilter } from '../application/useStaffFilter';
+import { useAdminIdentity } from '../../dashboard/application/useAdminIdentity';
+const TABLE_HEADER = [
+    "Họ và tên",
+    "Email",
+    "Số điện thoại",
+    "Phòng ban",
+    "Chức vụ",
+    "Vai trò",
+    "Trạng thái",
+    "Hành động"
+];
+
+const TITLE_OPTIONS = [
+    { key: 'ALL', label: 'Mọi chức vụ' },
+    { key: 'Frontend Developer', label: 'Frontend Developer' },
+    { key: 'Backend Developer', label: 'Backend Developer' },
+    { key: 'Product Manager', label: 'Product Manager' },
+    { key: 'IT Support Engineer', label: 'IT Support Engineer' },
+    { key: 'UI/UX Researcher', label: 'UI/UX Researcher' },
+    { key: 'UX Designer', label: 'UX Designer' },
+];
+
+
+export function StaffTable() {
+    //  Dữ liệu gốc và action
+    const {
+        staffList,
+        isLoading, isModalOpen, editingStaff, error,
+        handleOpenModal, handleCloseModal, handleSubmitStaff,
+        handleToggleStatus, handleDeleteStaff,
+    } = useStaffList();
+
+    // Custom hook lọc & tìm kiếm
+    const {
+        searchTerm,
+        setSearchTerm,
+        titleFilter,
+        setTitleFilter,
+        filteredStaffList,
+        isSearching,
+    } = useStaffFilter(staffList);
+
+    const {
+        currentPage,
+        totalPages,
+        paginatedItems,
+        hasNextPage,
+        hasPreviousPage,
+        goToNextPage,
+        goToPreviousPage,
+    } = useStaffPagination({
+        items: filteredStaffList,
+        pageSize: 6,
+    });
+
+    //  Phân quyền
+    const { adminInfo } = useAdminIdentity();
+    const { checkActionPermission, isSuperAdmin } = usePermission(adminInfo);
+    const canCreate = isSuperAdmin;
+
+    const renderSkeleton = () => (
+        Array.from({ length: 5 }).map((_, index) => (
+            <Table.Row key={`skeleton-${index}`} aria-label="Đang tải">
+                <Table.Cell className="py-4 px-4 text-center"><Skeleton className="h-4 w-full rounded-lg mx-auto" /></Table.Cell>
+                <Table.Cell className="py-4 px-4 text-center"><Skeleton className="h-4 w-24 rounded-lg mx-auto" /></Table.Cell>
+                <Table.Cell className="py-4 px-4 text-center"><Skeleton className="h-6 w-20 rounded-full mx-auto" /></Table.Cell>
+                <Table.Cell className="py-4 px-4 text-center"><Skeleton className="h-4 w-3/4 rounded-lg mx-auto" /></Table.Cell>
+                <Table.Cell className="py-4 px-4 text-center"><Skeleton className="h-6 w-16 rounded-md mx-auto" /></Table.Cell>
+                <Table.Cell className="py-4 px-4 text-center"><Skeleton className="h-6 w-24 rounded-md mx-auto" /></Table.Cell>
+                <Table.Cell className="py-4 px-4 text-center"><Skeleton className="h-6 w-24 rounded-md mx-auto" /></Table.Cell>
+                <Table.Cell className="py-4 px-4 text-center"><Skeleton className="h-6 w-24 rounded-md mx-auto" /></Table.Cell>
+            </Table.Row>
+        ))
+    );
+
+    const TableError = () => (
+        <Table.Row key="error" aria-label="Lỗi hệ thống">
+            <Table.Cell colSpan={8} className="text-center py-8 text-destructive bg-destructive/10">
+                <p className="font-bold">⚠️ Lỗi hệ thống</p>
+                <p className="text-xs mt-1">{error?.message ?? 'Đã xảy ra lỗi khi tải danh sách nhân sự.'}</p>
+            </Table.Cell>
+        </Table.Row>
+    )
+
+    const TableEmpty = () => (
+        <Table.Row key="empty" aria-label="Trống">
+            <Table.Cell colSpan={8} className="text-center py-10 text-text-muted italic">
+                Chưa có nhân sự nào trong hệ thống.
+            </Table.Cell>
+        </Table.Row>
+    )
+
+    return (
+        <div className="space-y-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 className="text-2xl font-bold font-headline text-text-dark">Quản lý Nhân sự</h1>
+                    <p className="text-sm text-text-secondary">Danh sách toàn bộ nhân sự nội bộ hệ thống.</p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    {/* Ô Tìm kiếm */}
+                    <div className="relative flex items-center w-72">
+                        <span className="absolute left-3 z-10 flex items-center pointer-events-none text-default-400">
+                            <Search className="w-4 h-4" />
+                        </span>
+
+                        <Input
+                            type="text"
+                            variant="secondary"
+                            placeholder="Tìm kiếm nhân sự..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            fullWidth
+                            aria-label="Tìm kiếm nhân sự"
+                            className="pl-9 pr-9"
+                        />
+
+                        {isSearching ? (
+                            <span className="absolute right-3 z-10 flex items-center">
+                                <Spinner size="sm" />
+                            </span>
+                        ) : searchTerm ? (
+                            <button
+                                onClick={() => setSearchTerm('')}
+                                className="absolute right-3 z-10 flex items-center text-default-400 hover:text-text-dark"
+                                aria-label="Xóa tìm kiếm"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        ) : null}
+                    </div>
+
+                    {/* Filter */}
+                    <Select
+                        aria-label="Lọc theo chức vụ"
+                        value={titleFilter}
+                        onChange={(key) => {
+                            setTitleFilter(String(key));
+                        }}
+                        className="w-37.5"
+                    >
+                        <Select.Trigger>
+                            <Select.Value />
+                            <Select.Indicator />
+                        </Select.Trigger>
+
+                        <Select.Popover>
+                            <ListBox>
+                                {TITLE_OPTIONS.map((item) => (
+                                    <ListBox.Item
+                                        key={item.key}
+                                        id={item.key}
+                                        textValue={item.label}
+                                    >
+                                        {item.label}
+                                        <ListBox.ItemIndicator />
+                                    </ListBox.Item>
+                                ))}
+                            </ListBox>
+                        </Select.Popover>
+                    </Select>
+
+                    {canCreate ? (
+                        <Button
+                            onPress={() => handleOpenModal()}
+                            aria-label="Thêm nhân sự mới"
+                            className="px-5 py-2.5 bg-primary text-text-light rounded-xl font-medium hover:bg-secondary transition-all shadow-md border border-border"
+                        >
+                            + Thêm nhân sự mới
+                        </Button>
+                    )
+                        : (
+                            <Button
+                                isDisabled={true}
+                                onPress={() => handleOpenModal()}
+                                aria-label="Thêm nhân sự mới"
+                                className="px-5 py-2.5 bg-primary text-text-light rounded-xl font-medium hover:bg-secondary transition-all shadow-md border border-border"
+                            >
+                                + Thêm nhân sự mới
+                            </Button>)
+
+                    }
+                </div>
+            </div>
+
+            <div className="w-full bg-surface border border-border rounded-2xl overflow-hidden shadow-xl backdrop-blur-md overflow-x-auto">
+                <Table aria-label="Danh sách nhân sự" className="w-full">
+                    <Table.ScrollContainer className="w-full overflow-x-auto">
+                        <Table.Content className="w-full min-w-250">
+                            <Table.Header className="border-b border-border bg-surface-dark/10">
+                                {TABLE_HEADER.map((title) => (
+                                    <Table.Column
+                                        isRowHeader
+                                        key={title}
+                                        aria-label={title}
+                                        className="py-4 px-4 text-2xs uppercase tracking-[0.15em] font-semibold text-text-secondary text-center"
+                                    >
+                                        {title}
+                                    </Table.Column>
+                                ))}
+                            </Table.Header>
+                            <Table.Body className="divide-y divide-border/60 text-sm text-text-dark">
+                                {isLoading ? (
+                                    renderSkeleton()
+                                ) : error ? (
+                                    TableError()
+                                ) : filteredStaffList.length === 0 ? (
+                                    TableEmpty()
+                                ) : (
+                                    paginatedItems.map((staff) => {
+                                        const { canEditInfo, canChangeStatus, canDelete } = checkActionPermission(staff.id!, staff.role);
+                                        return (
+                                            <Table.Row
+                                                key={staff.id}
+                                                aria-label={staff.fullName}
+                                                className="hover:bg-surface-dark/5 transition-colors"
+                                            >
+                                                <Table.Cell className="py-4 px-4 font-medium text-text-dark text-center">
+                                                    {staff.fullName}
+                                                </Table.Cell>
+                                                <Table.Cell className="py-4 px-4 text-text-secondary text-center">
+                                                    {staff.email}
+                                                </Table.Cell>
+                                                <Table.Cell className="py-4 px-4 text-text-secondary text-center">
+                                                    {staff.phone}
+                                                </Table.Cell>
+                                                <Table.Cell className="py-4 px-4 text-center">
+                                                    <span className="px-3 py-1 text-xs font-semibold bg-primary/15 text-text-secondary border border-primary/30 rounded-full inline-block">
+                                                        {staff.department}
+                                                    </span>
+                                                </Table.Cell>
+                                                <Table.Cell className="py-4 px-4 text-text-secondary text-center">
+                                                    {staff.title}
+                                                </Table.Cell>
+                                                <Table.Cell className="py-4 px-4 text-text-secondary text-center">
+                                                    {staff.role}
+                                                </Table.Cell>
+                                                <Table.Cell className="py-4 px-4 text-center">
+                                                    <span
+                                                        className={`px-3 py-1 text-xs font-medium rounded-md border inline-block ${staff.status === 'Active'
+                                                            ? 'bg-success/15 text-success border-success/30'
+                                                            : 'bg-destructive/15 text-destructive border-destructive/30'
+                                                            }`}
+                                                    >
+                                                        {staff.status}
+                                                    </span>
+                                                </Table.Cell>
+                                                <Table.Cell className="py-4 px-4 text-center">
+                                                    <div className="flex items-center justify-center gap-2">
+                                                        {canEditInfo ? (
+                                                            <Button isIconOnly size="sm" variant="secondary" onPress={() => handleOpenModal(staff)} className="text-primary hover:bg-primary/10">
+                                                                <Pencil size={16} />
+                                                            </Button>
+                                                        ) : (
+                                                            <Tooltip>
+                                                                <div className="cursor-not-allowed opacity-50">
+                                                                    <Button isIconOnly size="sm" variant="ghost" isDisabled><Pencil size={16} /></Button>
+                                                                </div>
+                                                            </Tooltip>
+                                                        )}
+
+                                                        {canChangeStatus ? (
+                                                            <Button
+                                                                isIconOnly size="sm" variant="secondary"
+                                                                onPress={() => handleToggleStatus(staff)}
+                                                                className={staff.status === 'Active' ? 'text-warning hover:bg-warning/10' : 'text-success hover:bg-success/10'}
+                                                            >
+                                                                {staff.status === 'Active' ? <Lock size={16} /> : <Unlock size={16} />}
+                                                            </Button>
+                                                        ) : (
+                                                            <Tooltip >
+                                                                <div className="cursor-not-allowed opacity-50">
+                                                                    <Button isIconOnly size="sm" variant="ghost" isDisabled>
+                                                                        {staff.status === 'Active' ? <Lock size={16} /> : <Unlock size={16} />}
+                                                                    </Button>
+                                                                </div>
+                                                            </Tooltip>
+                                                        )}
+
+                                                        {canDelete && isSuperAdmin ? (
+                                                            <Button isIconOnly size="sm" variant="secondary" onPress={() => handleDeleteStaff(staff.id!)} className="text-destructive hover:bg-destructive/10">
+                                                                <Trash2 size={16} />
+                                                            </Button>
+                                                        ) : (
+                                                            <Tooltip >
+                                                                <div className="cursor-not-allowed opacity-50">
+                                                                    <Button isIconOnly size="sm" variant="ghost" isDisabled><Trash2 size={16} /></Button>
+                                                                </div>
+                                                            </Tooltip>
+                                                        )}
+                                                    </div>
+                                                </Table.Cell>
+                                            </Table.Row>
+                                        );
+                                    })
+                                )}
+                            </Table.Body>
+                        </Table.Content>
+                    </Table.ScrollContainer>
+                </Table>
+            </div>
+
+            {filteredStaffList.length > 0 && (
+                <div className="flex items-center justify-between gap-4 px-2">
+                    <span className="text-sm text-text-secondary">
+                        Trang {currentPage} / {totalPages}
+                    </span>
+
+                    <div className="flex items-center gap-2">
+                        <Button
+                            size="sm"
+                            variant="secondary"
+                            isDisabled={!hasPreviousPage || isLoading}
+                            onPress={goToPreviousPage}
+                        >
+                            Trước
+                        </Button>
+
+                        <span className="min-w-20 text-center text-sm text-text-secondary">
+                            {currentPage} / {totalPages}
+                        </span>
+
+                        <Button
+                            size="sm"
+                            variant="secondary"
+                            isDisabled={!hasNextPage || isLoading}
+                            onPress={goToNextPage}
+                        >
+                            Sau
+                        </Button>
+                    </div>
+                </div>
+            )}
+
+            <StaffFormModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                onSubmit={handleSubmitStaff}
+                editingStaff={editingStaff}
+            />
+        </div>
+    );
+}

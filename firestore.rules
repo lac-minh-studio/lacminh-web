@@ -1,0 +1,41 @@
+rules_version = '2';
+
+service cloud.firestore {
+
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isSuperAdmin() {
+      return isAuthenticated()
+        && request.auth.token.role == 'SUPER_ADMIN';
+    }
+
+    function isManager() {
+      return isAuthenticated()
+        && request.auth.token.role == 'ADMIN';
+    }
+
+    function canManageStaff() {
+      return isSuperAdmin() || isManager();
+    }
+
+    match /staffs/{staffId} {
+      allow read, write: if canManageStaff();
+    }
+
+    match /metrics/{metricId} {
+      allow create: if isAuthenticated();
+      allow read, list: if canManageStaff(); 
+      allow update, delete: if false;
+    }
+
+    match /audit_logs/{logId} {
+      allow create: if isAuthenticated() ;
+allow read, list: if canManageStaff();
+      allow update, delete: if false;
+    }
+  }
+}

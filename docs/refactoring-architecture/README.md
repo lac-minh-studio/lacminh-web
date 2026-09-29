@@ -31,3 +31,37 @@ Bộ tài liệu này không phải tài liệu lý thuyết DDD chung. Nó là 
 ## Nguyên tắc đọc
 
 Khi có xung đột giữa source hiện tại và tài liệu này, **tài liệu target architecture là chuẩn mới**. Source hiện tại được xem là input của migration, không phải source of truth cho cách tổ chức code mới.
+
+## Environment
+1. Development
+- npm run dev:firebase
+Chạy Next.js và Firebase Local Emulator.
+
+2. Production
+- npm run start
+NEXT_PUBLIC_ENV=production
+Production sử dụng Firebase Cloud, không kết nối Local Emulator.
+
+3. Main Commands
+- npm run dev:firebase
+- npm run seed:auth
+- npm run test
+- npm run lint
+- npm run build
+- npm run deploy:rules
+- npm run seed:prod
+
+4. Project Structure
+src/
+├── app/
+│   ├── (home)/
+│   ├── (admin)/
+│   └── api/
+├── config/
+└── domain/
+    └── admin/
+        ├── application/
+        ├── domain/
+        ├── infrastructure/
+        ├── module/
+        └── presentation/
