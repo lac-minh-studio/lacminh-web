@@ -1,26 +1,17 @@
 'use client';
 
 import { Controller, useForm } from 'react-hook-form';
+import { Card, Form, TextField, Label, Input, Button, Checkbox, ErrorMessage } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-    Card,
-    Form,
-    TextField,
-    Label,
-    Input,
-    Button,
-    Checkbox,
-    ErrorMessage,
-} from '@heroui/react';
-import {
-    loginSchema,
-    LoginFormValues,
-    LoginFormConfigItem,
-} from '@/domain/admin/login/model/Login';
+
+import { loginSchema, LoginFormValues, LoginFormConfigItem } from '@/domain/admin/login/model/Login';
 import { LoginService } from '@/domain/admin/login/application/LoginService';
 
 export default function Login() {
+    //lấy các func và state từ loginService
     const { login, isLoading } = LoginService();
+
+    //array field -> render
     const loginFormConfig: LoginFormConfigItem[] = [
         {
             name: 'identifier',
@@ -35,6 +26,8 @@ export default function Login() {
             placeholder: '••••••••',
         },
     ];
+
+    //khởi tạo react-hook-form
     const {
         register,
         control,
@@ -50,6 +43,7 @@ export default function Login() {
         },
     });
 
+    //handler -> gửi dữ liệu form tới loginService
     const onSubmit = (data: LoginFormValues) => {
         login(data, setError);
     };
@@ -57,16 +51,18 @@ export default function Login() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-background p-4">
             <Card className="w-full max-w-md p-8 bg-surface border border-border shadow-2xl rounded-2xl space-y-6 backdrop-blur-md">
+                {/* header */}
                 <div>
                     <h1 className="text-(length:--text-heading-sm) font-headline font-bold text-text-dark">
-                        Admin Portal
+                        Lạc Minh Admin
                     </h1>
                     <p className="text-sm text-text-secondary mt-1">
                         Đăng nhập hệ thống quản trị nội bộ.
                     </p>
                 </div>
-
+                {/* form login */}
                 <Form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                    {/* map array field */}
                     {loginFormConfig.map((field) => (
                         <TextField
                             key={field.name}
@@ -90,7 +86,7 @@ export default function Login() {
                             )}
                         </TextField>
                     ))}
-
+                    {/* remember */}
                     <div className="flex items-center justify-between">
                         <Controller
                             name="rememberMe"
@@ -114,7 +110,7 @@ export default function Login() {
                             )}
                         />
                     </div>
-
+                    {/* button login */}
                     <Button
                         type="submit"
                         isPending={isLoading}

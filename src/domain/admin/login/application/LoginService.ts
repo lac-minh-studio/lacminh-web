@@ -1,14 +1,18 @@
+//
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { UseFormSetError } from 'react-hook-form';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { FirebaseError } from 'firebase/app';
 import toast from 'react-hot-toast';
-import { LoginFormValues } from '../model/Login';
+//
+import { FirebaseError } from 'firebase/app';
 import { auth, db } from '@/config/firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+//
+import { LoginFormValues } from '../model/Login';
 
 export const LoginService = () => {
+
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -20,17 +24,23 @@ export const LoginService = () => {
         const toastId = toast.loading('Đang xác thực...');
 
         try {
-            const userCredential = await signInWithEmailAndPassword(
+            //auth
+            const staffCredential = await signInWithEmailAndPassword(
                 auth,
                 data.identifier,
                 data.password
             );
 
-            const user = userCredential.user;
+            //lấy staff từ Firebase
+            const staff = staffCredential.user;
 
-            const staffRef = doc(db, 'staffs', user.uid);
+            //tìm staff
+            const staffRef = doc(db, 'staffs', staff.uid);
+
+            //đọc staff doc
             const staffSnap = await getDoc(staffRef);
 
+            //check staff đã tồn tại chưa
             if (!staffSnap.exists()) {
                 await auth.signOut();
 
@@ -48,8 +58,10 @@ export const LoginService = () => {
                 return;
             }
 
+            //lấy staff data
             const staffData = staffSnap.data();
 
+            //check trạng thái của staff
             if (staffData.status !== true) {
                 await auth.signOut();
 
@@ -67,12 +79,15 @@ export const LoginService = () => {
                 return;
             }
 
-            const idToken = await user.getIdToken();
+            //lấy id token
+            const idToken = await staff.getIdToken();
 
+            //cấu hình maxAge
             const maxAge = data.rememberMe
                 ? 7 * 24 * 60 * 60
                 : 24 * 60 * 60;
 
+            //tạo cookie
             document.cookie =
                 `admin_token=${idToken}; ` +
                 `path=/; ` +
@@ -83,14 +98,14 @@ export const LoginService = () => {
                 id: toastId,
             });
 
+            //điều hướng về trang dashboard
             router.push('/admin/dashboard');
             router.refresh();
 
         } catch (error: unknown) {
-            console.error('Login error:', error);
             let errorMessage = 'Đã có lỗi xảy ra trong quá trình đăng nhập.';
 
-            // Xử lý bắt lỗi 
+            // Xử lý bắt lỗi trong firebase
             if (error instanceof FirebaseError) {
                 switch (error.code) {
                     case 'auth/invalid-credential':
