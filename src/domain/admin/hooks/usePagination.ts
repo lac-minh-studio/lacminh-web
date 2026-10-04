@@ -1,14 +1,14 @@
 import { useMemo, useState } from 'react';
 
-interface UseStaffPaginationProps<T> {
+interface UsePaginationProps<T> {
     items: T[];
     pageSize?: number;
 }
 
-export function useStaffPagination<T>({
+export function usePagination<T>({
     items,
     pageSize = 6,
-}: UseStaffPaginationProps<T>) {
+}: UsePaginationProps<T>) {
     const [currentPage, setCurrentPage] = useState(1);
 
     const totalPages = Math.max(

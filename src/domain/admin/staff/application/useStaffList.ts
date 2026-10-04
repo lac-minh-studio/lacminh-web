@@ -1,25 +1,22 @@
 import { useState, } from 'react';
-import { IStaffItem, IStaffFormInput } from '../model/Staff';
-import { staffService } from './staffService';
-// import type { StaffPageCursor } from '../infrastructure/repositories/FirestoreStaffRepository';
 import toast from 'react-hot-toast';
-import { useStaffRealtime } from './useStaffRealtime'
-export function useStaffList() {
-    // const pageSize = 6;
-    // const [staffList, setStaffList] = useState<IStaffItem[]>([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    // const [isLoading, setIsLoading] = useState(true);
-    // const [error, setError] = useState<string | null>(null);
-    const [editingStaff, setEditingStaff] = useState<IStaffItem | null>(null);
-    // const [currentPage, setCurrentPage] = useState(0);
-    // const [hasNextPage, setHasNextPage] = useState(false);
-    // const cursors = useRef<StaffPageCursor[]>([]);
 
+import { staffService } from './staffService';
+import { IStaffItem, IStaffFormInput } from '../model/Staff';
+import { useStaffRealtime } from './useStaffRealtime'
+import { useAdminIdentity } from '../../dashboard/application/useAdminIdentity';
+
+export function useStaffList() {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingStaff, setEditingStaff] = useState<IStaffItem | null>(null);
+
+    // 
     const handleOpenModal = (staff?: IStaffItem) => {
         setEditingStaff(staff || null);
         setIsModalOpen(true);
     };
 
+    // 
     const handleCloseModal = () => {
         setEditingStaff(null);
         setIsModalOpen(false);
@@ -32,17 +29,27 @@ export function useStaffList() {
         error,
     } = useStaffRealtime();
 
+    const { adminInfo } = useAdminIdentity();
 
     const handleSubmitStaff = async (input: IStaffFormInput) => {
         try {
+
+            // 
+            if (!adminInfo) {
+                throw new Error(
+                    'Không xác định được người dùng đang đăng nhập.'
+                );
+            }
+
+            // 
             if (editingStaff?.id) {
-                await staffService.updateStaff(editingStaff.id, input);
+                await staffService.updateStaff(adminInfo, editingStaff.id, input);
 
                 toast.success(
                     'Cập nhật thông tin nhân sự thành công!'
                 );
             } else {
-                await staffService.createStaff(input);
+                await staffService.createStaff(adminInfo, input);
 
                 toast.success(
                     'Thêm nhân sự mới thành công!'
@@ -63,7 +70,16 @@ export function useStaffList() {
     const handleToggleStatus = async (staff: IStaffItem) => {
         if (!staff.id) return;
         try {
-            await staffService.toggleStatus(staff.id, staff.status);
+
+            // 
+            if (!adminInfo) {
+                throw new Error(
+                    'Không xác định được người dùng đang đăng nhập.'
+                );
+            }
+
+            // 
+            await staffService.toggleStatus(adminInfo, staff.id, staff.status);
             toast.success(`Đã đổi trạng thái thành ${staff.status === 'Active' ? 'Inactive' : 'Active'}`);
         } catch (e: unknown) {
             const msg =
@@ -79,7 +95,16 @@ export function useStaffList() {
     const handleDeleteStaff = async (id: string) => {
         if (!window.confirm("Cảnh báo: Bạn có chắc chắn muốn xóa vĩnh viễn nhân sự này khỏi hệ thống?")) return;
         try {
-            await staffService.deleteStaff(id);
+
+            // 
+            if (!adminInfo) {
+                throw new Error(
+                    'Không xác định được người dùng đang đăng nhập.'
+                );
+            }
+            // 
+
+            await staffService.deleteStaff(adminInfo, id);
             toast.success('Đã xóa nhân sự thành công!');
         } catch (e: unknown) {
             const msg =
@@ -94,8 +119,6 @@ export function useStaffList() {
     //retutrn
     return {
         staffList, isLoading, error, isModalOpen, editingStaff,
-        // currentPage, hasNextPage,
-        // setError,
         handleOpenModal, handleCloseModal, handleSubmitStaff, handleToggleStatus, handleDeleteStaff,
 
     };

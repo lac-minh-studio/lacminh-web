@@ -2,32 +2,16 @@
 
 import { Button, Table, Skeleton, Tooltip, Input, Spinner, Select, ListBox } from '@heroui/react';
 import { Pencil, Trash2, Lock, Unlock, Search, X } from 'lucide-react';
-import { useStaffList } from '../application/useStaffList';
-import { StaffFormModal } from './StaffFormModal';
-import { useStaffPagination } from '@/domain/admin/hooks/useStaffPagination';
-import { usePermission } from '@/domain/admin/dashboard/application/usePermission';
-import { useStaffFilter } from '../application/useStaffFilter';
-import { useAdminIdentity } from '../../dashboard/application/useAdminIdentity';
-const TABLE_HEADER = [
-    "Họ và tên",
-    "Email",
-    "Số điện thoại",
-    "Phòng ban",
-    "Chức vụ",
-    "Vai trò",
-    "Trạng thái",
-    "Hành động"
-];
 
-const TITLE_OPTIONS = [
-    { key: 'ALL', label: 'Mọi chức vụ' },
-    { key: 'Frontend Developer', label: 'Frontend Developer' },
-    { key: 'Backend Developer', label: 'Backend Developer' },
-    { key: 'Product Manager', label: 'Product Manager' },
-    { key: 'IT Support Engineer', label: 'IT Support Engineer' },
-    { key: 'UI/UX Researcher', label: 'UI/UX Researcher' },
-    { key: 'UX Designer', label: 'UX Designer' },
-];
+import { useStaffList } from '../application/useStaffList';
+import { useStaffFilter } from '../application/useStaffFilter';
+import { StaffFormModal } from './StaffFormModal';
+
+import { usePagination } from '@/domain/admin/hooks/usePagination'
+
+import { usePermission } from '@/domain/admin/dashboard/application/usePermission';
+import { useAdminIdentity } from '../../dashboard/application/useAdminIdentity';
+
 
 
 export function StaffTable() {
@@ -49,6 +33,7 @@ export function StaffTable() {
         isSearching,
     } = useStaffFilter(staffList);
 
+    //phân trang
     const {
         currentPage,
         totalPages,
@@ -57,7 +42,7 @@ export function StaffTable() {
         hasPreviousPage,
         goToNextPage,
         goToPreviousPage,
-    } = useStaffPagination({
+    } = usePagination({
         items: filteredStaffList,
         pageSize: 6,
     });
@@ -99,9 +84,31 @@ export function StaffTable() {
         </Table.Row>
     )
 
+    const TABLE_HEADER = [
+        "Họ và tên",
+        "Email",
+        "Số điện thoại",
+        "Phòng ban",
+        "Chức vụ",
+        "Vai trò",
+        "Trạng thái",
+        "Hành động"
+    ];
+
+    const TITLE_OPTIONS = [
+        { key: 'ALL', label: 'Mọi chức vụ' },
+        { key: 'Frontend Developer', label: 'Frontend Developer' },
+        { key: 'Backend Developer', label: 'Backend Developer' },
+        { key: 'Product Manager', label: 'Product Manager' },
+        { key: 'IT Support Engineer', label: 'IT Support Engineer' },
+        { key: 'UI/UX Researcher', label: 'UI/UX Researcher' },
+        { key: 'UX Designer', label: 'UX Designer' },
+    ];
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                {/*  */}
                 <div>
                     <h1 className="text-2xl font-bold font-headline text-text-dark">Quản lý Nhân sự</h1>
                     <p className="text-sm text-text-secondary">Danh sách toàn bộ nhân sự nội bộ hệ thống.</p>
@@ -169,7 +176,7 @@ export function StaffTable() {
                             </ListBox>
                         </Select.Popover>
                     </Select>
-
+                    {/* Button Create Staff */}
                     {canCreate ? (
                         <Button
                             onPress={() => handleOpenModal()}
@@ -209,6 +216,7 @@ export function StaffTable() {
                                     </Table.Column>
                                 ))}
                             </Table.Header>
+
                             <Table.Body className="divide-y divide-border/60 text-sm text-text-dark">
                                 {isLoading ? (
                                     renderSkeleton()
@@ -310,6 +318,7 @@ export function StaffTable() {
                 </Table>
             </div>
 
+            {/* phân trang */}
             {filteredStaffList.length > 0 && (
                 <div className="flex items-center justify-between gap-4 px-2">
                     <span className="text-sm text-text-secondary">

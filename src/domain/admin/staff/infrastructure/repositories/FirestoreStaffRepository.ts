@@ -1,34 +1,21 @@
+import { db } from '@/config/firebase';
 import {
     addDoc,
     collection,
     deleteDoc,
     DocumentData,
-    getDocs,
-    limit,
     orderBy,
     query,
-    QueryConstraint,
     QueryDocumentSnapshot,
     serverTimestamp,
-    startAfter,
     Timestamp,
     updateDoc,
     doc,
-    where,
     Query,
 } from 'firebase/firestore';
+
 import { z } from 'zod';
-import { db } from '@/config/firebase';
-import {
-    DepartmentSchema,
-    IStaffFormInput,
-    IStaffItem,
-    IStaffRepository,
-    RoleSchema,
-    StaffFilterQuery,
-    StaffFormSchema,
-    TitleSchema,
-} from '../../model/Staff';
+import { DepartmentSchema, IStaffFormInput, IStaffItem, IStaffRepository, RoleSchema, StaffFormSchema, TitleSchema, } from '../../model/Staff';
 
 const FirestoreStaffSchema = z.object({
     fullName: z.string(),
@@ -42,12 +29,6 @@ const FirestoreStaffSchema = z.object({
     updated_at: z.instanceof(Timestamp).optional(),
 });
 
-export type StaffPageCursor = QueryDocumentSnapshot<DocumentData> | null;
-
-export interface StaffPage {
-    items: IStaffItem[];
-    nextCursor: StaffPageCursor;
-}
 
 export class FirestoreStaffRepository implements IStaffRepository {
     private readonly collRef = collection(db, 'staffs');
@@ -59,7 +40,10 @@ export class FirestoreStaffRepository implements IStaffRepository {
     }
 
     public static toStaff(snapshot: QueryDocumentSnapshot<DocumentData>): IStaffItem {
-        const data = FirestoreStaffSchema.parse(snapshot.data());
+        const data = FirestoreStaffSchema.parse(snapshot.data({
+            serverTimestamps: 'estimate',
+        }));
+
         return {
             id: snapshot.id,
             fullName: data.fullName,
@@ -73,21 +57,7 @@ export class FirestoreStaffRepository implements IStaffRepository {
         };
     }
 
-    async getPage(pageSize: number, cursor?: StaffPageCursor): Promise<StaffPage> {
-        try {
-            const constraints: QueryConstraint[] = [orderBy('created_at', 'desc'), limit(pageSize + 1)];
-            if (cursor) constraints.splice(1, 0, startAfter(cursor));
-            const snapshot = await getDocs(query(this.collRef, ...constraints));
-            const pageDocuments = snapshot.docs.slice(0, pageSize);
-            return {
-                items: pageDocuments.map((item) => FirestoreStaffRepository.toStaff(item)),
-                nextCursor: snapshot.docs.length > pageSize ? pageDocuments.at(-1) ?? null : null,
-            };
-        } catch (error) {
-            this.handleError('Không thể tải danh sách nhân sự', error);
-        }
-    }
-
+    // 
     async create(input: IStaffFormInput): Promise<string> {
         try {
             const data = StaffFormSchema.parse(input);
@@ -103,6 +73,7 @@ export class FirestoreStaffRepository implements IStaffRepository {
         }
     }
 
+    //
     async update(id: string, input: Partial<IStaffFormInput>): Promise<void> {
         try {
             const data = StaffFormSchema.partial().parse(input);
@@ -120,6 +91,7 @@ export class FirestoreStaffRepository implements IStaffRepository {
         }
     }
 
+    //
     async delete(id: string): Promise<void> {
         try {
             await deleteDoc(doc(this.collRef, id));
@@ -128,32 +100,7 @@ export class FirestoreStaffRepository implements IStaffRepository {
         }
     }
 
-
-    async filterStaff(filter: StaffFilterQuery): Promise<IStaffItem[]> {
-
-        const constraints: QueryConstraint[] = [];
-        if (filter.title !== 'ALL') {
-            constraints.push(
-                where('title', '==', filter.title)
-            );
-        }
-
-        const keyword = filter.searchTerm
-        if (keyword) {
-            constraints.push(
-                where('fullName', '>=', keyword),
-                where('fullName', '<=', keyword + '\uf8ff'
-                )
-            )
-
-        }
-        const staffQuery = query(this.collRef, ...constraints);
-
-        const snapshot = await getDocs(staffQuery);
-        return snapshot.docs.map(
-            doc => FirestoreStaffRepository.toStaff(doc)
-        );
-    }
+    //
     public getRealtimeQuery(): Query {
         return query(
             this.collRef,

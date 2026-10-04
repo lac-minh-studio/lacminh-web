@@ -4,19 +4,11 @@ import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { StaffEntitySchema, IStaffItem, IStaffFormInput, Department, Title, Role } from '../model/Staff';
+
 import type { Key } from '@heroui/react';
-import {
-    Modal,
-    Form,
-    TextField,
-    Label,
-    Input,
-    Select,
-    ListBox,
-    ListBoxItem,
-    Button,
-} from '@heroui/react';
+import { Modal, Form, TextField, Label, Input, Select, ListBox, ListBoxItem, Button, } from '@heroui/react';
+
+import { StaffEntitySchema, IStaffItem, IStaffFormInput, Department, Title, Role } from '../model/Staff';
 import { usePermission } from '../../dashboard/application/usePermission';
 import { useAdminIdentity } from '../../dashboard/application/useAdminIdentity';
 
@@ -27,41 +19,22 @@ interface StaffFormModalProps {
     editingStaff?: IStaffItem | null;
 }
 
-const DEPARTMENT_OPTIONS = [
-    'Engineering',
-    'Product',
-    'UI/UX Design',
-    'Helpdesk',
-] as const;
-
-const TITLE_OPTIONS = [
-    'Frontend Developer',
-    'Backend Developer',
-    'Product Manager',
-    'IT Support Engineer',
-    'UI/UX Researcher',
-    'UX Designer',
-] as const;
-
-const ROLE_OPTIONS = [
-    'ADMIN',
-    'STAFF'
-] as const;
-
 const StaffFormSchema = StaffEntitySchema.omit({ id: true, createdAt: true });
 type StaffFormValues = z.infer<typeof StaffFormSchema>;
 
 export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: StaffFormModalProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const isEditMode = !!editingStaff;
 
-    const { adminInfo } = useAdminIdentity();
-    const { checkActionPermission } = usePermission(adminInfo);
+    const isEditMode = !!editingStaff;
     const targetUserId = editingStaff?.id ?? '';
     const targetUserRole = editingStaff?.role ?? 'STAFF';
 
+    const { adminInfo } = useAdminIdentity();
+    const { checkActionPermission } = usePermission(adminInfo);
     const { canChangeRole } = checkActionPermission(targetUserId, targetUserRole);
 
+
+    //khởi tạo react-hook-form
     const {
         handleSubmit,
         reset,
@@ -107,12 +80,14 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
         }
     }, [isOpen, editingStaff, reset]);
 
+    //hàm đóng
     const handleClose = () => {
         if (isSubmitting) return;
         reset();
         onClose();
     };
 
+    // 
     const handleFormSubmit = async (data: StaffFormValues) => {
         try {
             setIsSubmitting(true);
@@ -131,6 +106,27 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
             setIsSubmitting(false);
         }
     };
+
+    const DEPARTMENT_OPTIONS = [
+        'Engineering',
+        'Product',
+        'UI/UX Design',
+        'Helpdesk',
+    ] as const;
+
+    const TITLE_OPTIONS = [
+        'Frontend Developer',
+        'Backend Developer',
+        'Product Manager',
+        'IT Support Engineer',
+        'UI/UX Researcher',
+        'UX Designer',
+    ] as const;
+
+    const ROLE_OPTIONS = [
+        'ADMIN',
+        'STAFF'
+    ] as const;
 
     const textFields = [
         {
@@ -167,7 +163,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
                 isDismissable={!isSubmitting}
                 isKeyboardDismissDisabled={isSubmitting}
                 variant="blur"
-                className="fixed inset-0 z-[9999] flex items-center justify-center bg-deep-moss/80"
+                className="fixed inset-0 z-9999 flex items-center justify-center bg-deep-moss/80"
             >
                 <Modal.Container
                     size="lg"
@@ -178,6 +174,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
                         aria-label="Hộp thoại nhân sự"
                         className="w-full bg-surface border border-border rounded-2xl shadow-2xl"
                     >
+                        {/*  */}
                         <Form onSubmit={handleSubmit(handleFormSubmit)} className="contents">
                             <Modal.Header className="flex justify-between items-center border-b border-border pb-4 px-6 pt-6">
                                 <h3 className="text-xl font-headline font-bold text-text-dark">
@@ -196,7 +193,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
                             </Modal.Header>
 
                             <Modal.Body className="space-y-4 px-6 py-4">
-                                {/*  Input  */}
+                                {/*  text field  */}
                                 {textFields.map((item) => (
                                     <TextField key={item.name} className="flex flex-col gap-1">
                                         <Label className="block text-xs uppercase tracking-widest text-text-secondary mb-1 font-semibold">
@@ -264,6 +261,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
                                             </Select>
                                         )}
                                     />
+
                                     {/* title */}
                                     <Controller
                                         name="title"
@@ -305,6 +303,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
                                             </Select>
                                         )}
                                     />
+
                                     {/* role */}
                                     <Controller
                                         name="role"
@@ -347,11 +346,11 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
                                             </Select>
                                         )}
                                     />
-
                                 </div>
                             </Modal.Body>
 
                             <Modal.Footer className="flex justify-end gap-3 pt-4 border-t border-border px-6 pb-6">
+                                {/* button close */}
                                 <Button
                                     type="button"
                                     onClick={handleClose}
@@ -360,6 +359,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
                                 >
                                     Hủy
                                 </Button>
+                                {/* button submit */}
                                 <Button
                                     type="submit"
                                     isPending={isSubmitting}
