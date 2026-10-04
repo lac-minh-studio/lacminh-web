@@ -9,23 +9,25 @@ interface ActivityNotificationPopoverProps {
     error?: Error | null;
 }
 
-const statusColorMap: Record<ActivityData['status'], 'success' | 'warning' | 'danger'> = {
-    Success: 'success',
-    Pending: 'warning',
-    Failed: 'danger',
-};
 
-const statusIconMap = {
-    Success: <CheckCircle2 className="h-3.5 w-3.5 text-success" />,
-    Pending: <Clock className="h-3.5 w-3.5 text-warning" />,
-    Failed: <AlertCircle className="h-3.5 w-3.5 text-danger" />,
-};
 
 export function ActivityNotificationPopover({
     data: logs,
     isLoading = false,
     error = null,
 }: ActivityNotificationPopoverProps) {
+
+    const statusColorMap: Record<ActivityData['status'], 'success' | 'warning' | 'danger'> = {
+        Success: 'success',
+        Pending: 'warning',
+        Failed: 'danger',
+    };
+
+    const statusIconMap = {
+        Success: <CheckCircle2 className="h-3.5 w-3.5 text-success" />,
+        Pending: <Clock className="h-3.5 w-3.5 text-warning" />,
+        Failed: <AlertCircle className="h-3.5 w-3.5 text-danger" />,
+    };
 
     return (
         <Popover>
@@ -79,60 +81,62 @@ export function ActivityNotificationPopover({
                         <p className="py-8 text-center text-sm text-text-muted italic">
                             Không có hoạt động nào gần đây
                         </p>
-                    ) : (
-                        logs.map((item) => (
-                            <div
-                                key={item.id}
-                                className="flex cursor-pointer items-start gap-3 p-3.5 transition-colors hover:bg-background/60"
-                            >
-                                <div className="relative shrink-0">
-                                    <Avatar
-                                        size="md"
-                                        className="bg-primary/10 text-primary font-semibold text-sm"
-                                    >
-                                        <Avatar.Fallback>
-                                            {item.user.charAt(0)}
-                                        </Avatar.Fallback>
-                                    </Avatar>
-
-                                    <span className="absolute -bottom-1 -right-1 rounded-full bg-surface p-0.5 shadow-xs">
-                                        {statusIconMap[item.status]}
-                                    </span>
-                                </div>
-
-                                <div className="min-w-0 flex-1 space-y-1">
-                                    <p className="text-xs leading-snug text-text-dark">
-                                        <span className="font-semibold">
-                                            {item.user}
-                                        </span>{' '}
-                                        <span>{item.action}</span>{' '}
-                                        <span className="font-medium text-primary">
-                                            {item.target}
-                                        </span>
-                                    </p>
-
-                                    <div className="flex items-center justify-between pt-0.5">
-                                        <span className="text-2sx text-text-muted">
-                                            {item.time}
-                                        </span>
-
-                                        <Chip
-                                            color={statusColorMap[item.status]}
-                                            variant="soft"
-                                            size="sm"
-                                            className="h-5 px-1.5 text-[10px]"
+                    ) :
+                        // map data
+                        (
+                            logs.map((item) => (
+                                <div
+                                    key={item.id}
+                                    className="flex cursor-pointer items-start gap-3 p-3.5 transition-colors hover:bg-background/60"
+                                >
+                                    <div className="relative shrink-0">
+                                        <Avatar
+                                            size="md"
+                                            className="bg-primary/10 text-primary font-semibold text-sm"
                                         >
-                                            <Chip.Label>
-                                                {item.status}
-                                            </Chip.Label>
-                                        </Chip>
+                                            <Avatar.Fallback>
+                                                {item.user.charAt(0)}
+                                            </Avatar.Fallback>
+                                        </Avatar>
+
+                                        <span className="absolute -bottom-1 -right-1 rounded-full bg-surface p-0.5 shadow-xs">
+                                            {statusIconMap[item.status]}
+                                        </span>
+                                    </div>
+
+                                    <div className="min-w-0 flex-1 space-y-1">
+                                        <p className="text-xs leading-snug text-text-dark">
+                                            <span className="font-semibold">
+                                                {item.user}
+                                            </span>{' '}
+                                            <span>{item.action}</span>{' '}
+                                            <span className="font-medium text-primary">
+                                                {item.target}
+                                            </span>
+                                        </p>
+
+                                        <div className="flex items-center justify-between pt-0.5">
+                                            <span className="text-2sx text-text-muted">
+                                                {item.time}
+                                            </span>
+
+                                            <Chip
+                                                color={statusColorMap[item.status]}
+                                                variant="soft"
+                                                size="sm"
+                                                className="h-5 px-1.5 text-[10px]"
+                                            >
+                                                <Chip.Label>
+                                                    {item.status}
+                                                </Chip.Label>
+                                            </Chip>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))
-                    )}
+                            ))
+                        )}
                 </div>
-
+                {/*  */}
                 {logs.length > 0 && (
                     <div className="border-t border-border p-2 text-center">
                         <button

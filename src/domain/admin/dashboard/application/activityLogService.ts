@@ -17,9 +17,8 @@ type ActivityLogInput = Omit<
 >;
 
 export const activityLogService = {
-    /**
-     * Create a new activity log.
-     */
+
+    // Create a new activity log.
     async createLog(data: ActivityLogInput): Promise<void> {
         await addDoc(collection(db, 'audit_logs'), {
             ...data,
@@ -27,9 +26,8 @@ export const activityLogService = {
         });
     },
 
-    /**
-     * Create Firestore query for recent activity logs.
-     */
+
+    // Create Firestore query for recent activity logs.
     getRecentLogsQuery(limitCount = 10): Query {
         return query(
             collection(db, 'audit_logs'),
@@ -38,10 +36,10 @@ export const activityLogService = {
         );
     },
 
-    /**
-     * Map and validate Firestore document
-     * into ActivityData.
-     */
+
+    //  Map and validate Firestore document
+    //  into ActivityData.
+
     mapActivityLog(
         doc: QueryDocumentSnapshot<DocumentData>
     ): ActivityData {
@@ -55,6 +53,7 @@ export const activityLogService = {
     },
 };
 
+// chuyển timestamp thành time dễ đọc
 function formatRelativeTime(date: Date): string {
     const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
     if (seconds < 60) return 'Vừa xong';

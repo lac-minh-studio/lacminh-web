@@ -5,9 +5,9 @@ import {
     Table,
     Card,
     Chip,
-    Pagination,
     Select,
     ListBox,
+    Button,
 } from '@heroui/react';
 import {
     DashboardColumn,
@@ -18,6 +18,7 @@ import {
     AlertCircle,
     Clock,
 } from 'lucide-react';
+import { usePagination } from '../../hooks/usePagination';
 
 interface RecentActivityTableProps {
     data: ActivityData[];
@@ -113,11 +114,9 @@ export function RecentActivityTable({
     isLoading = false,
     error = null,
 }: RecentActivityTableProps) {
-    const [page, setPage] = useState(1);
     const [selectedAction, setSelectedAction] =
         useState<string>('ALL');
 
-    const rowsPerPage = 5;
 
     const actionOptions = useMemo(() => {
         const uniqueActions = Array.from(
@@ -146,26 +145,27 @@ export function RecentActivityTable({
         );
     }, [data, selectedAction]);
 
-    const totalPages =
-        Math.ceil(filteredData.length / rowsPerPage) || 1;
-
-    const safePage = Math.min(page, totalPages);
-
-    const items = useMemo(() => {
-        const start = (safePage - 1) * rowsPerPage;
-
-        return filteredData.slice(
-            start,
-            start + rowsPerPage
-        );
-    }, [safePage, filteredData]);
 
     const handleActionChange = (
         key: string | number
     ) => {
         setSelectedAction(String(key));
-        setPage(1);
     };
+
+    //phân trang
+    const {
+        currentPage,
+        totalPages,
+        paginatedItems,
+        hasNextPage,
+        hasPreviousPage,
+        goToNextPage,
+        goToPreviousPage,
+    } = usePagination({
+        items: filteredData,
+        pageSize: 6,
+    });
+
 
     return (
         <Card className="border border-border bg-surface shadow-sm rounded-2xl p-6 space-y-4">
@@ -241,7 +241,7 @@ export function RecentActivityTable({
                                     </Table.Header>
 
                                     <Table.Body
-                                        items={items}
+                                        items={paginatedItems}
                                         renderEmptyState={() => (
                                             <p className="text-center py-8 text-sm text-text-muted italic">
                                                 Không tìm thấy hoạt động nào phù hợp với bộ lọc.
@@ -272,56 +272,36 @@ export function RecentActivityTable({
                             </Table.ScrollContainer>
                         </Table>
 
-                        {totalPages > 1 && (
-                            <div className="flex w-full justify-center pt-4">
-                                <Pagination>
-                                    {/* Bắt buộc dùng flex-row ở đây */}
-                                    <Pagination.Content className="flex flex-row items-center justify-center gap-2 list-none p-0 m-0">
+                        {/* phân trang */}
+                        {filteredData.length > 0 && (
+                            <div className="flex items-center justify-between gap-4 px-2">
+                                <span className="text-sm text-text-secondary">
+                                    Trang {currentPage} / {totalPages}
+                                </span>
 
-                                        {/* Nút Previous */}
-                                        <Pagination.Item>
-                                            <Pagination.Previous
-                                                isDisabled={page === 1}
-                                                onPress={() => setPage((current) => Math.max(current - 1, 1))}
-                                                // Bổ sung flex items-center cho bản thân nút nếu HeroUI không tự cấp
-                                                className="flex items-center gap-1 px-3 py-1 text-sm border border-border rounded-lg"
-                                            >
-                                                <Pagination.PreviousIcon className="w-4 h-4" />
-                                                <span>Trước</span>
-                                            </Pagination.Previous>
-                                        </Pagination.Item>
+                                <div className="flex items-center gap-2">
+                                    <Button
+                                        size="sm"
+                                        variant="secondary"
+                                        isDisabled={!hasPreviousPage || isLoading}
+                                        onPress={goToPreviousPage}
+                                    >
+                                        Trước
+                                    </Button>
 
-                                        {/* Các số trang */}
-                                        {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-                                            <Pagination.Item key={pageNumber}>
-                                                <Pagination.Link
-                                                    isActive={pageNumber === page}
-                                                    onPress={() => setPage(pageNumber)}
-                                                    // Các nút số cũng cần được định hình rõ ràng
-                                                    className={`flex items-center justify-center min-w-8 h-8 rounded-lg border text-sm ${pageNumber === page
-                                                        ? 'bg-primary text-white border-primary'
-                                                        : 'border-border'
-                                                        }`}
-                                                >
-                                                    {pageNumber}
-                                                </Pagination.Link>
-                                            </Pagination.Item>
-                                        ))}
+                                    <span className="min-w-20 text-center text-sm text-text-secondary">
+                                        {currentPage} / {totalPages}
+                                    </span>
 
-                                        {/* Nút Next */}
-                                        <Pagination.Item>
-                                            <Pagination.Next
-                                                isDisabled={page === totalPages}
-                                                onPress={() => setPage((current) => Math.min(current + 1, totalPages))}
-                                                className="flex items-center gap-1 px-3 py-1 text-sm border border-border rounded-lg"
-                                            >
-                                                <span>Sau</span>
-                                                <Pagination.NextIcon className="w-4 h-4" />
-                                            </Pagination.Next>
-                                        </Pagination.Item>
-
-                                    </Pagination.Content>
-                                </Pagination>
+                                    <Button
+                                        size="sm"
+                                        variant="secondary"
+                                        isDisabled={!hasNextPage || isLoading}
+                                        onPress={goToNextPage}
+                                    >
+                                        Sau
+                                    </Button>
+                                </div>
                             </div>
                         )}
                     </>

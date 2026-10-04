@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { db } from '@/config/firebase';
 import type { LineChartPoint, PieChartSegment } from '../model/adminUser';
 
+//validate
 const MetricDocumentSchema = z.object({
     date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     visits: z.number().int().nonnegative(),
@@ -19,6 +20,7 @@ const departments = [
     { name: 'Helpdesk', color: '#ec4899' },
 ] as const;
 
+
 function throwFirebaseError(context: string, error: unknown): never {
     console.error(`[Dashboard] ${context}`, error);
     const message = error instanceof Error ? error.message : 'Lỗi Firebase không xác định.';
@@ -26,6 +28,7 @@ function throwFirebaseError(context: string, error: unknown): never {
 }
 
 export const dashboardService = {
+    //tổng số staff
     async getTotalStaffCount(): Promise<number> {
         try {
             return (await getCountFromServer(collection(db, 'staffs'))).data().count;
@@ -34,6 +37,7 @@ export const dashboardService = {
         }
     },
 
+    //tổng số status của staff
     async getStaffCountByStatus(status: 'Active' | 'Inactive'): Promise<number> {
         try {
             const staffQuery = query(collection(db, 'staffs'), where('status', '==', status === 'Active'));
@@ -43,6 +47,7 @@ export const dashboardService = {
         }
     },
 
+    // phân bổ nhân sự theo phòng ban
     async getDepartmentDistribution(): Promise<PieChartSegment[]> {
         try {
             return await Promise.all(departments.map(async (department) => ({
@@ -57,6 +62,7 @@ export const dashboardService = {
         }
     },
 
+    //Metric theo ngày
     async getMetricsTrend(limitCount = 7): Promise<DashboardMetric[]> {
         try {
             const snapshot = await getDocs(query(
@@ -72,6 +78,7 @@ export const dashboardService = {
         }
     },
 
+    //chuyển metric thành line
     async getVisitChartData(): Promise<LineChartPoint[]> {
         const metrics = await this.getMetricsTrend();
         return metrics.map((metric) => ({

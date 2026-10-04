@@ -15,7 +15,6 @@ interface SidebarProps {
     onClose: () => void;
     isCollapsed: boolean;
     onToggleCollapse: () => void;
-    // currentRole: AdminRole;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -23,13 +22,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
     onClose,
     isCollapsed,
     onToggleCollapse,
-    // currentRole,
 }) => {
     const pathname = usePathname();
 
-    // const visibleItems = sidebarConfig.filter((item) =>
-    //     item.permission.includes(currentRole)
-    // );
 
     return (
         <>

@@ -23,20 +23,24 @@ export function useAdminDashboard() {
     >([]);
     const [visits, setVisits] = useState(0);
 
+    // Realtime staff data
     const {
         staffList: staffRealtime,
         isLoading: isStaffLoading,
     } = useStaffRealtime();
+
+    // Current authenticated admin
     const { adminInfo } = useAdminIdentity();
 
-    /**
-     * Realtime Activity Logs
-     */
+
+    //   Realtime Activity Logs
     const recentLogsQuery = useMemo(
         () => activityLogService.getRecentLogsQuery(10),
         []
     );
 
+    // Subscribe to the latest activity logs and map
+    // Firestore documents into ActivityData.
     const {
         data: recentLogs,
         isLoading: isLogsLoading,
@@ -76,30 +80,38 @@ export function useAdminDashboard() {
     useEffect(() => {
         void fetchDashboardData();
     }, [fetchDashboardData]);
-    //
+
+    // tổng staff
     const totalStaff = staffRealtime.length;
-    //
+
+    // staff active
     const activeStaff = staffRealtime.filter(
         (staff) => staff.status === 'Active'
     ).length;
-    //
+
+    //phòng ban
     const departmentData = useMemo(
         () => buildDepartmentDistribution(staffRealtime),
         [staffRealtime]
     );
-    //
+
+
+    //% trạng thái hoạt động
     const activityRate =
         totalStaff === 0
             ? 0
             : (activeStaff / totalStaff) * 100;
 
     const isLoading = isStaffLoading || isLoadingDashboard;
+
+    // Configuration for dashboard summary cards.
     const metricsConfig: MetricCardConfig[] = [
         { id: 'total-staff', title: 'Tổng số nhân sự', value: totalStaff.toLocaleString(), change: 'Firestore', isPositive: true, icon: Users },
         { id: 'visits', title: 'Lượt truy cập', value: visits.toLocaleString(), change: 'Metrics mới nhất', isPositive: true, icon: Eye },
         { id: 'activity-rate', title: 'Tỷ lệ hoạt động', value: `${activityRate.toFixed(1)}%`, change: `${activeStaff}/${totalStaff} nhân sự`, isPositive: true, icon: Activity },
     ];
 
+    //logout
     const handleLogout = async () => {
         setIsLoggingOut(true);
         try {
@@ -135,6 +147,8 @@ export function useAdminDashboard() {
         refreshDashboard: fetchDashboardData,
     };
 }
+
+//  Aggregates staff by department for the dashboard pie chart.
 function buildDepartmentDistribution(
     staffList: IStaffItem[]
 ): PieChartSegment[] {

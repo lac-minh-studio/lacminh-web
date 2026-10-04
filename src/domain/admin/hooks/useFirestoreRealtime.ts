@@ -32,10 +32,10 @@ export function useFirestoreRealtime<T>(
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
-    const [connectionState, setConnectionState] =
-        useState<FirestoreConnectionState>('connecting');
+    const [connectionState, setConnectionState] = useState<FirestoreConnectionState>('connecting');
 
     useEffect(() => {
+        // 
         const unsubscribe = onSnapshot(
             firestoreQuery,
             (snapshot) => {
@@ -75,6 +75,7 @@ export function useFirestoreRealtime<T>(
         );
 
         return unsubscribe;
+
     }, [firestoreQuery, mapper]);
 
     const effectiveConnectionState =
