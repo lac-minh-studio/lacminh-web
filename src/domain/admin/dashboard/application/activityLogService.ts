@@ -28,11 +28,13 @@ export const activityLogService = {
 
 
     // Create Firestore query for recent activity logs.
-    getRecentLogsQuery(limitCount = 10): Query {
+    getRecentLogsQuery(
+        // limitCount = 10
+    ): Query {
         return query(
             collection(db, 'audit_logs'),
             orderBy('createdAt', 'desc'),
-            limit(limitCount)
+            // limit(limitCount)
         );
     },
 
