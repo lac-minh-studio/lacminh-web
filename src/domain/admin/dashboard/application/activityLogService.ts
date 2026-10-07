@@ -1,4 +1,4 @@
-import { addDoc, collection, DocumentData, limit, orderBy, Query, query, QueryDocumentSnapshot, Timestamp } from 'firebase/firestore';
+import { addDoc, collection, DocumentData, orderBy, Query, query, QueryDocumentSnapshot, Timestamp } from 'firebase/firestore';
 import { z } from 'zod';
 import { db } from '@/config/firebase';
 import { ActivityData } from '../model/adminUser';

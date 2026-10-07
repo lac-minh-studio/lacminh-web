@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Table, Skeleton, Tooltip, Input, Spinner, Select, ListBox } from '@heroui/react';
-import { Pencil, Trash2, Lock, Unlock, Search, X } from 'lucide-react';
+import { Pencil, Trash2, Lock, Unlock, Search, X, FileDown } from 'lucide-react';
 
 import { useStaffList } from '../application/useStaffList';
 import { useStaffFilter } from '../application/useStaffFilter';
@@ -11,11 +11,17 @@ import { usePagination } from '@/domain/admin/hooks/usePagination'
 
 import { usePermission } from '@/domain/admin/dashboard/application/usePermission';
 import { useAdminIdentity } from '../../dashboard/application/useAdminIdentity';
+import toast from 'react-hot-toast';
+import { CsvColumn, exportToCsv } from '@/unitls/exportToCsv';
+import { useState } from 'react';
+import { IStaffItem } from '../model/Staff';
 
 
 
 export function StaffTable() {
     //  Dữ liệu gốc và action
+    const [isExporting, setIsExporting] = useState(false);
+
     const {
         staffList,
         isLoading, isModalOpen, editingStaff, error,
@@ -46,11 +52,80 @@ export function StaffTable() {
         items: filteredStaffList,
         pageSize: 6,
     });
+    const staffCsvColumns: CsvColumn<IStaffItem>[] = [
+        {
+            key: 'fullName',
+            header: 'Họ và tên',
+        },
+        {
+            key: 'email',
+            header: 'Email',
+        },
+        {
+            key: 'phone',
+            header: 'Số điện thoại',
+        },
+        {
+            key: 'department',
+            header: 'Phòng ban',
+        },
+        {
+            key: 'title',
+            header: 'Chức danh',
+        },
+        {
+            key: 'role',
+            header: 'Quyền',
+        },
+        {
+            key: 'status',
+            header: 'Trạng thái',
+            formatter: (value) =>
+                value === 'Active' ? 'Hoạt động' : 'Không hoạt động',
+        },
+
+        {
+            key: 'createdAt',
+            header: 'Ngày tạo',
+            formatter: (value) =>
+                value?.toLocaleString('vi-VN') ?? '',
+        },
+    ];
 
     //  Phân quyền
     const { adminInfo } = useAdminIdentity();
     const { checkActionPermission, isSuperAdmin } = usePermission(adminInfo);
     const canCreate = isSuperAdmin;
+
+    const handleExportCsv = async () => {
+        try {
+            setIsExporting(true);
+
+            exportToCsv(
+                filteredStaffList,
+                staffCsvColumns,
+                `staff-${new Date().toISOString().slice(0, 10)}.csv`,
+            );
+
+            if (filteredStaffList.length === 0) {
+                toast.error(`Không có data để export`)
+                return;
+            }
+
+            toast.success(
+                `Đã xuất ${filteredStaffList.length} nhân sự.`,
+            );
+        } catch (error) {
+            console.error(
+                'Export staff CSV failed:',
+                error,
+            );
+
+            toast.error('Xuất CSV thất bại.');
+        } finally {
+            setIsExporting(false);
+        }
+    };
 
     const renderSkeleton = () => (
         Array.from({ length: 5 }).map((_, index) => (
@@ -112,6 +187,17 @@ export function StaffTable() {
                 <div>
                     <h1 className="text-2xl font-bold font-headline text-text-dark">Quản lý Nhân sự</h1>
                     <p className="text-sm text-text-secondary">Danh sách toàn bộ nhân sự nội bộ hệ thống.</p>
+                    <Button
+                        size="sm"
+                        variant="secondary"
+                        onPress={handleExportCsv}
+                        isDisabled={isExporting}
+                        className="mt-2"
+
+
+                    >
+                        Export file <FileDown size={20} />
+                    </Button>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">

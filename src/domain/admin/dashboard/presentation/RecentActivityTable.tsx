@@ -1,24 +1,12 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import {
-    Table,
-    Card,
-    Chip,
-    Select,
-    ListBox,
-    Button,
-} from '@heroui/react';
-import {
-    DashboardColumn,
-    ActivityData,
-} from '@/domain/admin/dashboard/model/adminUser';
-import {
-    CheckCircle2,
-    AlertCircle,
-    Clock,
-} from 'lucide-react';
+import { Table, Card, Chip, Select, ListBox, Button, } from '@heroui/react';
+import { DashboardColumn, ActivityData, } from '@/domain/admin/dashboard/model/adminUser';
+import { CheckCircle2, AlertCircle, Clock, FileDown } from 'lucide-react';
 import { usePagination } from '../../hooks/usePagination';
+import { CsvColumn, exportToCsv } from '@/unitls/exportToCsv';
+import toast from 'react-hot-toast';
 
 interface RecentActivityTableProps {
     data: ActivityData[];
@@ -54,6 +42,37 @@ const columns: DashboardColumn[] = [
     { id: 'time', label: 'Thời gian' },
     { id: 'status', label: 'Trạng thái' },
 ];
+
+//
+const ActivityLogCsvColumns: CsvColumn<ActivityData>[] = [
+    {
+        key: 'user',
+        header: 'Quản trị viên',
+    },
+    {
+        key: 'action',
+        header: 'Hành động',
+    },
+    {
+        key: 'target',
+        header: 'Đối tượng',
+    },
+    {
+        key: 'status',
+        header: 'trạng thái',
+        formatter: (value) =>
+            value === "Success" ? "Thành công " :
+                value === "Warning" ? "cảnh báo" :
+                    "Thất bại"
+    },
+    {
+        key: 'time',
+        header: 'Thời gian',
+        formatter: (value) =>
+            value.toString(),
+    },
+];
+
 
 function renderCell(
     item: ActivityData,
@@ -114,6 +133,7 @@ export function RecentActivityTable({
     isLoading = false,
     error = null,
 }: RecentActivityTableProps) {
+    const [isExporting, setIsExporting] = useState(false);
     const [selectedAction, setSelectedAction] =
         useState<string>('ALL');
 
@@ -166,15 +186,58 @@ export function RecentActivityTable({
         pageSize: 6,
     });
 
+    //export CSV 
+    const handleExportCsv = async () => {
+        try {
+            setIsExporting(true);
+            exportToCsv(
+                filteredData,
+                ActivityLogCsvColumns,
+                'audit-logs.csv',
+            );
+
+            if (filteredData.length === 0) {
+                toast.error(`Không có data để export`)
+                return;
+            }
+
+            toast.success(
+                `Đã xuất ${filteredData.length} hoạt động.`,
+            );
+
+        } catch (error) {
+            console.error(
+                'Export Activity Log CSV failed:',
+                error,
+            );
+
+            toast.error('Xuất Activity Log CSV thất bại.');
+        } finally {
+            setIsExporting(false);
+        }
+    }
+
 
     return (
         <Card className="border border-border bg-surface shadow-sm rounded-2xl p-6 space-y-4">
             <Card.Header className="p-0 border-none flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <Card.Title className="text-lg font-bold font-headline text-text-dark">
                     Nhật ký hoạt động gần đây
+                    {/*  */}
+                    <Button
+                        size='lg'
+                        variant="secondary"
+                        onPress={handleExportCsv}
+                        isDisabled={isExporting}
+                        isPending={isExporting}
+                        className="ml-2"
+
+                    >
+                        Export file <FileDown size={20} />
+                    </Button>
                 </Card.Title>
 
-                <div className="w-full sm:w-48">
+                <div className=" w-full sm:w-48">
                     <Select
                         aria-label="Lọc theo hành động"
                         value={selectedAction}
@@ -203,7 +266,11 @@ export function RecentActivityTable({
                             </ListBox>
                         </Select.Popover>
                     </Select>
+
+
                 </div>
+
+
             </Card.Header>
 
             <Card.Content className="p-0 space-y-4">
