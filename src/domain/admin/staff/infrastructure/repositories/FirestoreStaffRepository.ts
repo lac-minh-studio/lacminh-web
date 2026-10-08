@@ -12,6 +12,7 @@ import {
     updateDoc,
     doc,
     Query,
+    getDocs,
 } from 'firebase/firestore';
 
 import { z } from 'zod';
@@ -106,5 +107,24 @@ export class FirestoreStaffRepository implements IStaffRepository {
             this.collRef,
             orderBy('created_at', 'desc')
         );
+    }
+    public async getAll(): Promise<IStaffItem[]> {
+        try {
+            const q = query(
+                this.collRef,
+                orderBy('created_at', 'desc')
+            );
+
+            const snapshot = await getDocs(q);
+
+            return snapshot.docs.map(
+                FirestoreStaffRepository.toStaff
+            );
+        } catch (error) {
+            this.handleError(
+                'Không thể lấy danh sách nhân sự',
+                error
+            );
+        }
     }
 }

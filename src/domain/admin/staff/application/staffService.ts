@@ -25,6 +25,7 @@ export const staffService = {
     async getStaff() {
         await seedService.seedIfEmpty();
 
+        return staffRepository.getAll();
     },
 
 
@@ -61,5 +62,7 @@ export const staffService = {
         return staffRepository.getRealtimeQuery();
     },
     mapStaff: FirestoreStaffRepository.toStaff,
+
+
 
 };

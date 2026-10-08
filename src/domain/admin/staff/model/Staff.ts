@@ -31,6 +31,7 @@ export interface IStaffRepository {
     create(data: IStaffFormInput): Promise<string>;
     update(id: string, data: Partial<IStaffFormInput>): Promise<void>;
     delete(id: string): Promise<void>;
+    getAll(): Promise<IStaffItem[]>;
 }
 
 export interface StaffFilterQuery {
