@@ -27,6 +27,6 @@ export interface MonthlyReportData {
         action: string;
         target: string;
         status: string;
-        createdAt: string;
+        time: string;
     }[];
 }

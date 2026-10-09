@@ -11,7 +11,7 @@ import {
 
 import { MonthlyReportData } from '../model/types';
 
-// 1. BẮT BUỘC ĐĂNG KÝ FONT (Nếu không tên tiếng Việt sẽ lỗi 100%)
+//Đăng kí Font không bị lỗi tiếng việt
 Font.register({
     family: 'Roboto',
     fonts: [
@@ -20,7 +20,7 @@ Font.register({
     ]
 });
 
-// 2. HỆ THỐNG MÀU SẮC CHUYÊN NGHIỆP (Minimalist Corporate)
+// hệ thống màu
 const colors = {
     primary: '#0ea5e9',
     textDark: '#0f172a',
@@ -28,14 +28,17 @@ const colors = {
     border: '#e2e8f0',
     bgLight: '#f8fafc',
     statusActive: '#16a34a',
-    statusInactive: '#dc2626'
+    statusInactive: '#dc2626',
+    statusWarning: '#FEC701',
+    statusDanger: '#E3302B',
+
 };
 
 const styles = StyleSheet.create({
     page: {
         padding: 40,
         paddingBottom: 60,
-        fontFamily: 'Roboto', // Phải gọi font đã đăng ký
+        fontFamily: 'Roboto',
         fontSize: 10,
         color: colors.textDark,
         backgroundColor: '#ffffff'
@@ -105,6 +108,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
         textTransform: 'uppercase',
+        marginTop: 30,
+
     },
     tableHeaderRow: {
         flexDirection: 'row',
@@ -121,11 +126,20 @@ const styles = StyleSheet.create({
     },
 
     // CHIA CỘT (Tổng = 100%)
+
     colSTT: { width: '5%', textAlign: 'center' },
+    colStatus: { width: '15%', textAlign: 'right' },
+
+    //staff
     colEmployee: { width: '35%', paddingRight: 10 },
     colPosition: { width: '30%', paddingRight: 10 },
     colRole: { width: '15%' },
-    colStatus: { width: '15%', textAlign: 'right' },
+
+    //activity
+    colUser: { width: '20%', paddingRight: 10 },
+    colAction: { width: '20%', paddingRight: 10 },
+    colTarget: { width: '20%' },
+    colTime: { width: '20%', textAlign: 'right' },
 
     headerText: {
         fontSize: 8,
@@ -142,7 +156,10 @@ const styles = StyleSheet.create({
         fontSize: 9,
         color: colors.textMuted,
     }
+
+
 });
+
 
 interface MonthlyReportDocumentProps {
     report: MonthlyReportData;
@@ -152,18 +169,21 @@ const MonthlyReportDocument = ({ report }: MonthlyReportDocumentProps) => (
     <Document>
         <Page size="A4" style={styles.page}>
 
-            {/* KHỐI 1: HEADER & LOGO */}
+            {/*  HEADER & LOGO */}
             <View style={styles.header}>
+                {/*  eslint-disable-next-line jsx-a11y/alt-text */}
                 <Image src="/logo.png"
-
-                    style={styles.logo} />
+                    style={styles.logo}
+                />
                 <View style={styles.headerTextRight}>
                     <Text style={styles.title}>Staff & Activity Report</Text>
                     <Text style={styles.subtitle}>Exported: {report.reportDate}</Text>
                 </View>
             </View>
 
-            {/* KHỐI 2: METRICS BỌC TRONG BOX XÁM */}
+            {/* METRICS BỌC TRONG BOX XÁM */}
+            <Text style={styles.tableTitle}>Metrics Statistics</Text>
+
             <View style={styles.metricsContainer}>
                 <View style={styles.metricBox}>
                     <Text style={styles.metricLabel}>Total Staff</Text>
@@ -179,8 +199,8 @@ const MonthlyReportDocument = ({ report }: MonthlyReportDocumentProps) => (
                 </View>
             </View>
 
-            {/* KHỐI 3: BẢNG CHI TIẾT */}
-            <Text style={styles.tableTitle}>Staff Directory</Text>
+            {/* Staff */}
+            <Text style={styles.tableTitle}>Staff Statistics</Text>
 
             {/* Dòng Header Bảng */}
             <View style={styles.tableHeaderRow}>
@@ -210,10 +230,12 @@ const MonthlyReportDocument = ({ report }: MonthlyReportDocumentProps) => (
                         <Text style={styles.textSub}>{staff.title}</Text>
                     </View>
 
+                    {/* Role */}
                     <View style={styles.colRole}>
                         <Text style={[styles.textMain, { fontWeight: 'normal' }]}>{staff.role}</Text>
                     </View>
 
+                    {/* Status */}
                     <View style={styles.colStatus}>
                         <Text style={[
                             styles.textMain,
@@ -225,7 +247,7 @@ const MonthlyReportDocument = ({ report }: MonthlyReportDocumentProps) => (
                 </View>
             ))}
 
-            {/* Render Dữ liệu */}
+            {/* Title */}
             <Text style={styles.tableTitle}>Title Statistics</Text>
 
             <View style={styles.metricsContainer}>
@@ -236,6 +258,62 @@ const MonthlyReportDocument = ({ report }: MonthlyReportDocumentProps) => (
                     </View>
                 ))}
             </View>
+
+            {/* Activity */}
+            <Text style={styles.tableTitle}>ACtivity Statistics</Text>
+
+            {/* Dòng Header Bảng */}
+            <View style={styles.tableHeaderRow}>
+                <View style={styles.colSTT}><Text style={styles.headerText}>#</Text></View>
+                <View style={styles.colUser}><Text style={styles.headerText}>User</Text></View>
+                <View style={styles.colAction}><Text style={styles.headerText}>Action</Text></View>
+                <View style={styles.colTarget}><Text style={styles.headerText}>Target</Text></View>
+                <View style={styles.colStatus}><Text style={styles.headerText}>Status</Text></View>
+                <View style={styles.colTime}><Text style={styles.headerText}>Time</Text></View>
+            </View>
+
+            {/* Render Dữ liệu */}
+            {report.activities.map((activity, index) => (
+                <View style={styles.tableRow} key={index} wrap={false}>
+                    <View style={styles.colSTT}>
+                        <Text style={styles.textSub}>{index + 1}</Text>
+                    </View>
+
+                    {/* User */}
+                    <View style={styles.colUser}>
+                        <Text style={styles.textMain}>{activity.user}</Text>
+                    </View>
+
+                    {/* Action */}
+                    <View style={styles.colAction}>
+                        <Text style={styles.textMain}>{activity.action}</Text>
+                    </View>
+
+                    {/* Target */}
+                    <View style={styles.colTarget}>
+                        <Text style={[styles.textMain, { fontWeight: 'normal' }]}>{activity.target}</Text>
+                    </View>
+
+                    {/* Status */}
+                    <View style={styles.colStatus}>
+                        <Text style={[
+                            styles.textMain,
+                            {
+                                color: activity.status.toLowerCase() === 'success' ? colors.statusActive :
+                                    activity.status.toLowerCase() === 'warning' ? colors.statusWarning :
+                                        colors.statusDanger
+                            }
+                        ]}>
+                            {activity.status}
+                        </Text>
+                    </View>
+
+                    {/* Time */}
+                    <View style={styles.colTime}>
+                        <Text style={[styles.textMain, { fontWeight: 'normal' }]}>{activity.time}</Text>
+                    </View>
+                </View>
+            ))}
 
         </Page>
     </Document >

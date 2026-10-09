@@ -1,9 +1,29 @@
+import { activityLogService } from "../../dashboard/application/activityLogService";
 import { staffService } from "../../staff/application/staffService";
 import { MonthlyReportData } from "../model/types";
+import { getMonthDateRange } from "./getMonthDateRange";
 
 export const reportService = {
-    async generateMonthlyReport(): Promise<MonthlyReportData> {
-        const staffList = await staffService.getStaff();
+
+    async generateMonthlyReport(month: string): Promise<MonthlyReportData> {
+
+        const { startDate, endDate } =
+            getMonthDateRange(month);
+        //
+        const [staffList, activities] = await Promise.all([
+            //
+            staffService.getStaffByDateRange(
+                startDate,
+                endDate,
+            ),
+
+            //
+            activityLogService.getActivitiesByDateRange(
+                startDate,
+                endDate,
+            ),
+        ]);
+
 
         //tổng staff
         const totalStaff = staffList.length;
@@ -46,7 +66,7 @@ export const reportService = {
             },
             titleStatistics,
             staffList,
-            activities: [],
+            activities,
         };
     },
 };

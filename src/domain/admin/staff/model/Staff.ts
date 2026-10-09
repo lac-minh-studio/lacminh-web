@@ -32,6 +32,11 @@ export interface IStaffRepository {
     update(id: string, data: Partial<IStaffFormInput>): Promise<void>;
     delete(id: string): Promise<void>;
     getAll(): Promise<IStaffItem[]>;
+    getByCreatedAtRange(
+        startDate: Date,
+        endDate: Date,
+    ): Promise<IStaffItem[]>;
+
 }
 
 export interface StaffFilterQuery {

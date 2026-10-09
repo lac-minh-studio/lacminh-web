@@ -13,6 +13,7 @@ import {
     doc,
     Query,
     getDocs,
+    where,
 } from 'firebase/firestore';
 
 import { z } from 'zod';
@@ -124,6 +125,39 @@ export class FirestoreStaffRepository implements IStaffRepository {
             this.handleError(
                 'Không thể lấy danh sách nhân sự',
                 error
+            );
+        }
+    }
+    //lấy doc trong khoảng time
+    public async getByCreatedAtRange(
+        startDate: Date,
+        endDate: Date,
+    ): Promise<IStaffItem[]> {
+        try {
+            const q = query(
+                this.collRef,
+                where(
+                    'created_at',
+                    '>=',
+                    Timestamp.fromDate(startDate),
+                ),
+                where(
+                    'created_at',
+                    '<',
+                    Timestamp.fromDate(endDate),
+                ),
+                orderBy('created_at', 'desc'),
+            );
+
+            const snapshot = await getDocs(q);
+
+            return snapshot.docs.map(
+                FirestoreStaffRepository.toStaff,
+            );
+        } catch (error) {
+            this.handleError(
+                'Không thể lấy danh sách nhân sự theo khoảng thời gian',
+                error,
             );
         }
     }

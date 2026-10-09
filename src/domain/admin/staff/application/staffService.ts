@@ -1,5 +1,5 @@
 import { FirestoreStaffRepository } from '../infrastructure/repositories/FirestoreStaffRepository';
-import { IStaffFormInput } from '../model/Staff';
+import { IStaffFormInput, IStaffItem } from '../model/Staff';
 import { activityLogService } from '../../dashboard/application/activityLogService';
 import { seedService } from '../../dashboard/infrastructure/seeding/seedService';
 import { AdminUser } from '../../dashboard/model/adminUser';
@@ -27,6 +27,20 @@ export const staffService = {
 
         return staffRepository.getAll();
     },
+
+    //lấy doc trong khoảng time
+    async getStaffByDateRange(
+        startDate: Date,
+        endDate: Date,
+    ): Promise<IStaffItem[]> {
+        await seedService.seedIfEmpty();
+
+        return staffRepository.getByCreatedAtRange(
+            startDate,
+            endDate,
+        );
+    },
+
 
 
     //create staff gọi hàm create thông qua staffstaffRepository

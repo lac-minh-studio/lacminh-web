@@ -1,4 +1,4 @@
-import { addDoc, collection, DocumentData, orderBy, Query, query, QueryDocumentSnapshot, Timestamp } from 'firebase/firestore';
+import { addDoc, collection, DocumentData, getDocs, orderBy, Query, query, QueryDocumentSnapshot, Timestamp, where } from 'firebase/firestore';
 import { z } from 'zod';
 import { db } from '@/config/firebase';
 import { ActivityData } from '../model/adminUser';
@@ -17,6 +17,33 @@ type ActivityLogInput = Omit<
 >;
 
 export const activityLogService = {
+
+    //lấy activity trong khoảng time
+    async getActivitiesByDateRange(
+        startDate: Date,
+        endDate: Date,
+    ): Promise<ActivityData[]> {
+        const q = query(
+            collection(db, 'audit_logs'),
+            where(
+                'createdAt',
+                '>=',
+                Timestamp.fromDate(startDate),
+            ),
+            where(
+                'createdAt',
+                '<',
+                Timestamp.fromDate(endDate),
+            ),
+            orderBy('createdAt', 'desc'),
+        );
+
+        const snapshot = await getDocs(q);
+
+        return snapshot.docs.map((doc) =>
+            this.mapActivityLog(doc),
+        );
+    },
 
     // Create a new activity log.
     async createLog(data: ActivityLogInput): Promise<void> {
