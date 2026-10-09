@@ -5,11 +5,11 @@ import {
     collection,
     query,
     orderBy,
-    limit,
+    // limit,
     CollectionReference,
     DocumentData,
     QueryOrderByConstraint,
-    QueryLimitConstraint,
+    // QueryLimitConstraint,
     Query,
     QueryDocumentSnapshot,
     Timestamp // Import class Timestamp thật
@@ -75,20 +75,22 @@ describe('activityLogService', () => {
     it('phải tạo query lấy log gần đây chuẩn xác (getRecentLogsQuery)', () => {
         const mockCollectionRef = {} as CollectionReference<DocumentData, DocumentData>;
         const mockOrderByConstraint = {} as QueryOrderByConstraint;
-        const mockLimitConstraint = {} as QueryLimitConstraint;
+        // const mockLimitConstraint = {} as QueryLimitConstraint;
         const mockQueryReturn = {} as Query<DocumentData, DocumentData>;
 
         vi.mocked(collection).mockReturnValue(mockCollectionRef);
         vi.mocked(orderBy).mockReturnValue(mockOrderByConstraint);
-        vi.mocked(limit).mockReturnValue(mockLimitConstraint);
+        // vi.mocked(limit).mockReturnValue(mockLimitConstraint);
         vi.mocked(query).mockReturnValue(mockQueryReturn);
 
-        const result = activityLogService.getRecentLogsQuery(15);
+        const result = activityLogService.getRecentLogsQuery();
 
         expect(collection).toHaveBeenCalledWith(db, 'audit_logs');
         expect(orderBy).toHaveBeenCalledWith('createdAt', 'desc');
-        expect(limit).toHaveBeenCalledWith(15);
-        expect(query).toHaveBeenCalledWith(mockCollectionRef, mockOrderByConstraint, mockLimitConstraint);
+        // expect(limit).toHaveBeenCalledWith(15);
+        expect(query).toHaveBeenCalledWith(mockCollectionRef, mockOrderByConstraint,
+            // mockLimitConstraint
+        );
         expect(result).toBe(mockQueryReturn);
     });
 
