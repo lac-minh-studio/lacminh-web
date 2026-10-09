@@ -14,6 +14,7 @@ import {
     Query,
     getDocs,
     where,
+    getDoc,
 } from 'firebase/firestore';
 
 import { z } from 'zod';
@@ -100,6 +101,18 @@ export class FirestoreStaffRepository implements IStaffRepository {
         } catch (error) {
             this.handleError('Không thể xóa nhân sự', error);
         }
+    }
+
+    //lấy staff dựa trên ID
+    async getById(id: string): Promise<IStaffItem | null> {
+        const staffRef = doc(db, 'staffs', id);
+        const snapshot = await getDoc(staffRef);
+
+        if (!snapshot.exists()) {
+            return null;
+        }
+
+        return FirestoreStaffRepository.toStaff(snapshot);
     }
 
     //

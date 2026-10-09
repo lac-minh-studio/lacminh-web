@@ -52,9 +52,46 @@ export const staffService = {
 
     //update staff gọi hàm update thông qua staffstaffRepository
     async updateStaff(actor: AdminUser, id: string, data: Partial<IStaffFormInput>): Promise<void> {
+
+        //lấy thông tin staff hiện tại 
+        const currentStaff = await staffRepository.getById(id);
+
+        //
+        if (!currentStaff) {
+            throw new Error('Không tim thấy nhân sự');
+        }
+
+        //lấy role hiện tại
+        const preRole = currentStaff.role;
+        //lấy role sau khi update
+        const nextRole = data.role;
+        //
+        const roleChanged = preRole !== nextRole;
+
         await staffRepository.update(id, data);
         const targetName = data.fullName || `Nhân sự #${id.slice(0, 6)}`;
-        await recordStaffActivity(actor, 'Cập nhật thông tin', targetName);
+        //nếu change role SUPER_ADMIN
+        if (roleChanged && nextRole === 'SUPER_ADMIN') {
+            await recordStaffActivity(
+                actor,
+                'Nâng quyền thành SUPER_ADMIN',
+                targetName,
+            );
+            //
+        } else if (roleChanged) {
+            await recordStaffActivity(
+                actor,
+                `Thay đổi role từ ${preRole} sang ${nextRole}`,
+                targetName,
+            );
+            //
+        } else {
+            await recordStaffActivity(
+                actor,
+                'Cập nhật thông tin',
+                targetName,
+            );
+        }
     },
 
     //delete staff gọi hàm delete thông qua staffstaffRepository

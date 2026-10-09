@@ -1,4 +1,4 @@
-import { addDoc, collection, DocumentData, getDocs, orderBy, Query, query, QueryDocumentSnapshot, Timestamp, where } from 'firebase/firestore';
+import { addDoc, collection, DocumentData, getDocs, limit, orderBy, Query, query, QueryDocumentSnapshot, Timestamp, where } from 'firebase/firestore';
 import { z } from 'zod';
 import { db } from '@/config/firebase';
 import { ActivityData } from '../model/adminUser';
@@ -17,6 +17,21 @@ type ActivityLogInput = Omit<
 >;
 
 export const activityLogService = {
+
+    //cảnh báo nguy cơ 
+    getHighRiskLogsQuery(): Query {
+        return query(
+            collection(db, 'audit_logs'),
+            where('status', '==', 'Success'),
+            where('action', 'in', [
+                'Xóa vĩnh viễn',
+                'Chuyển trạng thái sang Inactive',
+                'Nâng quyền thành SUPER_ADMIN'
+            ]),
+            orderBy('createdAt', 'desc'),
+            limit(50),
+        );
+    },
 
     //lấy activity trong khoảng time
     async getActivitiesByDateRange(

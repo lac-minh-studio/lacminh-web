@@ -9,6 +9,7 @@ import { useAdminIdentity } from '@/domain/admin/dashboard/application/useAdminI
 import { useNetworkStatus } from '@/domain/admin/hooks/useNetworkStatus';
 import { ReconnectionBanner } from '@/domain/admin/ui/ReconnectionBanner';
 import { Spinner } from '@heroui/react'; // Dùng Spinner của HeroUI cậu đang cài
+import { HighRiskAlertListener } from '@/domain/admin/activity-alert/presentation/HighRiskAlertListener';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   // Lấy thêm trạng thái isLoading từ Identity hook
@@ -18,8 +19,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [isCollapsed, setIsCollapsed] = useState(false);
   const isOnline = useNetworkStatus();
 
-  // 1. CƠ CHẾ PHÒNG THỦ: Trạng thái Loading
-  // Chặn toàn bộ UI cho đến khi Client đọc và giải mã xong Token
   if (isLoading) {
     return (
       <div className="flex min-h-screen w-full items-center justify-center bg-background">
@@ -28,33 +27,37 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  // 2. CƠ CHẾ PHÒNG THỦ: Trạng thái Unauthorized
-  // Nếu không có token (hoặc token lỗi), không render Layout. 
-  // (Thường middleware sẽ đá văng user ra trang login trước khi đến bước này, nhưng cứ phòng hờ là không thừa)
+  //nếu chưa có token để lấy thông tin admin thì không return gì cả
   if (!adminInfo) {
     return null;
   }
 
-  // 3. Render giao diện chuẩn
+
   return (
     <div className="flex min-h-screen bg-background">
+
+      {/* lắng nghe nguy cơ */}
+      <HighRiskAlertListener />
+
+      {/* siderbar */}
       <Sidebar
-        // currentRole={adminInfo.role} // Hoàn toàn an toàn, adminInfo chắc chắn != null
         onClose={() => setIsSidebarOpen(false)}
         isOpen={isSidebarOpen}
         isCollapsed={isCollapsed}
         onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
       />
 
+      {/* header */}
       <div className="flex min-w-0 flex-1 flex-col">
         <Header
-          adminInfo={adminInfo} // An toàn tuyệt đối
+          adminInfo={adminInfo}
           recentLogs={recentLogs}
           onLogout={handleLogout}
           isLoggingOut={isLoggingOut}
           onMenuClick={() => setIsSidebarOpen(true)}
         />
 
+        {/*  connection network */}
         <ReconnectionBanner isVisible={!isOnline} />
 
         {/* Nội dung chính */}
@@ -62,7 +65,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {children}
         </main>
 
-        {/* Đưa Toaster ra khỏi thẻ main để chuẩn hóa cấu trúc DOM */}
+        {/* Toaster thông báo */}
         <Toaster
           position="top-right"
           toastOptions={{

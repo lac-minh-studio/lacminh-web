@@ -124,6 +124,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
     ] as const;
 
     const ROLE_OPTIONS = [
+        'SUPER_ADMIN',
         'ADMIN',
         'STAFF'
     ] as const;
