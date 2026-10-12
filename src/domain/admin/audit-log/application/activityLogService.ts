@@ -1,4 +1,4 @@
-import { addDoc, collection, DocumentData, getDocs, limit, orderBy, Query, query, QueryDocumentSnapshot, Timestamp, where } from 'firebase/firestore';
+import { addDoc, collection, DocumentData, getDocs, limit, orderBy, Query, query, QueryDocumentSnapshot, startAfter, Timestamp, where } from 'firebase/firestore';
 import { z } from 'zod';
 import { db } from '@/config/firebase';
 import { ActivityData } from '../model/types';
@@ -16,7 +16,49 @@ type ActivityLogInput = Omit<
     'createdAt'
 >;
 
+export type ActivityLogCursor =
+    QueryDocumentSnapshot<DocumentData>;
+
+export interface ActivityLogPage {
+    items: ActivityData[];
+    nextCursor: ActivityLogCursor | null;
+    hasMore: boolean;
+}
 export const activityLogService = {
+
+    //reload mỗi lần tải
+    async getRecentLogsPage(
+        cursor: ActivityLogCursor | null,
+        pageSize = 10,
+    ): Promise<ActivityLogPage> {
+        const constraints = [
+            orderBy('createdAt', 'desc'),
+            ...(cursor ? [startAfter(cursor)] : []),
+            limit(pageSize + 1),
+        ];
+
+        const snapshot = await getDocs(
+            query(collection(db, 'audit_logs'), ...constraints),
+        );
+
+        const hasMore = snapshot.docs.length > pageSize;
+        const pageDocs = snapshot.docs.slice(0, pageSize);
+
+        return {
+            items: pageDocs.map((doc) => this.mapActivityLog(doc)),
+            nextCursor: pageDocs[pageDocs.length - 1] ?? null,
+            hasMore,
+        };
+    },
+    //lấy log mới nhất 
+    getRecentNotificationQuery(pageSize = 10): Query {
+        return query(
+            collection(db, 'audit_logs'),
+            orderBy('createdAt', 'desc'),
+            limit(pageSize),
+        );
+    },
+
 
     //cảnh báo nguy cơ 
     getHighRiskLogsQuery(): Query {
@@ -70,8 +112,7 @@ export const activityLogService = {
 
 
     // Create Firestore query for recent activity logs.
-    getRecentLogsQuery(
-        // limitCount = 10
+    getLogsQuery(
     ): Query {
         return query(
             collection(db, 'audit_logs'),

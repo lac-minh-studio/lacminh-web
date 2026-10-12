@@ -36,7 +36,7 @@ export function useAdminDashboard() {
 
     //   Realtime Activity Logs
     const recentLogsQuery = useMemo(
-        () => activityLogService.getRecentLogsQuery(),
+        () => activityLogService.getLogsQuery(),
         []
     );
 

@@ -83,7 +83,7 @@ describe('activityLogService', () => {
         // vi.mocked(limit).mockReturnValue(mockLimitConstraint);
         vi.mocked(query).mockReturnValue(mockQueryReturn);
 
-        const result = activityLogService.getRecentLogsQuery();
+        const result = activityLogService.getLogsQuery();
 
         expect(collection).toHaveBeenCalledWith(db, 'audit_logs');
         expect(orderBy).toHaveBeenCalledWith('createdAt', 'desc');

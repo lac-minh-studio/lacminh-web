@@ -1,4 +1,3 @@
-// Trong Header.tsx
 import React from 'react';
 import { Button } from '@heroui/react';
 import { LogOut, Menu, User } from 'lucide-react';
@@ -7,7 +6,12 @@ import { ActivityNotificationPopover } from '@/domain/admin/audit-log/presentati
 import { ActivityData } from '@/domain/admin/audit-log/model/types'
 interface HeaderProps {
     adminInfo: AdminUser;
-    recentLogs: (ActivityData & { time: string })[];
+    recentLogs: ActivityData[];
+    isLoadingLogs: boolean;
+    isLoadingMoreLogs: boolean;
+    hasMoreLogs: boolean;
+    logsError: Error | null;
+    onLoadMoreLogs: () => void;
     onLogout: () => void;
     isLoggingOut: boolean;
     onMenuClick: () => void;
@@ -19,6 +23,11 @@ export const Header: React.FC<HeaderProps> = ({
     onLogout,
     isLoggingOut,
     onMenuClick,
+    isLoadingLogs,
+    isLoadingMoreLogs,
+    hasMoreLogs,
+    logsError,
+    onLoadMoreLogs,
 }) => {
     return (
         <header className="flex min-h-16 items-center justify-between gap-4 border-b border-border bg-surface/80 px-4 backdrop-blur-md md:px-6 lg:px-8">
@@ -41,8 +50,14 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Right */}
             <div className="flex shrink-0 items-center gap-3">
                 <div className="flex items-center gap-3 text-right">
-                    <ActivityNotificationPopover data={recentLogs} />
-
+                    <ActivityNotificationPopover
+                        data={recentLogs}
+                        isLoading={isLoadingLogs}
+                        isLoadingMore={isLoadingMoreLogs}
+                        hasMore={hasMoreLogs}
+                        error={logsError}
+                        onLoadMore={onLoadMoreLogs}
+                    />
                     <div className="hidden sm:block">
                         <p className="mt-1 text-xs text-text-secondary">{adminInfo.email}</p>
                         <p className="mt-1 text-xs text-text-muted">{adminInfo.role}</p>

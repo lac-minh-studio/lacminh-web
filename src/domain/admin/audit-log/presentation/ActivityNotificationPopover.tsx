@@ -6,15 +6,20 @@ import { ActivityData } from '@/domain/admin/audit-log/model/types';
 interface ActivityNotificationPopoverProps {
     data: ActivityData[];
     isLoading?: boolean;
+    isLoadingMore?: boolean;
+    hasMore?: boolean;
     error?: Error | null;
+    onLoadMore: () => void;
 }
-
 
 
 export function ActivityNotificationPopover({
     data: logs,
     isLoading = false,
+    isLoadingMore = false,
+    hasMore = false,
     error = null,
+    onLoadMore,
 }: ActivityNotificationPopoverProps) {
 
     const statusColorMap: Record<ActivityData['status'], 'success' | 'warning' | 'danger'> = {
@@ -137,13 +142,19 @@ export function ActivityNotificationPopover({
                         )}
                 </div>
                 {/*  */}
-                {logs.length > 0 && (
-                    <div className="border-t border-border p-2 text-center">
+                {hasMore && (
+                    <div className="border-t border-border p-3 text-center">
                         <button
                             type="button"
-                            className="w-full cursor-pointer rounded-lg py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-background"
+                            onClick={onLoadMore}
+                            disabled={isLoadingMore || isLoading}
+                            className="text-sm font-medium text-primary disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            Xem tất cả nhật ký
+                            {isLoadingMore
+                                ? 'Đang tải...'
+                                : error
+                                    ? 'Thử tải lại'
+                                    : 'Nhấn để xem thêm'}
                         </button>
                     </div>
                 )}

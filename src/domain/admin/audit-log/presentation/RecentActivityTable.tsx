@@ -75,10 +75,11 @@ const ActivityLogCsvColumns: CsvColumn<ActivityData>[] = [
 ];
 
 
+
 function renderCell(
     item: ActivityData,
-    columnId: string
-) {
+    columnId: string,
+): React.ReactNode {
     switch (columnId) {
         case 'user':
             return (
@@ -122,12 +123,11 @@ function renderCell(
                 </Chip>
             );
 
-        default: {
-            const key = columnId as keyof ActivityData;
-            return item[key] ?? null;
-        }
+        default:
+            return null;
     }
 }
+
 
 export function RecentActivityTable({
     data,

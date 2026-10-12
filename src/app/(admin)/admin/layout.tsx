@@ -10,14 +10,23 @@ import { useNetworkStatus } from '@/domain/admin/hooks/useNetworkStatus';
 import { ReconnectionBanner } from '@/domain/admin/ui/ReconnectionBanner';
 import { Spinner } from '@heroui/react'; // Dùng Spinner của HeroUI cậu đang cài
 import { HighRiskAlertListener } from '@/domain/admin/activity-alert/presentation/HighRiskAlertListener';
+import { useCursorPagination } from '@/domain/admin/audit-log/application/useCursorPagination';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   // Lấy thêm trạng thái isLoading từ Identity hook
   const { adminInfo, isLoading } = useAdminIdentity();
-  const { handleLogout, isLoggingOut, recentLogs } = useAdminDashboard();
+  const { handleLogout, isLoggingOut } = useAdminDashboard();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const isOnline = useNetworkStatus();
+  const {
+    items: recentLogs,
+    isLoading: isLoadingLogs,
+    isLoadingMore: isLoadingMoreLogs,
+    hasMore: hasMoreLogs,
+    error: logsError,
+    loadMore: loadMoreLogs,
+  } = useCursorPagination(10);
 
   if (isLoading) {
     return (
@@ -55,6 +64,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           onLogout={handleLogout}
           isLoggingOut={isLoggingOut}
           onMenuClick={() => setIsSidebarOpen(true)}
+          hasMoreLogs={hasMoreLogs}
+          isLoadingLogs={isLoadingLogs}
+          isLoadingMoreLogs={isLoadingMoreLogs}
+          logsError={logsError}
+          onLoadMoreLogs={loadMoreLogs}
         />
 
         {/*  connection network */}
