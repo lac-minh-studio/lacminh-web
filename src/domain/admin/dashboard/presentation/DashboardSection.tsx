@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { AnalyticsCharts } from '@/domain/admin/dashboard/presentation/AnalyticsCharts';
 import { MetricsGrid } from '@/domain/admin/dashboard/presentation/MetricsGrid';
 import { useAdminDashboard } from '@/domain/admin/dashboard/application/useAdminDashboard';
-import { RecentActivityTable } from './RecentActivityTable';
+import { RecentActivityTable } from '../../audit-log/presentation/RecentActivityTable';
 import { ExportReportButton } from '../../report/presentation/ExportReportButton';
 import { ListBox, Select } from '@heroui/react';
 import { CalendarDays } from 'lucide-react';

@@ -1,4 +1,4 @@
-import { ActivityData } from '@/domain/admin/dashboard/model/adminUser';
+import { ActivityData } from '@/domain/admin/audit-log/model/types';
 
 export type HighRiskAlertType =
     | 'STAFF_DELETED'

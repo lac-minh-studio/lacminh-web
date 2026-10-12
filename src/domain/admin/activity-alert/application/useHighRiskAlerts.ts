@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 
-import { activityLogService } from '@/domain/admin/dashboard/application/activityLogService';
+import { activityLogService } from '@/domain/admin/audit-log/application/activityLogService';
 import { highRiskAlertService } from './highRiskAlertService';
 import { onSnapshot } from 'firebase/firestore';
 

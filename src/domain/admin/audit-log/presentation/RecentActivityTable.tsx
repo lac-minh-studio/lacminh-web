@@ -2,7 +2,8 @@
 
 import React, { useMemo, useState } from 'react';
 import { Table, Card, Chip, Select, ListBox, Button, } from '@heroui/react';
-import { DashboardColumn, ActivityData, } from '@/domain/admin/dashboard/model/adminUser';
+import { DashboardColumn, } from '@/domain/admin/dashboard/model/adminUser';
+import { ActivityData } from '@/domain/admin/audit-log/model/types';
 import { CheckCircle2, AlertCircle, Clock, FileDown } from 'lucide-react';
 import { usePagination } from '../../hooks/usePagination';
 import { CsvColumn, exportToCsv } from '@/unitls/exportToCsv';

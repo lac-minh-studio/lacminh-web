@@ -1,6 +1,6 @@
 import { FirestoreStaffRepository } from '../infrastructure/repositories/FirestoreStaffRepository';
 import { IStaffFormInput, IStaffItem } from '../model/Staff';
-import { activityLogService } from '../../dashboard/application/activityLogService';
+import { activityLogService } from '@/domain/admin/audit-log/application/activityLogService';
 import { seedService } from '../../dashboard/infrastructure/seeding/seedService';
 import { AdminUser } from '../../dashboard/model/adminUser';
 

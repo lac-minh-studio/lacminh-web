@@ -1,7 +1,7 @@
 import { addDoc, collection, DocumentData, getDocs, limit, orderBy, Query, query, QueryDocumentSnapshot, Timestamp, where } from 'firebase/firestore';
 import { z } from 'zod';
 import { db } from '@/config/firebase';
-import { ActivityData } from '../model/adminUser';
+import { ActivityData } from '../model/types';
 
 const ActivityLogSchema = z.object({
     user: z.string(),

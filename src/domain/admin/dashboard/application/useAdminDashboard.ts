@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter, } from 'next/navigation';
-import { ActivityData, LineChartPoint, MetricCardConfig, PieChartSegment } from '../model/adminUser';
+import { LineChartPoint, MetricCardConfig, PieChartSegment } from '../model/adminUser';
 import { IStaffItem } from '@/domain/admin/staff/model/Staff'
 import { dashboardService } from './DashboardService';
-import { activityLogService } from './activityLogService';
+import { activityLogService } from '@/domain/admin/audit-log/application/activityLogService';
+import { ActivityData } from '@/domain/admin/audit-log/model/types'
 import { Activity, Eye, Users } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { seedService } from '../infrastructure/seeding/seedService';

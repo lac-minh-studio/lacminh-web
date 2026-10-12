@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { activityLogService } from '@/domain/admin/dashboard/application/activityLogService';
+import { activityLogService } from '@/domain/admin/audit-log/application/activityLogService';
 import {
     addDoc,
     collection,

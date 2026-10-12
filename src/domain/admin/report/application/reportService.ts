@@ -1,4 +1,4 @@
-import { activityLogService } from "../../dashboard/application/activityLogService";
+import { activityLogService } from "@/domain/admin/audit-log/application/activityLogService";
 import { staffService } from "../../staff/application/staffService";
 import { MonthlyReportData } from "../model/types";
 import { getMonthDateRange } from "./getMonthDateRange";

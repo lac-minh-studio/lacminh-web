@@ -2,7 +2,7 @@
 
 import { Popover, Button, Avatar, Chip } from '@heroui/react';
 import { Bell, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
-import { ActivityData } from '@/domain/admin/dashboard/model/adminUser';
+import { ActivityData } from '@/domain/admin/audit-log/model/types';
 interface ActivityNotificationPopoverProps {
     data: ActivityData[];
     isLoading?: boolean;

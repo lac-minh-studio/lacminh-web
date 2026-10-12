@@ -2,9 +2,9 @@
 import React from 'react';
 import { Button } from '@heroui/react';
 import { LogOut, Menu, User } from 'lucide-react';
-import { AdminUser, ActivityData } from '../model/adminUser';
-import { ActivityNotificationPopover } from './ActivityNotificationPopover';
-
+import { AdminUser } from '../model/adminUser';
+import { ActivityNotificationPopover } from '@/domain/admin/audit-log/presentation/ActivityNotificationPopover';
+import { ActivityData } from '@/domain/admin/audit-log/model/types'
 interface HeaderProps {
     adminInfo: AdminUser;
     recentLogs: (ActivityData & { time: string })[];

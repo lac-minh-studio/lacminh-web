@@ -31,15 +31,6 @@ export interface DashboardColumn {
     label: string;
 }
 
-export interface ActivityData {
-    id: string;
-    user: string;
-    action: string;
-    target: string;
-    time: string;
-    status: 'Success' | 'Pending' | 'Failed';
-}
-
 export interface LineChartPoint {
     period: string;
     users: number;
