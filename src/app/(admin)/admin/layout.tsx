@@ -11,6 +11,7 @@ import { ReconnectionBanner } from '@/domain/admin/ui/ReconnectionBanner';
 import { Spinner } from '@heroui/react'; // Dùng Spinner của HeroUI cậu đang cài
 import { HighRiskAlertListener } from '@/domain/admin/activity-alert/presentation/HighRiskAlertListener';
 import { useCursorPagination } from '@/domain/admin/audit-log/application/useCursorPagination';
+import { SessionGuard } from '@/domain/admin/login/presentation/SessionGuard';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   // Lấy thêm trạng thái isLoading từ Identity hook
@@ -47,6 +48,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* lắng nghe nguy cơ */}
       <HighRiskAlertListener />
+      <SessionGuard />
 
       {/* siderbar */}
       <Sidebar

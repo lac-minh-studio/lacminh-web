@@ -117,7 +117,7 @@ export function useAdminDashboard() {
         setIsLoggingOut(true);
         try {
             document.cookie = 'admin_token=; path=/; max-age=0; SameSite=Lax';
-            router.push('/admin/login');
+            router.push('/login');
             router.refresh();
             toast.success('Đăng xuất thành công');
         } catch (error) {
