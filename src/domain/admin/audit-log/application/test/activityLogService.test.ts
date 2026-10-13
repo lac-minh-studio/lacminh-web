@@ -17,15 +17,27 @@ import {
 import { db } from '@/config/firebase';
 
 // 1. Dùng importActual để giữ lại class Timestamp gốc, tránh lỗi Zod instanceof
-vi.mock('firebase/firestore', async (importOriginal) => {
-    const actual = await importOriginal<typeof import('firebase/firestore')>();
+const { mockTimestampValue, mockServerTimestamp } = vi.hoisted(() => {
+    const timestampValue = { type: 'mock-server-timestamp' };
+
     return {
-        ...actual, // Bê nguyên toàn bộ code thật của firebase vào đây (Bao gồm class Timestamp)
+        mockTimestampValue: timestampValue,
+        mockServerTimestamp: vi.fn(() => timestampValue),
+    };
+});
+
+vi.mock('firebase/firestore', async (importOriginal) => {
+    const actual =
+        await importOriginal<typeof import('firebase/firestore')>();
+
+    return {
+        ...actual,
         addDoc: vi.fn(),
         collection: vi.fn(),
         query: vi.fn(),
         orderBy: vi.fn(),
         limit: vi.fn(),
+        serverTimestamp: mockServerTimestamp,
     };
 });
 
@@ -67,9 +79,10 @@ describe('activityLogService', () => {
                 target: 'Nhân sự #123',
                 status: 'Success',
                 // So sánh bằng class Timestamp thật
-                createdAt: Timestamp.fromDate(new Date('2026-09-25T14:00:00Z'))
+                createdAt: mockTimestampValue,
             })
         );
+        expect(mockServerTimestamp).toHaveBeenCalledTimes(1);
     });
 
     it('phải tạo query lấy log gần đây chuẩn xác (getRecentLogsQuery)', () => {
