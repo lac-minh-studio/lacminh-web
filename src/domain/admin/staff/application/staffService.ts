@@ -3,7 +3,7 @@ import { IStaffFormInput, IStaffItem, StaffFormSchema, StaffUpdateSchema } from 
 import { activityLogService } from '@/domain/admin/audit-log/application/activityLogService';
 import { seedService } from '../../dashboard/infrastructure/seeding/seedService';
 import { AdminUser } from '../../dashboard/model/adminUser';
-
+import { sanitizeStaffInput } from '../model/sanitizeStaffInput';
 
 const staffRepository = new FirestoreStaffRepository();
 
@@ -45,17 +45,18 @@ export const staffService = {
 
     //create staff gọi hàm create thông qua staffstaffRepository
     async createStaff(actor: AdminUser, data: IStaffFormInput): Promise<string> {
-        const validatedData = StaffFormSchema.parse(data);
+        const sanitizedInput = sanitizeStaffInput(data);
+        const validatedInput = StaffFormSchema.parse(sanitizedInput);
 
-        const newId = await staffRepository.create(validatedData);
+        const newId = await staffRepository.create(validatedInput);
         await recordStaffActivity(actor, 'Thêm mới nhân sự', data.fullName);
         return newId;
     },
 
     //update staff gọi hàm update thông qua staffstaffRepository
     async updateStaff(actor: AdminUser, id: string, data: Partial<IStaffFormInput>): Promise<void> {
-        const validatedData = StaffUpdateSchema.parse(data);
-
+        const sanitizedInput = sanitizeStaffInput(data);
+        const validatedInput = StaffUpdateSchema.parse(sanitizedInput);
         //lấy thông tin staff hiện tại 
         const currentStaff = await staffRepository.getById(id);
 
@@ -67,12 +68,11 @@ export const staffService = {
         //lấy role hiện tại
         const preRole = currentStaff.role;
         //lấy role sau khi update
-        const nextRole = validatedData.role;
+        const nextRole = validatedInput.role;
+        //
+        const roleChanged = preRole !== nextRole;
 
-        const roleChanged =
-            nextRole !== undefined && preRole !== nextRole;
-
-        await staffRepository.update(id, validatedData);
+        await staffRepository.update(id, validatedInput);
         const targetName = data.fullName || `Nhân sự #${id.slice(0, 6)}`;
         //nếu change role SUPER_ADMIN
         if (roleChanged && nextRole === 'SUPER_ADMIN') {

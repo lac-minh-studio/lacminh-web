@@ -11,7 +11,7 @@ import { Modal, Form, TextField, Label, Input, Select, ListBox, ListBoxItem, But
 import { StaffEntitySchema, IStaffItem, IStaffFormInput, Department, Title, Role } from '../model/Staff';
 import { usePermission } from '../../dashboard/application/usePermission';
 import { useAdminIdentity } from '../../dashboard/application/useAdminIdentity';
-
+import { useSanitize } from '@/domain/admin/hooks/useSanitize';
 interface StaffFormModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -33,6 +33,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
     const { checkActionPermission } = usePermission(adminInfo);
     const { canChangeRole } = checkActionPermission(targetUserId, targetUserRole);
 
+    const { sanitize } = useSanitize();
 
     //khởi tạo react-hook-form
     const {
@@ -97,15 +98,16 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
         setIsSubmitting(true);
         try {
             setIsSubmitting(true);
-            await onSubmit({
-                fullName: data.fullName,
-                email: data.email,
-                phone: data.phone,
-                department: data.department as Department,
-                title: data.title as Title,
-                role: data.role as Role,
-                status: data.status,
-            });
+            const sanitizedData = {
+                ...data,
+                fullName: sanitize(data.fullName, {
+                    collapseWhitespace: true,
+                }),
+                email: sanitize(data.email),
+                phone: sanitize(data.phone),
+            };
+
+            await onSubmit(StaffFormSchema.parse(sanitizedData));
             reset();
             onClose();
         } finally {
@@ -183,22 +185,21 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
                         className="w-full bg-surface border border-border rounded-2xl shadow-2xl"
                     >
                         {/*  */}
-                        <Form onSubmit={handleSubmit(handleFormSubmit)} className="contents">
-                            <Modal.Header className="flex justify-between items-center border-b border-border pb-4 px-6 pt-6">
-                                <h3 className="text-xl font-headline font-bold text-text-dark">
-                                    {isEditMode ? 'Cập nhật thông tin nhân sự' : 'Thêm mới nhân sự'}
-                                </h3>
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    onClick={handleClose}
-                                    isDisabled={isSubmitting}
-                                    aria-label="Hủy"
-                                    className="text-text-secondary hover:text-text-dark text-xl font-bold transition-colors disabled:opacity-50"
-                                >
-                                    &times;
-                                </Button>
-                            </Modal.Header>
+                        <Form onSubmit={handleSubmit(handleFormSubmit)} className="contents">                            <Modal.Header className="flex justify-between items-center border-b border-border pb-4 px-6 pt-6">
+                            <h3 className="text-xl font-headline font-bold text-text-dark">
+                                {isEditMode ? 'Cập nhật thông tin nhân sự' : 'Thêm mới nhân sự'}
+                            </h3>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={handleClose}
+                                isDisabled={isSubmitting}
+                                aria-label="Hủy"
+                                className="text-text-secondary hover:text-text-dark text-xl font-bold transition-colors disabled:opacity-50"
+                            >
+                                &times;
+                            </Button>
+                        </Modal.Header>
 
                             <Modal.Body className="space-y-4 px-6 py-4">
                                 {/*  text field  */}

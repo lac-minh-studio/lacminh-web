@@ -18,7 +18,8 @@ import {
 } from 'firebase/firestore';
 
 import { z } from 'zod';
-import { DepartmentSchema, IStaffFormInput, IStaffItem, IStaffRepository, RoleSchema, StaffFormSchema, TitleSchema, } from '../../model/Staff';
+import { DepartmentSchema, IStaffFormInput, IStaffItem, IStaffRepository, RoleSchema, StaffFormSchema, StaffUpdateSchema, TitleSchema, } from '../../model/Staff';
+import { sanitizeStaffInput } from '../../model/sanitizeStaffInput';
 
 const FirestoreStaffSchema = z.object({
     fullName: z.string(),
@@ -63,7 +64,8 @@ export class FirestoreStaffRepository implements IStaffRepository {
     // 
     async create(input: IStaffFormInput): Promise<string> {
         try {
-            const data = StaffFormSchema.parse(input);
+            const sanitizedInput = sanitizeStaffInput(input);
+            const data = StaffFormSchema.parse(sanitizedInput);
             const docRef = await addDoc(this.collRef, {
                 ...data,
                 status: data.status === 'Active',
@@ -79,7 +81,8 @@ export class FirestoreStaffRepository implements IStaffRepository {
     //
     async update(id: string, input: Partial<IStaffFormInput>): Promise<void> {
         try {
-            const data = StaffFormSchema.partial().parse(input);
+            const sanitizedInput = sanitizeStaffInput(input);
+            const data = StaffUpdateSchema.parse(sanitizedInput);
             const updatePayload: Record<string, unknown> = { updated_at: serverTimestamp() };
             if (data.fullName !== undefined) updatePayload.fullName = data.fullName;
             if (data.email !== undefined) updatePayload.email = data.email;
