@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -87,8 +87,14 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
         onClose();
     };
 
+    const submitLock = useRef(false);
+
     // 
     const handleFormSubmit = async (data: StaffFormValues) => {
+        if (submitLock.current || isSubmitting) return;
+
+        submitLock.current = true;
+        setIsSubmitting(true);
         try {
             setIsSubmitting(true);
             await onSubmit({
@@ -103,6 +109,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
             reset();
             onClose();
         } finally {
+            submitLock.current = false;
             setIsSubmitting(false);
         }
     };
@@ -311,7 +318,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
                                         control={control}
                                         render={({ field }) => (
                                             <Select
-                                                isDisabled={!canChangeRole}
+                                                isDisabled={canChangeRole}
                                                 aria-label='role'
                                                 isRequired
                                                 className="flex flex-col gap-2 col-span-2"

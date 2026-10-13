@@ -1,4 +1,4 @@
-import { useState, } from 'react';
+import { useRef, useState, } from 'react';
 import toast from 'react-hot-toast';
 
 import { staffService } from './staffService';
@@ -10,6 +10,19 @@ export function useStaffList() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingStaff, setEditingStaff] = useState<IStaffItem | null>(null);
 
+    // Trạng thái xử lý để UI disable đúng nút.
+    const [isSubmittingStaff, setIsSubmittingStaff] = useState(false);
+    const [pendingStatusIds, setPendingStatusIds] = useState<Set<string>>(
+        () => new Set(),
+    );
+    const [pendingDeleteIds, setPendingDeleteIds] = useState<Set<string>>(
+        () => new Set(),
+    );
+
+    // Ref cập nhật đồng bộ, tránh hai lần gọi cùng lúc trước khi React render.
+    const inFlight = useRef(new Set<string>());
+
+
     // 
     const handleOpenModal = (staff?: IStaffItem) => {
         setEditingStaff(staff || null);
@@ -18,6 +31,9 @@ export function useStaffList() {
 
     // 
     const handleCloseModal = () => {
+
+        if (inFlight.current.has('submit-staff')) return;
+
         setEditingStaff(null);
         setIsModalOpen(false);
     };
@@ -32,6 +48,15 @@ export function useStaffList() {
     const { adminInfo } = useAdminIdentity();
 
     const handleSubmitStaff = async (input: IStaffFormInput) => {
+        const lockKey = 'submit-staff';
+
+        if (inFlight.current.has(lockKey)) {
+            throw new Error('Yêu cầu đang được xử lý. Vui lòng chờ.');
+        }
+
+        inFlight.current.add(lockKey);
+        setIsSubmittingStaff(true);
+
         try {
 
             // 
@@ -64,11 +89,22 @@ export function useStaffList() {
             toast.error(msg);
             throw e;
         }
+        finally {
+            inFlight.current.delete(lockKey);
+            setIsSubmittingStaff(false);
+        }
     };
 
     //fun change status
     const handleToggleStatus = async (staff: IStaffItem) => {
-        if (!staff.id) return;
+        const id = staff.id
+        if (!id) return;
+        const lockKey = `status:${id}`;
+
+        if (inFlight.current.has(lockKey)) return;
+
+        inFlight.current.add(lockKey);
+        setPendingStatusIds(previous => new Set(previous).add(id));
         try {
 
             // 
@@ -88,12 +124,37 @@ export function useStaffList() {
                     : 'Lỗi khi đổi trạng thái staff';
 
             toast.error(msg);
+        } finally {
+            // Luôn mở khóa, kể cả khi request thất bại.
+            inFlight.current.delete(lockKey);
+
+            setPendingStatusIds(previous => {
+                const next = new Set(previous);
+                next.delete(id);
+                return next;
+            });
         }
     };
 
     //fun delete
     const handleDeleteStaff = async (id: string) => {
-        if (!window.confirm("Cảnh báo: Bạn có chắc chắn muốn xóa vĩnh viễn nhân sự này khỏi hệ thống?")) return;
+        const lockKey = `delete:${id}`;
+
+        if (inFlight.current.has(lockKey)) return;
+
+        // Khóa ngay trước confirm để tránh mở nhiều hộp thoại liên tiếp.
+        inFlight.current.add(lockKey);
+
+
+        const confirm = window.confirm("Cảnh báo: Bạn có chắc chắn muốn xóa vĩnh viễn nhân sự này khỏi hệ thống?");
+
+        if (!confirm) {
+            inFlight.current.delete(lockKey);
+            return;
+        }
+
+        setPendingDeleteIds(previous => new Set(previous).add(id));
+
         try {
 
             // 
@@ -113,12 +174,19 @@ export function useStaffList() {
                     : 'Lỗi khi xóa nhân sự khỏi hệ thống.';
 
             toast.error(msg);
+        } finally {
+            inFlight.current.delete(lockKey);
+            setPendingDeleteIds(previous => {
+                const next = new Set(previous);
+                next.delete(id);
+                return next;
+            });
         }
-    };
+    }
 
     //retutrn
     return {
-        staffList, isLoading, error, isModalOpen, editingStaff,
+        staffList, isLoading, error, isModalOpen, editingStaff, isSubmittingStaff, pendingDeleteIds, pendingStatusIds,
         handleOpenModal, handleCloseModal, handleSubmitStaff, handleToggleStatus, handleDeleteStaff,
 
     };

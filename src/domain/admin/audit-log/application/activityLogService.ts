@@ -1,4 +1,4 @@
-import { addDoc, collection, DocumentData, getDocs, limit, orderBy, Query, query, QueryDocumentSnapshot, startAfter, Timestamp, where } from 'firebase/firestore';
+import { addDoc, collection, DocumentData, getDocs, limit, orderBy, Query, query, QueryDocumentSnapshot, serverTimestamp, startAfter, Timestamp, where } from 'firebase/firestore';
 import { z } from 'zod';
 import { db } from '@/config/firebase';
 import { ActivityData } from '../model/types';
@@ -106,7 +106,7 @@ export const activityLogService = {
     async createLog(data: ActivityLogInput): Promise<void> {
         await addDoc(collection(db, 'audit_logs'), {
             ...data,
-            createdAt: Timestamp.now(),
+            createdAt: serverTimestamp(),
         });
     },
 
@@ -128,7 +128,10 @@ export const activityLogService = {
     mapActivityLog(
         doc: QueryDocumentSnapshot<DocumentData>
     ): ActivityData {
-        const data = ActivityLogSchema.parse(doc.data());
+        const rawData = doc.data({
+            serverTimestamps: 'estimate',
+        });
+        const data = ActivityLogSchema.parse(rawData);
 
         return {
             id: doc.id,

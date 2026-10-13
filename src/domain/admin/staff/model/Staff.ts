@@ -6,14 +6,41 @@ export const TitleSchema = z.enum(['Frontend Developer', 'Backend Developer', 'P
 export const RoleSchema = z.enum(['SUPER_ADMIN', 'ADMIN', 'STAFF']);
 
 export const StaffFormSchema = z.object({
-    fullName: z.string().trim().min(2, 'Tên phải từ 2 ký tự trở lên'),
-    email: z.string().trim().email('Email không hợp lệ'),
-    phone: z.string().regex(/(84|0[3|5|7|8|9])+([0-9]{8})\b/, 'Số điện thoại không hợp lệ'),
+    fullName: z
+        .string()
+        .trim()
+        .min(2, 'Tên phải từ 2 ký tự trở lên')
+        .max(100, 'Tên không được vượt quá 100 ký tự'),
+
+    email: z
+        .string()
+        .trim()
+        .email('Email không hợp lệ')
+        .max(254, 'Email không được vượt quá 254 ký tự'),
+
+    phone: z
+        .string()
+        .trim()
+        .regex(
+            /^(?:0[35789]\d{8}|\+?84[35789]\d{8})$/,
+            'Số điện thoại không hợp lệ',
+        ),
+
     department: DepartmentSchema,
     title: TitleSchema,
     role: RoleSchema,
     status: StatusSchema,
 });
+
+// Dùng cho luồng cập nhật một phần dữ liệu.
+export const StaffUpdateSchema = StaffFormSchema
+    .partial()
+    .refine(
+        (data) => Object.keys(data).length > 0,
+        'Phải cung cấp ít nhất một trường để cập nhật',
+    );
+
+
 
 export const StaffEntitySchema = StaffFormSchema.extend({
     id: z.string(),

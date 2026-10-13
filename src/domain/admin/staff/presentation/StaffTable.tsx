@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Table, Skeleton, Tooltip, Input, Spinner, Select, ListBox } from '@heroui/react';
-import { Pencil, Trash2, Lock, Unlock, Search, X, FileDown } from 'lucide-react';
+import { Pencil, Trash2, Lock, Unlock, Search, X, FileDown, UserRoundPlus } from 'lucide-react';
 
 import { useStaffList } from '../application/useStaffList';
 import { useStaffFilter } from '../application/useStaffFilter';
@@ -24,7 +24,7 @@ export function StaffTable() {
 
     const {
         staffList,
-        isLoading, isModalOpen, editingStaff, error,
+        isLoading, isModalOpen, editingStaff, error, isSubmittingStaff, pendingDeleteIds, pendingStatusIds,
         handleOpenModal, handleCloseModal, handleSubmitStaff,
         handleToggleStatus, handleDeleteStaff,
     } = useStaffList();
@@ -94,8 +94,7 @@ export function StaffTable() {
 
     //  Phân quyền
     const { adminInfo } = useAdminIdentity();
-    const { checkActionPermission, isSuperAdmin } = usePermission(adminInfo);
-    const canCreate = isSuperAdmin;
+    const { checkActionPermission } = usePermission(adminInfo);
 
     const handleExportCsv = async () => {
         try {
@@ -263,28 +262,20 @@ export function StaffTable() {
                         </Select.Popover>
                     </Select>
                     {/* Button Create Staff */}
-                    {canCreate ? (
-                        <Button
-                            onPress={() => handleOpenModal()}
-                            aria-label="Thêm nhân sự mới"
-                            className="px-5 py-2.5 bg-primary text-text-light rounded-xl font-medium hover:bg-secondary transition-all shadow-md border border-border"
-                        >
-                            + Thêm nhân sự mới
-                        </Button>
-                    )
-                        : (
-                            <Button
-                                isDisabled={true}
-                                onPress={() => handleOpenModal()}
-                                aria-label="Thêm nhân sự mới"
-                                className="px-5 py-2.5 bg-primary text-text-light rounded-xl font-medium hover:bg-secondary transition-all shadow-md border border-border"
-                            >
-                                + Thêm nhân sự mới
-                            </Button>)
 
-                    }
+                    <Button
+                        onPress={() => handleOpenModal()}
+                        isDisabled={isSubmittingStaff}
+                        aria-label="Thêm nhân sự mới"
+                        className="px-5 py-2.5 bg-primary text-text-light rounded-xl font-medium hover:bg-secondary transition-all shadow-md border border-border"
+                    >
+                        {isSubmittingStaff ? <Spinner size='sm' /> : <UserRoundPlus size={30} />}
+                    </Button>
+
+
+
                 </div>
-            </div>
+            </div >
 
             <div className="w-full bg-surface border border-border rounded-2xl overflow-hidden shadow-xl backdrop-blur-md overflow-x-auto">
                 <Table aria-label="Danh sách nhân sự" className="w-full">
@@ -363,34 +354,36 @@ export function StaffTable() {
                                                             </Tooltip>
                                                         )}
 
-                                                        {canChangeStatus ? (
+                                                        {canChangeStatus && (
                                                             <Button
                                                                 isIconOnly size="sm" variant="secondary"
                                                                 onPress={() => handleToggleStatus(staff)}
+                                                                isDisabled={pendingStatusIds.has(staff.id!)}
+
                                                                 className={staff.status === 'Active' ? 'text-warning hover:bg-warning/10' : 'text-success hover:bg-success/10'}
                                                             >
-                                                                {staff.status === 'Active' ? <Lock size={16} /> : <Unlock size={16} />}
+                                                                {pendingStatusIds.has(staff.id!)
+                                                                    ? <Spinner size="sm" /> :
+                                                                    staff.status === 'Active' ?
+                                                                        <Lock size={16} /> :
+                                                                        <Unlock size={16} />}
                                                             </Button>
-                                                        ) : (
-                                                            <Tooltip >
-                                                                <div className="cursor-not-allowed opacity-50">
-                                                                    <Button isIconOnly size="sm" variant="ghost" isDisabled>
-                                                                        {staff.status === 'Active' ? <Lock size={16} /> : <Unlock size={16} />}
-                                                                    </Button>
-                                                                </div>
-                                                            </Tooltip>
                                                         )}
 
-                                                        {canDelete && isSuperAdmin ? (
-                                                            <Button isIconOnly size="sm" variant="secondary" onPress={() => handleDeleteStaff(staff.id!)} className="text-destructive hover:bg-destructive/10">
-                                                                <Trash2 size={16} />
+                                                        {canDelete && (
+                                                            <Button
+                                                                isIconOnly
+                                                                size="sm"
+                                                                variant="secondary"
+                                                                isDisabled={pendingDeleteIds.has(staff.id!)}
+                                                                onPress={() => handleDeleteStaff(staff.id!)}
+                                                                className="text-destructive hover:bg-destructive/10"
+                                                            >
+                                                                {pendingDeleteIds.has(staff.id!)
+                                                                    ? <Spinner size="sm" />
+                                                                    : <Trash2 size={16} />
+                                                                }
                                                             </Button>
-                                                        ) : (
-                                                            <Tooltip >
-                                                                <div className="cursor-not-allowed opacity-50">
-                                                                    <Button isIconOnly size="sm" variant="ghost" isDisabled><Trash2 size={16} /></Button>
-                                                                </div>
-                                                            </Tooltip>
                                                         )}
                                                     </div>
                                                 </Table.Cell>
@@ -405,37 +398,39 @@ export function StaffTable() {
             </div>
 
             {/* phân trang */}
-            {filteredStaffList.length > 0 && (
-                <div className="flex items-center justify-between gap-4 px-2">
-                    <span className="text-sm text-text-secondary">
-                        Trang {currentPage} / {totalPages}
-                    </span>
-
-                    <div className="flex items-center gap-2">
-                        <Button
-                            size="sm"
-                            variant="secondary"
-                            isDisabled={!hasPreviousPage || isLoading}
-                            onPress={goToPreviousPage}
-                        >
-                            Trước
-                        </Button>
-
-                        <span className="min-w-20 text-center text-sm text-text-secondary">
-                            {currentPage} / {totalPages}
+            {
+                filteredStaffList.length > 0 && (
+                    <div className="flex items-center justify-between gap-4 px-2">
+                        <span className="text-sm text-text-secondary">
+                            Trang {currentPage} / {totalPages}
                         </span>
 
-                        <Button
-                            size="sm"
-                            variant="secondary"
-                            isDisabled={!hasNextPage || isLoading}
-                            onPress={goToNextPage}
-                        >
-                            Sau
-                        </Button>
+                        <div className="flex items-center gap-2">
+                            <Button
+                                size="sm"
+                                variant="secondary"
+                                isDisabled={!hasPreviousPage || isLoading}
+                                onPress={goToPreviousPage}
+                            >
+                                Trước
+                            </Button>
+
+                            <span className="min-w-20 text-center text-sm text-text-secondary">
+                                {currentPage} / {totalPages}
+                            </span>
+
+                            <Button
+                                size="sm"
+                                variant="secondary"
+                                isDisabled={!hasNextPage || isLoading}
+                                onPress={goToNextPage}
+                            >
+                                Sau
+                            </Button>
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             <StaffFormModal
                 isOpen={isModalOpen}
@@ -443,6 +438,6 @@ export function StaffTable() {
                 onSubmit={handleSubmitStaff}
                 editingStaff={editingStaff}
             />
-        </div>
+        </div >
     );
 }

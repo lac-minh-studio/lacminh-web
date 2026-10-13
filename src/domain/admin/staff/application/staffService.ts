@@ -1,5 +1,5 @@
 import { FirestoreStaffRepository } from '../infrastructure/repositories/FirestoreStaffRepository';
-import { IStaffFormInput, IStaffItem } from '../model/Staff';
+import { IStaffFormInput, IStaffItem, StaffFormSchema, StaffUpdateSchema } from '../model/Staff';
 import { activityLogService } from '@/domain/admin/audit-log/application/activityLogService';
 import { seedService } from '../../dashboard/infrastructure/seeding/seedService';
 import { AdminUser } from '../../dashboard/model/adminUser';
@@ -45,13 +45,16 @@ export const staffService = {
 
     //create staff gọi hàm create thông qua staffstaffRepository
     async createStaff(actor: AdminUser, data: IStaffFormInput): Promise<string> {
-        const newId = await staffRepository.create(data);
+        const validatedData = StaffFormSchema.parse(data);
+
+        const newId = await staffRepository.create(validatedData);
         await recordStaffActivity(actor, 'Thêm mới nhân sự', data.fullName);
         return newId;
     },
 
     //update staff gọi hàm update thông qua staffstaffRepository
     async updateStaff(actor: AdminUser, id: string, data: Partial<IStaffFormInput>): Promise<void> {
+        const validatedData = StaffUpdateSchema.parse(data);
 
         //lấy thông tin staff hiện tại 
         const currentStaff = await staffRepository.getById(id);
@@ -64,11 +67,12 @@ export const staffService = {
         //lấy role hiện tại
         const preRole = currentStaff.role;
         //lấy role sau khi update
-        const nextRole = data.role;
-        //
-        const roleChanged = preRole !== nextRole;
+        const nextRole = validatedData.role;
 
-        await staffRepository.update(id, data);
+        const roleChanged =
+            nextRole !== undefined && preRole !== nextRole;
+
+        await staffRepository.update(id, validatedData);
         const targetName = data.fullName || `Nhân sự #${id.slice(0, 6)}`;
         //nếu change role SUPER_ADMIN
         if (roleChanged && nextRole === 'SUPER_ADMIN') {
