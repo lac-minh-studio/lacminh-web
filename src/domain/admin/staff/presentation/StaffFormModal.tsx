@@ -319,7 +319,7 @@ export function StaffFormModal({ isOpen, onClose, onSubmit, editingStaff }: Staf
                                         control={control}
                                         render={({ field }) => (
                                             <Select
-                                                isDisabled={canChangeRole}
+                                                isDisabled={!canChangeRole}
                                                 aria-label='role'
                                                 isRequired
                                                 className="flex flex-col gap-2 col-span-2"

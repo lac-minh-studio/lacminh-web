@@ -6,6 +6,7 @@ import { IStaffItem, IStaffFormInput } from '../model/Staff';
 import { useStaffRealtime } from './useStaffRealtime'
 import { useAdminIdentity } from '../../dashboard/application/useAdminIdentity';
 import { useActionRateLimit } from '@/domain/admin/hooks/useActionRateLimit';
+import { auth } from '@/config/firebase';
 export function useStaffList() {
     const { execute: rateLimitSubmit } = useActionRateLimit(2000);
     const { execute: rateLimitDelete } = useActionRateLimit(3000);
@@ -75,17 +76,44 @@ export function useStaffList() {
                     : 'staff:create',
                 async () => {
                     if (editingStaff?.id) {
-                        await staffService.updateStaff(
-                            adminInfo,
+                        const result = await updateStaffWithApi(
                             editingStaff.id,
                             input,
                         );
 
-                        toast.success('Cập nhật thông tin nhân sự thành công!');
+                        if (
+                            input.role === 'SUPER_ADMIN' &&
+                            result.emailSent
+                        ) {
+                            toast.success(
+                                'Cập nhật role và gửi email cảnh báo thành công.',
+                            );
+                        } else if (
+                            input.role === 'SUPER_ADMIN' &&
+                            !result.emailSent
+                        ) {
+                            toast.error(
+                                'Đã cập nhật nhân sự nhưng email nâng quyền chưa gửi được.',
+                                { duration: 6000 },
+                            );
+                        } else {
+                            toast.success(
+                                'Cập nhật thông tin nhân sự thành công!',
+                            );
+                        }
                     } else {
-                        await staffService.createStaff(adminInfo, input);
+                        const result = await createStaffWithApi(input);
 
-                        toast.success('Thêm nhân sự mới thành công!');
+                        if (result.emailSent) {
+                            toast.success(
+                                'Tạo tài khoản nhân sự thành công. Email thiết lập tài khoản đã được gửi.',
+                            );
+                        } else {
+                            toast.error(
+                                'Đã tạo tài khoản nhân sự nhưng gửi email thất bại. Cần kiểm tra và gửi lại email.',
+                                { duration: 6000 },
+                            );
+                        }
                     }
                 },
             );
@@ -136,16 +164,27 @@ export function useStaffList() {
             const result = await rateLimitStatusChange(
                 `staff:status:${id}`,
                 async () => {
-                    await staffService.toggleStatus(
-                        adminInfo,
-                        id,
-                        staff.status,
-                    );
+                    const nextStatus =
+                        staff.status === 'Active' ? 'Inactive' : 'Active';
 
-                    toast.success(
-                        `Đã đổi trạng thái thành ${staff.status === 'Active' ? 'Inactive' : 'Active'
-                        }`,
-                    );
+                    const updateResult = await updateStaffWithApi(id, {
+                        status: nextStatus,
+                    });
+
+                    if (updateResult.emailSent) {
+                        toast.success(
+                            nextStatus === 'Active'
+                                ? 'Đã mở khóa tài khoản và gửi email thông báo.'
+                                : 'Đã khóa tài khoản và gửi email thông báo.',
+                        );
+                    } else {
+                        toast.error(
+                            nextStatus === 'Active'
+                                ? 'Đã mở khóa tài khoản nhưng email thông báo chưa gửi được.'
+                                : 'Đã khóa tài khoản nhưng email thông báo chưa gửi được.',
+                            { duration: 6000 },
+                        );
+                    }
                 },
             );
 
@@ -170,7 +209,6 @@ export function useStaffList() {
     };
 
     //fun delete
-
     const handleDeleteStaff = async (id: string) => {
         const lockKey = `delete:${id}`;
 
@@ -228,3 +266,79 @@ export function useStaffList() {
 
     };
 }
+
+
+async function createStaffWithApi(
+    input: IStaffFormInput,
+): Promise<{ emailSent: boolean }> {
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+        throw new Error('Phiên đăng nhập Firebase không hợp lệ. Vui lòng đăng nhập lại.');
+    }
+
+    const idToken = await currentUser.getIdToken();
+
+    const response = await fetch('/api/staff', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify(input),
+    });
+
+    const result: {
+        success?: boolean;
+        emailSent?: boolean;
+        message?: string;
+    } = await response.json();
+
+    if (!response.ok || !result.success) {
+        throw new Error(result.message || 'Không thể tạo nhân sự.');
+    }
+
+    return {
+        emailSent: result.emailSent === true,
+    };
+}
+
+async function updateStaffWithApi(
+    id: string,
+    input: Partial<IStaffFormInput>,
+): Promise<{ emailSent: boolean }> {
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+        throw new Error('Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.');
+    }
+
+    const idToken = await currentUser.getIdToken();
+
+    const response = await fetch(
+        `/api/staff/${encodeURIComponent(id)}`,
+        {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${idToken}`,
+            },
+            body: JSON.stringify(input),
+        },
+    );
+
+    const result: {
+        success?: boolean;
+        emailSent?: boolean;
+        message?: string;
+    } = await response.json();
+
+    if (!response.ok || !result.success) {
+        throw new Error(result.message || 'Không thể cập nhật nhân sự.');
+    }
+
+    return {
+        emailSent: result.emailSent === true,
+    };
+}
+
