@@ -157,26 +157,3 @@ Nếu một chức năng không khả dụng, tài khoản có thể không đư
 
 Không tự ý thay đổi cấu hình hệ thống hoặc dữ liệu cơ sở dữ liệu để xử lý sự cố nếu không có quyền quản trị kỹ thuật.
 
-## 9. Checklist trước khi kết thúc công việc
-
-- [ ] Đã hoàn thành các thao tác quản trị cần thiết.
-- [ ] Đã kiểm tra kết quả của các thay đổi quan trọng.
-- [ ] Đã xuất và kiểm tra báo cáo nếu có yêu cầu.
-- [ ] Đã báo cáo các lỗi hoặc hoạt động bất thường.
-- [ ] Đã đăng xuất nếu sử dụng thiết bị chung.
-
-## 10. Hỗ trợ
-
-Khi cần hỗ trợ, hãy cung cấp:
-- Thời điểm xảy ra sự cố.
-- Tên chức năng đang sử dụng.
-- Mô tả các bước đã thực hiện.
-- Nội dung thông báo lỗi nếu có.
-
-Không gửi mật khẩu, mã xác thực hoặc thông tin bí mật trong báo cáo sự cố.
-
----
-
-**Phiên bản tài liệu:** 1.0  
-**Hệ thống:** Lac Minh Admin Portal  
-**Mục đích:** Hướng dẫn sử dụng dành cho người dùng quản trị.
