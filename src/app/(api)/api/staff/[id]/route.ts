@@ -13,6 +13,15 @@ export const runtime = 'nodejs';
 type RouteContext = {
     params: Promise<{ id: string }>;
 };
+type StaffAuditSnapshot = {
+    fullName: string | null;
+    email: string | null;
+    phone: string | null;
+    department: string | null;
+    title: string | null;
+    role: string | null;
+    status: 'Active' | 'Inactive';
+};
 
 export async function PATCH(
     request: NextRequest,
@@ -51,7 +60,7 @@ export async function PATCH(
         }
 
         const current = staffSnap.data()!;
-
+        const beforeSnapshot = createStaffAuditSnapshot(current);
         const roleChanged =
             changes.role !== undefined &&
             changes.role !== current.role;
@@ -130,6 +139,10 @@ export async function PATCH(
         }
 
         await staffRef.update(updatePayload);
+        const afterSnapshot = createStaffAuditSnapshot({
+            ...current,
+            ...changes,
+        });
 
         const fullName = changes.fullName ?? current.fullName;
         const email = changes.email ?? current.email;
@@ -159,11 +172,24 @@ export async function PATCH(
 
         for (const action of actions) {
             try {
+                // Chỉ lấy IP từ header
+                const forwardedFor = request.headers.get('x-forwarded-for');
+                const ipAddress = forwardedFor
+                    ? forwardedFor.split(',')[0]?.trim() || null
+                    : request.headers.get('x-real-ip');
+
+                const userAgent = request.headers.get('user-agent');
+
                 await adminDb.collection('audit_logs').add({
                     user: actorName,
+                    actorUid: actor.uid,
                     action,
                     target: fullName,
                     status: 'Success',
+                    before: beforeSnapshot,
+                    after: afterSnapshot,
+                    ipAddress,
+                    userAgent,
                     createdAt: FieldValue.serverTimestamp(),
                 });
             } catch (error) {
@@ -238,4 +264,29 @@ export async function PATCH(
             { status: 500 },
         );
     }
+}
+
+function createStaffAuditSnapshot(
+    staff: Record<string, unknown>,
+): StaffAuditSnapshot {
+    return {
+        fullName:
+            typeof staff.fullName === 'string' ? staff.fullName : null,
+        email:
+            typeof staff.email === 'string' ? staff.email : null,
+        phone:
+            typeof staff.phone === 'string' ? staff.phone : null,
+        department:
+            typeof staff.department === 'string'
+                ? staff.department
+                : null,
+        title:
+            typeof staff.title === 'string' ? staff.title : null,
+        role:
+            typeof staff.role === 'string' ? staff.role : null,
+        status:
+            staff.status === true || staff.status === 'Active'
+                ? 'Active'
+                : 'Inactive',
+    };
 }

@@ -4,11 +4,11 @@ import React, { useMemo, useState } from 'react';
 import { Table, Card, Chip, Select, ListBox, Button, } from '@heroui/react';
 import { DashboardColumn, } from '@/domain/admin/dashboard/model/adminUser';
 import { ActivityData } from '@/domain/admin/audit-log/model/types';
-import { CheckCircle2, AlertCircle, Clock, FileDown } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Clock, FileDown, Eye } from 'lucide-react';
 import { usePagination } from '../../hooks/usePagination';
 import { CsvColumn, exportToCsv } from '@/unitls/exportToCsv';
 import toast from 'react-hot-toast';
-
+import { AuditLogDiffModal } from './AuditLogDiffModal';
 interface RecentActivityTableProps {
     data: ActivityData[];
     isLoading?: boolean;
@@ -42,6 +42,8 @@ const columns: DashboardColumn[] = [
     { id: 'target', label: 'Đối tượng' },
     { id: 'time', label: 'Thời gian' },
     { id: 'status', label: 'Trạng thái' },
+    { id: 'detail', label: 'Chi tiết' },
+
 ];
 
 //
@@ -67,10 +69,12 @@ const ActivityLogCsvColumns: CsvColumn<ActivityData>[] = [
                     "Thất bại"
     },
     {
+
         key: 'time',
         header: 'Thời gian',
         formatter: (value) =>
-            value.toString(),
+            value == null ? '' : String(value),
+
     },
 ];
 
@@ -79,6 +83,7 @@ const ActivityLogCsvColumns: CsvColumn<ActivityData>[] = [
 function renderCell(
     item: ActivityData,
     columnId: string,
+    onViewDetail: (item: ActivityData) => void,
 ): React.ReactNode {
     switch (columnId) {
         case 'user':
@@ -122,7 +127,18 @@ function renderCell(
                     </div>
                 </Chip>
             );
-
+        case 'detail':
+            return (
+                <Button
+                    size="sm"
+                    variant="secondary"
+                    onPress={() => onViewDetail(item)}
+                    aria-label={`Xem chi tiết nhật ký ${item.id}`}
+                >
+                    <Eye size={16} />
+                    Chi tiết
+                </Button>
+            );
         default:
             return null;
     }
@@ -134,6 +150,8 @@ export function RecentActivityTable({
     isLoading = false,
     error = null,
 }: RecentActivityTableProps) {
+    const [selectedLog, setSelectedLog] =
+        useState<ActivityData | null>(null);
     const [isExporting, setIsExporting] = useState(false);
     const [selectedAction, setSelectedAction] =
         useState<string>('ALL');
@@ -320,7 +338,7 @@ export function RecentActivityTable({
                                             <Table.Row
                                                 key={item.id}
                                                 id={item.id}
-                                                className="border-b border-border/50 last:border-none hover:bg-background/50 transition-colors"
+                                                className="border-b border-border/50 last:border-none hover:bg-background/50 transition-colors cursor-pointer"
                                             >
                                                 {columns.map((column) => (
                                                     <Table.Cell
@@ -329,7 +347,8 @@ export function RecentActivityTable({
                                                     >
                                                         {renderCell(
                                                             item,
-                                                            column.id
+                                                            column.id,
+                                                            setSelectedLog
                                                         )}
                                                     </Table.Cell>
                                                 ))}
@@ -339,6 +358,11 @@ export function RecentActivityTable({
                                 </Table.Content>
                             </Table.ScrollContainer>
                         </Table>
+
+                        <AuditLogDiffModal
+                            log={selectedLog}
+                            onClose={() => setSelectedLog(null)}
+                        />
 
                         {/* phân trang */}
                         {filteredData.length > 0 && (

@@ -3,12 +3,27 @@ import { z } from 'zod';
 import { db } from '@/config/firebase';
 import { ActivityData } from '../model/types';
 
+
+const AuditSnapshotSchema = z.record(
+    z.string(),
+    z.unknown(),
+);
+
 const ActivityLogSchema = z.object({
     user: z.string(),
     action: z.string(),
     target: z.string(),
     status: z.enum(['Success', 'Pending', 'Failed']),
     createdAt: z.instanceof(Timestamp),
+
+    // Dữ liệu trước và sau thao tác.
+    before: AuditSnapshotSchema.nullable().optional(),
+    after: AuditSnapshotSchema.nullable().optional(),
+
+    // Thông tin request tại thời điểm thực hiện.
+    actorUid: z.string().optional(),
+    ipAddress: z.string().nullable().optional(),
+    userAgent: z.string().nullable().optional(),
 });
 
 type ActivityLogInput = Omit<

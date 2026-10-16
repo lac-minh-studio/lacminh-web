@@ -8,4 +8,11 @@ export interface ActivityData {
     time: string;
     status: 'Success' | 'Pending' | 'Failed';
     createdAt: Timestamp;
+
+    before?: Record<string, unknown> | null;
+    after?: Record<string, unknown> | null;
+
+    actorUid?: string;
+    ipAddress?: string | null;
+    userAgent?: string | null;
 }
