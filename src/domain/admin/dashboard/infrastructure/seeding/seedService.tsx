@@ -1,4 +1,4 @@
-import { addDoc, collection, getCountFromServer, Timestamp } from 'firebase/firestore';
+import { addDoc, collection, getCountFromServer, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 
 const METRICS = [
@@ -39,7 +39,7 @@ export const seedService = {
                     action: 'Khởi tạo dữ liệu mẫu',
                     target: 'Firestore Emulator',
                     status: 'Success',
-                    createdAt: now,
+                    createdAt: serverTimestamp(),
                 });
             }
         } catch (error) {
