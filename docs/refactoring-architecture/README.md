@@ -31,3 +31,117 @@ Bộ tài liệu này không phải tài liệu lý thuyết DDD chung. Nó là 
 ## Nguyên tắc đọc
 
 Khi có xung đột giữa source hiện tại và tài liệu này, **tài liệu target architecture là chuẩn mới**. Source hiện tại được xem là input của migration, không phải source of truth cho cách tổ chức code mới.
+
+## Environment
+### 1. Development
+Run the application with Firebase Local Emulator:
+`npm run dev:firebase`
+The application uses the local Firebase Emulator for development and testing.
+
+### 2. Production
+Build and start the application:
+`npm run build`
+`npm run start`
+
+Set the production environment variable:
+NEXT_PUBLIC_ENV=production
+
+Production uses Firebase Cloud services instead of the local Emulator. Make sure the required production environment variables and Firebase configuration are set before starting the application.
+
+## Main Commands
+| Command| Description |
+|---|---|
+| `npm run dev:firebase` | Run the application with Firebase Emulator |
+| `npm run seed:auth` | Initialize authentication test data |
+| `npm run test` | Run automated tests |
+| `npm run lint` | Check code quality |
+| `npm run build` | Build the application for production |
+| `npm run deploy:rules` | Deploy Firestore Security Rules |
+| `npm run seed:prod` | Initialize production data, according to the script configuration |
+
+Run data initialization or deployment commands only in the intended environment. Review the script configuration before using commands that modify production data.
+
+## Diagram Environment DEV & PRODUCTION
+
+                    ┌─────────────────────────┐
+                    │    NEXT.JS APPLICATION  │
+                    └────────────┬────────────┘
+                                 │
+                                 ▼
+                    ┌─────────────────────────┐
+                    │   ENVIRONMENT CONFIG    │
+                    └────────────┬────────────┘
+                                 │
+                   ┌─────────────┴─────────────┐
+                   │                           │
+                   ▼                           ▼
+       ┌────────────────────────┐  ┌────────────────────────┐
+       │     DEVELOPMENT        │  │      PRODUCTION        │
+       │                        │  │                        │
+       │ Firebase Emulator      │  │ Firebase Cloud         │
+       │                        │  │                        │
+       │ Authentication         │  │ Authentication         │
+       │ Firestore              │  │ Cloud Firestore        │
+       └────────────────────────┘  └────────────────────────┘
+
+
+## System Architecture Diagram
+
+                         ┌────────────────────────┐
+                         │       ADMIN USER       │
+                         └────────────┬───────────┘
+                                      │
+                                      │ HTTP / HTTPS
+                                      ▼
+                    ┌────────────────────────────────┐
+                    │       NEXT.JS ADMIN PORTAL     │
+                    │                                │
+                    │  ┌──────────────────────────┐  │
+                    │  │ Presentation Layer       │  │
+                    │  │ Pages / Layouts / UI     │  │
+                    │  └────────────┬─────────────┘  │
+                    │               │                │
+                    │  ┌────────────▼─────────────┐  │
+                    │  │ Application Layer        │  │
+                    │  │ Hooks / Services         │  │
+                    │  └────────────┬─────────────┘  │
+                    │               │                │
+                    │  ┌────────────▼─────────────┐  │
+                    │  │ Domain Layer             │  │
+                    │  │ Business Rules / Models  │  │
+                    │  └────────────┬─────────────┘  │
+                    │               │                │
+                    │  ┌────────────▼─────────────┐  │
+                    │  │ Infrastructure Layer     │  │
+                    │  │ Repositories / Firebase  │  │
+                    │  └────────────┬─────────────┘  │
+                    └───────────────┼────────────────┘
+                                    │
+                   ┌────────────────┴────────────────┐
+                   │                                 │
+                   ▼                                 ▼
+        ┌──────────────────────┐       ┌──────────────────────┐
+        │ Firebase             │       │ Cloud Firestore      │
+        │ Authentication       │       │                      │
+        │                      │       │ Staff / Audit Logs   │
+        │ Login / Identity     │       │ Dashboard Data       │
+        └──────────────────────┘       └──────────────────────┘
+                                                  ▲
+                                                  │
+                                     ┌────────────┴───────────┐
+                                     │ Firestore Security     │
+                                     │ Rules                  │
+                                     └────────────────────────┘
+
+
+
+## Main Features
+
+- Admin authentication and role-based access control.
+- Staff management, search, filtering, and pagination.
+- Dashboard statistics and data visualizations.
+- Activity logs and high-risk activity alerts.
+- Staff CSV export and monthly PDF reports.
+- Paginated activity notifications.
+- Firestore backup and restore utilities.
+

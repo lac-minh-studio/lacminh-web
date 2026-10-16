@@ -44,3 +44,12 @@ next-env.d.ts
 
 .vercel
 .env*.local
+
+# Firebase Emulator export data
+firebase-data/
+ui-debug.log
+firebase-debug.log
+
+
+#Backup firestore
+backups/

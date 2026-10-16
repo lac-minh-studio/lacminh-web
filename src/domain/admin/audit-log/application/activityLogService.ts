@@ -1,0 +1,166 @@
+import { addDoc, collection, DocumentData, getDocs, limit, orderBy, Query, query, QueryDocumentSnapshot, serverTimestamp, startAfter, Timestamp, where } from 'firebase/firestore';
+import { z } from 'zod';
+import { db } from '@/config/firebase';
+import { ActivityData } from '../model/types';
+
+
+const AuditSnapshotSchema = z.record(
+    z.string(),
+    z.unknown(),
+);
+
+const ActivityLogSchema = z.object({
+    user: z.string(),
+    action: z.string(),
+    target: z.string(),
+    status: z.enum(['Success', 'Pending', 'Failed']),
+    createdAt: z.instanceof(Timestamp),
+
+    // Dữ liệu trước và sau thao tác.
+    before: AuditSnapshotSchema.nullable().optional(),
+    after: AuditSnapshotSchema.nullable().optional(),
+
+    // Thông tin request tại thời điểm thực hiện.
+    actorUid: z.string().optional(),
+    ipAddress: z.string().nullable().optional(),
+    userAgent: z.string().nullable().optional(),
+});
+
+type ActivityLogInput = Omit<
+    z.infer<typeof ActivityLogSchema>,
+    'createdAt'
+>;
+
+export type ActivityLogCursor =
+    QueryDocumentSnapshot<DocumentData>;
+
+export interface ActivityLogPage {
+    items: ActivityData[];
+    nextCursor: ActivityLogCursor | null;
+    hasMore: boolean;
+}
+export const activityLogService = {
+
+    //reload mỗi lần tải
+    async getRecentLogsPage(
+        cursor: ActivityLogCursor | null,
+        pageSize = 10,
+    ): Promise<ActivityLogPage> {
+        const constraints = [
+            orderBy('createdAt', 'desc'),
+            ...(cursor ? [startAfter(cursor)] : []),
+            limit(pageSize + 1),
+        ];
+
+        const snapshot = await getDocs(
+            query(collection(db, 'audit_logs'), ...constraints),
+        );
+
+        const hasMore = snapshot.docs.length > pageSize;
+        const pageDocs = snapshot.docs.slice(0, pageSize);
+
+        return {
+            items: pageDocs.map((doc) => this.mapActivityLog(doc)),
+            nextCursor: pageDocs[pageDocs.length - 1] ?? null,
+            hasMore,
+        };
+    },
+    //lấy log mới nhất 
+    getRecentNotificationQuery(pageSize = 10): Query {
+        return query(
+            collection(db, 'audit_logs'),
+            orderBy('createdAt', 'desc'),
+            limit(pageSize),
+        );
+    },
+
+
+    //cảnh báo nguy cơ 
+    getHighRiskLogsQuery(): Query {
+        return query(
+            collection(db, 'audit_logs'),
+            where('status', '==', 'Success'),
+            where('action', 'in', [
+                'Xóa vĩnh viễn',
+                'Chuyển trạng thái sang Inactive',
+                'Nâng quyền thành SUPER_ADMIN'
+            ]),
+            orderBy('createdAt', 'desc'),
+            limit(50),
+        );
+    },
+
+    //lấy activity trong khoảng time
+    async getActivitiesByDateRange(
+        startDate: Date,
+        endDate: Date,
+    ): Promise<ActivityData[]> {
+        const q = query(
+            collection(db, 'audit_logs'),
+            where(
+                'createdAt',
+                '>=',
+                Timestamp.fromDate(startDate),
+            ),
+            where(
+                'createdAt',
+                '<',
+                Timestamp.fromDate(endDate),
+            ),
+            orderBy('createdAt', 'desc'),
+        );
+
+        const snapshot = await getDocs(q);
+
+        return snapshot.docs.map((doc) =>
+            this.mapActivityLog(doc),
+        );
+    },
+
+    // Create a new activity log.
+    async createLog(data: ActivityLogInput): Promise<void> {
+        await addDoc(collection(db, 'audit_logs'), {
+            ...data,
+            createdAt: serverTimestamp(),
+        });
+    },
+
+
+    // Create Firestore query for recent activity logs.
+    getLogsQuery(
+    ): Query {
+        return query(
+            collection(db, 'audit_logs'),
+            orderBy('createdAt', 'desc'),
+            // limit(limitCount)
+        );
+    },
+
+
+    //  Map and validate Firestore document
+    //  into ActivityData.
+
+    mapActivityLog(
+        doc: QueryDocumentSnapshot<DocumentData>
+    ): ActivityData {
+        const rawData = doc.data({
+            serverTimestamps: 'estimate',
+        });
+        const data = ActivityLogSchema.parse(rawData);
+
+        return {
+            id: doc.id,
+            ...data,
+            time: formatRelativeTime(data.createdAt.toDate()),
+        };
+    },
+};
+
+// chuyển timestamp thành time dễ đọc
+function formatRelativeTime(date: Date): string {
+    const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+    if (seconds < 60) return 'Vừa xong';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)} phút trước`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)} giờ trước`;
+    return `${Math.floor(seconds / 86400)} ngày trước`;
+}
